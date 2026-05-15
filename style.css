@@ -325,73 +325,126 @@ body{
     font-size:2.5rem;
   }
 }
-/* PAYMENT MODAL */
+/* =========================
+   MODALS
+========================= */
 
+.service-modal,
 .payment-modal{
   position:fixed;
   inset:0;
-  background:rgba(0,0,0,0.8);
+
+  background:rgba(0,0,0,0.75);
+
   display:flex;
   justify-content:center;
   align-items:center;
-  z-index:2000;
+
+  z-index:9999;
+
+  padding:20px;
 
   opacity:0;
+  visibility:hidden;
   pointer-events:none;
-  transition:0.3s;
+
+  transition:0.3s ease;
 }
 
+/* ACTIVE */
+
+.service-modal.show,
 .payment-modal.show{
   opacity:1;
+  visibility:visible;
   pointer-events:auto;
 }
 
+/* BOX */
+
+.service-box,
 .payment-box{
-  width:90%;
+  width:100%;
   max-width:700px;
+
   background:#111827;
-  padding:40px;
+
   border-radius:24px;
+
+  padding:35px;
+
   position:relative;
-  animation:popup 0.3s ease;
+
+  transform:translateY(30px);
+
+  transition:0.3s ease;
+
+  max-height:90vh;
+  overflow-y:auto;
 }
 
-@keyframes popup{
-  from{
-    transform:scale(0.9);
-    opacity:0;
-  }
+/* ANIMATION */
 
-  to{
-    transform:scale(1);
-    opacity:1;
-  }
+.service-modal.show .service-box,
+.payment-modal.show .payment-box{
+  transform:translateY(0);
 }
 
+/* CLOSE BUTTONS */
+
+.close-service,
 .close-payment{
   position:absolute;
-  top:20px;
-  right:20px;
-  background:none;
+
+  top:15px;
+  right:15px;
+
+  width:42px;
+  height:42px;
+
   border:none;
+  border-radius:50%;
+
+  background:#1e293b;
+
   color:white;
-  font-size:20px;
+
+  font-size:18px;
+
   cursor:pointer;
+
+  transition:0.3s;
 }
+
+.close-service:hover,
+.close-payment:hover{
+  background:#895425;
+}
+
+/* PAYMENT */
 
 .payment-methods{
   display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+
+  grid-template-columns:
+  repeat(auto-fit,minmax(220px,1fr));
+
   gap:20px;
+
   margin-top:30px;
 }
 
 .payment-card{
   background:#1e293b;
+
   padding:25px;
+
   border-radius:20px;
+
   cursor:pointer;
+
   transition:0.3s;
+
   border:2px solid transparent;
 }
 
@@ -413,17 +466,82 @@ body{
   font-size:14px;
 }
 
-.pay-btn{
+/* BUTTONS */
+
+.pay-btn,
+.custom-order-btn{
   width:100%;
+
   margin-top:30px;
+
   padding:16px;
+
   border:none;
+
   border-radius:14px;
+
   background:#895425;
+
   color:white;
+
   font-size:16px;
+
   cursor:pointer;
+
+  transition:0.3s;
 }
+
+.pay-btn:hover,
+.custom-order-btn:hover{
+  transform:translateY(-3px);
+}
+
+/* CUSTOM SERVICE */
+
+.custom-grid{
+  display:grid;
+  gap:20px;
+  margin-top:25px;
+}
+
+.custom-group{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+.custom-group label{
+  font-weight:600;
+}
+
+.custom-group input,
+.custom-group select,
+.custom-group textarea{
+  padding:14px;
+
+  border:none;
+
+  border-radius:12px;
+
+  background:#1e293b;
+
+  color:white;
+
+  font-family:inherit;
+}
+
+.custom-group textarea{
+  min-height:120px;
+  resize:none;
+}
+
+.service-total{
+  margin-top:25px;
+  font-size:1.4rem;
+  font-weight:700;
+}
+
+/* CHECKOUT */
 
 .checkout-btn{
   width:100%;

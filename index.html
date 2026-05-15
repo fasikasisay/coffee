@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -17,6 +18,7 @@
 
   <!-- NAVBAR -->
   <header id="navbar" class="navbar">
+
     <div class="container nav-container">
 
       <h1 class="logo">MISRAK COFFEE</h1>
@@ -43,28 +45,55 @@
       <a href="#order" class="mobile-nav-link">Order</a>
       <a href="#contact" class="mobile-nav-link">Contact</a>
     </div>
+
   </header>
 
   <!-- HERO -->
   <section id="home" class="hero">
+
     <div class="hero-content">
+
       <h2>Premium Ethiopian Coffee</h2>
+
       <p>Dark • Modern • Authentic</p>
-      <a href="#menu" class="btn">Explore Menu</a>
+
+      <a href="#menu" class="btn">
+        Explore Menu
+      </a>
+
     </div>
+
   </section>
 
   <!-- MENU -->
   <section id="menu" class="menu-section">
 
-    <h2 class="section-title">Our Menu</h2>
+    <h2 class="section-title">
+      Our Menu
+    </h2>
 
     <div class="tabs">
-      <button class="tab active" data-category="all">All</button>
-      <button class="tab" data-category="espresso">Espresso</button>
-      <button class="tab" data-category="filter">Filter</button>
-      <button class="tab" data-category="cold">Cold</button>
-      <button class="tab" data-category="beans">Beans</button>
+
+      <button class="tab active" data-category="all">
+        All
+      </button>
+
+      <button class="tab" data-category="green">
+        Green Beans
+      </button>
+
+      <button class="tab" data-category="roasted">
+        Roasted
+      </button>
+
+      <button class="tab" data-category="bulk">
+        Bulk Supply
+      </button>
+
+      <button class="tab" data-category="service">
+        Services
+      </button>
+
     </div>
 
     <div id="menuGrid" class="menu-grid"></div>
@@ -75,75 +104,54 @@
   <section id="order" class="order-section">
 
     <div class="cart-panel">
+
       <h2>Your Cart</h2>
 
       <div id="cartItems"></div>
 
       <div id="cartTotal" class="cart-total">
-        <button id="checkoutBtn" class="btn checkout-btn">
-  Checkout
-</button>
+
         <span>Total</span>
-        <span id="cartTotalAmount">$0.00</span>
-      </div>
-    </div>
-<!-- PAYMENT MODAL -->
 
-<div id="paymentModal" class="payment-modal">
+        <span id="cartTotalAmount">
+          $0.00
+        </span>
 
-  <div class="payment-box">
-
-    <button id="closePayment" class="close-payment">
-      ✕
-    </button>
-
-    <h2>Select Payment Method</h2>
-
-    <div class="payment-methods">
-
-      <div class="payment-card" data-method="telebirr">
-        <h3>Telebirr</h3>
-        <p>Fast mobile payment</p>
       </div>
 
-      <div class="payment-card" data-method="cbe">
-        <h3>CBE Birr</h3>
-        <p>Commercial Bank transfer</p>
-      </div>
-
-      <div class="payment-card" data-method="cash">
-        <h3>Cash</h3>
-        <p>Pay at pickup/delivery</p>
-      </div>
-
-      <div class="payment-card" data-method="card">
-        <h3>Visa / Mastercard</h3>
-        <p>Secure online payment</p>
-      </div>
+      <button id="checkoutBtn" class="btn checkout-btn">
+        Checkout
+      </button>
 
     </div>
 
-    <button id="payNowBtn" class="pay-btn">
-      Confirm Payment
-    </button>
-
-  </div>
-
-</div>
   </section>
 
   <!-- CONTACT -->
   <section id="contact" class="contact-section">
 
-    <h2 class="section-title">Contact Us</h2>
+    <h2 class="section-title">
+      Contact Us
+    </h2>
 
     <form id="contactForm" class="contact-form">
 
-      <input type="text" id="cName" placeholder="Your Name" />
+      <input
+        type="text"
+        id="cName"
+        placeholder="Your Name"
+      />
 
-      <input type="email" id="cEmail" placeholder="Your Email" />
+      <input
+        type="email"
+        id="cEmail"
+        placeholder="Your Email"
+      />
 
-      <textarea id="cMessage" placeholder="Message"></textarea>
+      <textarea
+        id="cMessage"
+        placeholder="Message"
+      ></textarea>
 
       <button type="submit" class="btn">
         Send Message
@@ -157,10 +165,65 @@
 
   </section>
 
+  <!-- SERVICE MODAL -->
+  <div id="serviceModal" class="service-modal">
+
+    <div class="service-box">
+
+      <div id="serviceContent"></div>
+
+    </div>
+
+  </div>
+
+  <!-- PAYMENT MODAL -->
+  <div id="paymentModal" class="payment-modal">
+
+    <div class="payment-box">
+
+      <button id="closePayment" class="close-payment">
+        ✕
+      </button>
+
+      <h2>Select Payment Method</h2>
+
+      <div class="payment-methods">
+
+        <div class="payment-card" data-method="telebirr">
+          <h3>Telebirr</h3>
+          <p>Fast mobile payment</p>
+        </div>
+
+        <div class="payment-card" data-method="cbe">
+          <h3>CBE Birr</h3>
+          <p>Commercial Bank transfer</p>
+        </div>
+
+        <div class="payment-card" data-method="cash">
+          <h3>Cash</h3>
+          <p>Pay at pickup/delivery</p>
+        </div>
+
+        <div class="payment-card" data-method="card">
+          <h3>Visa / Mastercard</h3>
+          <p>Secure online payment</p>
+        </div>
+
+      </div>
+
+      <button id="payNowBtn" class="pay-btn">
+        Confirm Payment
+      </button>
+
+    </div>
+
+  </div>
+
   <!-- TOAST -->
   <div id="toast" class="toast"></div>
 
   <script src="app.js"></script>
 
 </body>
+
 </html>
