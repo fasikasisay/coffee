@@ -1,8 +1,5 @@
 'use strict';
 
-/* ============================================================
-   MISRAK COFFEE — app.js
-============================================================ */
 
 /* ---- MENU DATA ---- */
 
@@ -128,15 +125,11 @@ const MENU_ITEMS = [
   },
 ];
 
-/* ============================================================
-   CART
-============================================================ */
+
 
 let cart = [];
 
-/* ============================================================
-   NAVBAR
-============================================================ */
+/* nav */
 
 const navbar = document.getElementById('navbar');
 const navLinks = document.querySelectorAll('.nav-link');
@@ -179,9 +172,7 @@ window.addEventListener('scroll', () => {
 
 }, { passive:true });
 
-/* ============================================================
-   MOBILE MENU
-============================================================ */
+/*  MOBILE MENU */
 
 const hamburger = document.getElementById('hamburger');
 const mobileMenu = document.getElementById('mobileMenu');
@@ -194,9 +185,7 @@ hamburger.addEventListener('click', () => {
 
 });
 
-/* ============================================================
-   MENU
-============================================================ */
+/*   MENU */
 
 const menuGrid = document.getElementById('menuGrid');
 const tabs = document.querySelectorAll('.tab');
@@ -303,10 +292,9 @@ tabs.forEach(tab => {
 
 renderMenuItems();
 
-/* ============================================================
+/* 
    CART LOGIC
-============================================================ */
-
+*/
 function addToCart(id){
 
   const item = MENU_ITEMS.find(m => m.id === id);
@@ -398,9 +386,7 @@ function renderCart(){
 
 }
 
-/* ============================================================
-   PAYMENT SYSTEM
-============================================================ */
+/*  PAYMENT SYSTEM*/
 
 const paymentModal = document.getElementById('paymentModal');
 const checkoutBtn = document.getElementById('checkoutBtn');
@@ -458,7 +444,7 @@ payNowBtn.addEventListener('click', () => {
 
   setTimeout(() => {
 
-    showToast('Payment successful ☕', 'success');
+    showToast('Payment successful ', 'success');
 
     paymentModal.classList.remove('show');
 
@@ -473,9 +459,9 @@ payNowBtn.addEventListener('click', () => {
   },2000);
 
 });
-/* ============================================================
+/* 
    SERVICE CUSTOMIZATION
-============================================================ */
+ */
 
 const serviceModal = document.getElementById('serviceModal');
 const serviceContent = document.getElementById('serviceContent');
@@ -630,16 +616,16 @@ function openServicePage(item){
       serviceModal.classList.remove('show');
 
       showToast(
-        'Customized order added ☕',
+        'Customized order added ',
         'success'
       );
 
     });
   }
 
-/* ============================================================
+/*
    TOAST
-============================================================ */
+*/
 
 const toastEl = document.getElementById('toast');
 
