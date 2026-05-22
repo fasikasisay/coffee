@@ -547,3 +547,9 @@ body{
   width:100%;
   margin-top:20px;
 }
+.menu-image img{
+    width:80px;
+    height:80px;
+    object-fit:cover;
+    border-radius:12px;
+}

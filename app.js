@@ -10,7 +10,7 @@ const MENU_ITEMS = [
     category: 'green',
     price: 145.00,
     desc: 'Premium washed Ethiopian green beans with floral aroma and export-grade quality.',
-    emoji: '🫘',
+    image:'images/greencoffeebeans.webp',
     popular: true,
   },
 
@@ -20,7 +20,7 @@ const MENU_ITEMS = [
     category: 'green',
     price: 132.00,
     desc: 'Highland Arabica beans prepared for international roasting and distribution.',
-    emoji: '🌱',
+    image:'images/green-coffee-beans-01.jpg',
     popular: true,
   },
 
@@ -30,7 +30,7 @@ const MENU_ITEMS = [
     category: 'green',
     price: 138.00,
     desc: 'Dry-processed Ethiopian coffee with winey notes and bold complexity.',
-    emoji: '☕',
+    image:'images/Raw-Green-Unprocessed-Coffee-Beans-Whole-5.jpg',
     popular: false,
   },
 
@@ -40,7 +40,7 @@ const MENU_ITEMS = [
     category: 'roasted',
     price: 24.00,
     desc: 'Dark roasted espresso blend designed for cafés and hotels.',
-    emoji: '🔥',
+    image:'images/rosted.jpg',
     popular: true,
   },
 
@@ -50,7 +50,7 @@ const MENU_ITEMS = [
     category: 'roasted',
     price: 22.00,
     desc: 'Medium roast profile preserving Ethiopian floral sweetness.',
-    emoji: '☕',
+    image:'images/rosted2.webp',
     popular: false,
   },
 
@@ -60,7 +60,7 @@ const MENU_ITEMS = [
     category: 'bulk',
     price: 850.00,
     desc: 'Large-volume coffee supply solution for wholesalers and retailers.',
-    emoji: '📦',
+    image:'images/large package.webp',
     popular: true,
   },
 
@@ -70,7 +70,7 @@ const MENU_ITEMS = [
     category: 'service',
     price: 120.00,
     desc: 'Professional export packaging with international shipping standards.',
-    emoji: '🚚',
+   image:'images/packeage.jpg',
     popular: false,
   },
 
@@ -80,7 +80,7 @@ const MENU_ITEMS = [
     category: 'service',
     price: 95.00,
     desc: 'Advanced defect sorting and grading services.',
-    emoji: '⚙️',
+    image:'images/coffee-beans-after-cleaning.jpg',
     popular: false,
   },
 
@@ -90,7 +90,7 @@ const MENU_ITEMS = [
     category: 'green',
     price: 140.00,
     desc: 'Fully washed Arabica coffee processed for premium export markets.',
-    emoji: '💧',
+    image:'images/cleaning coffe.jpg',
     popular: true,
   },
 
@@ -100,7 +100,7 @@ const MENU_ITEMS = [
     category: 'green',
     price: 136.00,
     desc: 'Sun-dried natural coffee beans delivering fruity sweetness.',
-    emoji: '☀️',
+    image:'images/high-angle-view-beans.jpg',
     popular: false,
   },
 
@@ -110,7 +110,7 @@ const MENU_ITEMS = [
     category: 'service',
     price: 180.00,
     desc: 'Custom roasting and branding solutions for cafés and coffee brands.',
-    emoji: '🏷️',
+    image:'images/how-to-roast-coffee.jpg',
     popular: false,
   },
 
@@ -120,7 +120,7 @@ const MENU_ITEMS = [
     category: 'service',
     price: 250.00,
     desc: 'End-to-end export logistics and shipment handling.',
-    emoji: '🌍',
+    image:'images/Exports-1mer3rn.jpg',
     popular: true,
   },
 ];
@@ -210,9 +210,9 @@ function createMenuItemHTML(item){
 
       ${item.popular ? '<span class="menu-item__badge">Popular</span>' : ''}
 
-      <div class="menu-item__emoji">
-        ${item.emoji}
-      </div>
+      <div class="menu-image">
+   <img src="${item.image}" alt="${item.name}">
+</div>
 
       <p class="menu-item__category">
         ${formatCategory(item.category)}
