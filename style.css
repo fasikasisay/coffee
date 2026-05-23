@@ -97,7 +97,7 @@ body{
 
 .hero{
   height:100vh;
-  background:url(coffee2.png)
+  background:url('coffee2.png') 
   center/cover;
   display:flex;
   justify-content:center;
@@ -325,9 +325,7 @@ body{
     font-size:2.5rem;
   }
 }
-/* =========================
-   MODALS
-========================= */
+/* MODALS*/
 
 .service-modal,
 .payment-modal{
@@ -599,3 +597,44 @@ body{
   transform:translateY(-5px);
   background:#c08457;
 }
+.about-section{
+  padding:120px 8%;
+  background:#020617;
+  position:relative;
+  overflow:hidden;
+}
+
+.about-container{
+  max-width:1200px;
+  margin:auto;
+}
+
+.about-header{
+  text-align:center;
+  margin-bottom:70px;
+}
+
+.section-tag{
+  display:inline-block;
+  padding:10px 18px;
+  background:rgba(192,132,87,0.15);
+  color:#c08457;
+  border-radius:999px;
+  font-size:14px;
+  margin-bottom:20px;
+  border:1px solid rgba(192,132,87,0.2);
+}
+
+.about-description{
+  max-width:760px;
+  margin:25px auto 0;
+  color:#94a3b8;
+  line-height:1.9;
+  font-size:18px;
+}
+
+
+
+
+
+
