@@ -632,9 +632,71 @@ body{
   line-height:1.9;
   font-size:18px;
 }
+.about-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+  gap:30px;
+}
 
+.about-card{
+  background:#0f172a;
+  border-radius:28px;
+  padding:40px 35px;
+  border:1px solid rgba(255,255,255,0.05);
+  transition:0.4s ease;
+  position:relative;
+  overflow:hidden;
+}
 
+.about-card::before{
+  content:'';
+  position:absolute;
+  inset:0;
+  background:linear-gradient(
+    135deg,
+    rgba(192,132,87,0.08),
+    transparent
+  );
+  opacity:0;
+  transition:0.4s;
+}
 
+.about-card:hover::before{
+  opacity:1;
+}
+
+.about-card:hover{
+  transform:translateY(-10px);
+  border-color:rgba(192,132,87,0.25);
+}
+
+.about-icon{
+  width:70px;
+  height:70px;
+  border-radius:20px;
+  background:rgba(192,132,87,0.15);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  margin-bottom:25px;
+}
+
+.about-icon i{
+  font-size:32px;
+  color:#c08457;
+}
+
+.about-card h3{
+  color:white;
+  font-size:26px;
+  margin-bottom:18px;
+}
+
+.about-card p{
+  color:#94a3b8;
+  line-height:1.8;
+  font-size:16px;
+}
 
 
 
