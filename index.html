@@ -184,124 +184,124 @@
   </section>
 
   <!-- MENU -->
-  <section id="menu" class="menu-section">
+  <section id="menu" class="menu-section" aria-labelledby="menuHeading">
+    <div class="container">
 
-    <h2 class="section-title">
-      Our Menu
-    </h2>
+      <span class="section-eyebrow">Our Products</span>
+      <h2 id="menuHeading" class="section-title">Our Menu</h2>
 
-    <div class="tabs">
-
-      <button class="tab active" data-category="all">
-        All
-      </button>
-
-      <button class="tab" data-category="green">
-        Green Beans
-      </button>
-
-      <button class="tab" data-category="roasted">
-        Roasted
-      </button>
-
-      <button class="tab" data-category="bulk">
-        Bulk Supply
-      </button>
-
-      <button class="tab" data-category="service">
-        Services
-      </button>
-
-    </div>
-
-    <div id="menuGrid" class="menu-grid"></div>
-
-  </section>
-
-  <!-- ORDER -->
-  <section id="order" class="order-section">
-
-    <div class="cart-panel">
-
-      <h2>Your Cart</h2>
-
-      <div id="cartItems"></div>
-
-      <div id="cartTotal" class="cart-total">
-
-        <span>Total</span>
-
-        <span id="cartTotalAmount">
-          $0.00
-        </span>
-
+      <!-- Category Tabs -->
+      <div class="tabs" role="tablist" aria-label="Product categories">
+        <button class="tab active" data-category="all" role="tab" aria-selected="true">All</button>
+        <button class="tab" data-category="green" role="tab" aria-selected="false">Green Beans</button>
+        <button class="tab" data-category="roasted" role="tab" aria-selected="false">Roasted</button>
+        <button class="tab" data-category="bulk" role="tab" aria-selected="false">Bulk Supply</button>
+        <button class="tab" data-category="service" role="tab" aria-selected="false">Services</button>
       </div>
 
-      <button id="checkoutBtn" class="btn checkout-btn">
-        Checkout
-      </button>
+      <div id="menuGrid" class="menu-grid" role="tabpanel" aria-label="Product list"></div>
 
     </div>
-
   </section>
+
 
   <!-- CONTACT -->
   
-  <section id="contact" class="contact-section">
+   <section id="contact" class="contact-section" aria-labelledby="contactHeading">
+    <div class="container contact-container">
 
-    <h2 class="section-title">
-      Contact Us
-    </h2>
-  
-    <form id="contactForm" class="contact-form">
+      <div class="contact-left">
+        <span class="section-eyebrow">Reach Out</span>
+        <h2 id="contactHeading" class="section-title">Contact Us</h2>
 
-      <input
-        type="text"
-        id="cName"
-        placeholder="Your Name"
-      />
+        <!-- Contact Form -->
+        <form id="contactForm" class="contact-form" novalidate aria-label="Contact form">
 
-      <input
-        type="email"
-        id="cEmail"
-        placeholder="Your Email"
-      />
+          <div class="form-group">
+            <label for="cName">Full Name <span aria-hidden="true">*</span></label>
+            <input
+              type="text"
+              id="cName"
+              name="name"
+              placeholder="Your full name"
+              autocomplete="name"
+              aria-required="true"
+              aria-describedby="cNameError"
+            />
+            <span class="field-error" id="cNameError" role="alert" aria-live="polite"></span>
+          </div>
 
-      <textarea
-        id="cMessage"
-        placeholder="Message"
-      ></textarea>
+          <div class="form-group">
+            <label for="cEmail">Email Address <span aria-hidden="true">*</span></label>
+            <input
+              type="email"
+              id="cEmail"
+              name="email"
+              placeholder="your@email.com"
+              autocomplete="email"
+              aria-required="true"
+              aria-describedby="cEmailError"
+            />
+            <span class="field-error" id="cEmailError" role="alert" aria-live="polite"></span>
+          </div>
 
-      <button type="submit" class="btn">
-        Send Message
-      </button>
+          <div class="form-group">
+            <label for="cMessage">Message <span aria-hidden="true">*</span></label>
+            <textarea
+              id="cMessage"
+              name="message"
+              placeholder="Tell us about your coffee needs..."
+              aria-required="true"
+              aria-describedby="cMessageError"
+            ></textarea>
+            <span class="field-error" id="cMessageError" role="alert" aria-live="polite"></span>
+          </div>
 
-    </form>
+          <button type="submit" id="submitBtn" class="btn btn--primary btn--full">
+            <span class="btn-text">Send Message</span>
+            <span class="btn-loader" aria-hidden="true"></span>
+          </button>
 
-    <div id="contactSuccess" class="success-box">
-      Message sent successfully ✅
-    </div>
+        </form>
+
+    
 
  <!-- COMPANY INFO -->
+ <div class="contact-right">
+        <div class="company-contact">
+          <h3>Get In Touch</h3>
 
-  <div class="company-contact">
+          <ul class="contact-info" aria-label="Contact information">
+            <li>
+              <i class="fa-solid fa-phone" aria-hidden="true"></i>
+              <a href="tel:+251912345678">+251 912 345 678</a>
+            </li>
+            <li>
+              <i class="fa-solid fa-envelope" aria-hidden="true"></i>
+              <a href="mailto:info@misrakcoffee.com">info@misrakcoffee.com</a>
+            </li>
+            <li>
+              <i class="fa-solid fa-location-dot" aria-hidden="true"></i>
+              <address>Addis Ababa, Ethiopia</address>
+            </li>
+          </ul>
 
-    <h3>Get In Touch</h3>
+          <div class="contact-socials" aria-label="Social media links">
+            <a href="https://www.linkedin.com/in/fasika-sisay-778663348/" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="LinkedIn">
+              <i class="fa-brands fa-linkedin-in" aria-hidden="true"></i>
+            </a>
+            <a href="https://instagram.com/fa_fi_22" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="Instagram">
+              <i class="fa-brands fa-instagram" aria-hidden="true"></i>
+            </a>
+            <a href="https://t.me/fasikawit" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="Telegram">
+              <i class="fa-brands fa-telegram" aria-hidden="true"></i>
+            </a>
+          </div>
+        </div>
+      </div>
 
-    <p>
-      <i class="fa-solid fa-phone"></i>
-      +251 912 345 678
-    </p>
-
-    <p>
-      <i class="fa-solid fa-envelope"></i>
-      info@misrakcoffee.com
-    </p>
-
-    <p>
-      <i class="fa-solid fa-location-dot"></i>
-      Addis Ababa, Ethiopia
-    </p>
+    </div>
+  </section>
 
     <!-- SOCIAL LINKS -->
 
@@ -334,64 +334,111 @@
     </div>
 
   </div>
-  </section>
+  
+</section>
+ <!--  CART DRAWER-->
+  <div id="cartOverlay" class="cart-overlay" aria-hidden="true"></div>
+
+  <aside
+    id="cartDrawer"
+    class="cart-drawer"
+    role="dialog"
+    aria-modal="true"
+    aria-label="Shopping cart"
+    aria-hidden="true"
+  >
+    <div class="cart-drawer__header">
+      <h2 class="cart-drawer__title">
+        <i class="fa-solid fa-bag-shopping" aria-hidden="true"></i>
+        Your Cart
+        <span id="cartCount" class="cart-drawer__count">0 items</span>
+      </h2>
+      <button id="closeCart" class="cart-drawer__close" aria-label="Close cart">
+        <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+      </button>
+    </div>
+    
+
+    <div id="cartItems" class="cart-drawer__items" aria-live="polite"></div>
+
+    <div class="cart-drawer__footer">
+      <div class="cart-subtotal">
+        <span>Subtotal</span>
+        <span id="cartTotalAmount">$0.00</span>
+      </div>
+      <p class="cart-note">Shipping & taxes calculated at checkout</p>
+      <button id="checkoutBtn" class="btn btn--primary btn--full">
+        Proceed to Checkout
+        <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+      </button>
+      <button id="continueShopping" class="btn btn--ghost btn--full">Continue Shopping</button>
+    </div>
+  </aside>
 
   <!-- SERVICE MODAL -->
-  <div id="serviceModal" class="service-modal">
-
-    <div class="service-box">
-
+   <div id="serviceModal" class="modal" role="dialog" aria-modal="true" aria-label="Service customization" aria-hidden="true">
+    <div class="modal__box">
       <div id="serviceContent"></div>
-
     </div>
-
   </div>
 
   <!-- PAYMENT MODAL -->
-  <div id="paymentModal" class="payment-modal">
-
-    <div class="payment-box">
-
-      <button id="closePayment" class="close-payment">
-        ✕
+  <!-- ============================
+       PAYMENT MODAL
+  ============================= -->
+  <div id="paymentModal" class="modal" role="dialog" aria-modal="true" aria-label="Payment options" aria-hidden="true">
+    <div class="modal__box">
+      <button id="closePayment" class="modal__close" aria-label="Close payment modal">
+        <i class="fa-solid fa-xmark" aria-hidden="true"></i>
       </button>
 
-      <h2>Select Payment Method</h2>
+      <h2 class="modal__title">Select Payment Method</h2>
 
-      <div class="payment-methods">
+      <div class="payment-methods" role="radiogroup" aria-label="Payment methods">
 
-        <div class="payment-card" data-method="telebirr">
+        <div class="payment-card" data-method="telebirr" role="radio" aria-checked="false" tabindex="0">
+          <div class="payment-card__icon" aria-hidden="true">
+            <i class="fa-solid fa-mobile-screen"></i>
+          </div>
           <h3>Telebirr</h3>
           <p>Fast mobile payment</p>
         </div>
 
-        <div class="payment-card" data-method="cbe">
+        <div class="payment-card" data-method="cbe" role="radio" aria-checked="false" tabindex="0">
+          <div class="payment-card__icon" aria-hidden="true">
+            <i class="fa-solid fa-building-columns"></i>
+          </div>
           <h3>CBE Birr</h3>
           <p>Commercial Bank transfer</p>
         </div>
 
-        <div class="payment-card" data-method="cash">
+        <div class="payment-card" data-method="cash" role="radio" aria-checked="false" tabindex="0">
+          <div class="payment-card__icon" aria-hidden="true">
+            <i class="fa-solid fa-money-bill-wave"></i>
+          </div>
           <h3>Cash</h3>
           <p>Pay at pickup/delivery</p>
         </div>
 
-        <div class="payment-card" data-method="card">
+        <div class="payment-card" data-method="card" role="radio" aria-checked="false" tabindex="0">
+          <div class="payment-card__icon" aria-hidden="true">
+            <i class="fa-brands fa-cc-visa"></i>
+          </div>
           <h3>Visa / Mastercard</h3>
           <p>Secure online payment</p>
         </div>
 
       </div>
 
-      <button id="payNowBtn" class="pay-btn">
+      <button id="payNowBtn" class="btn btn--primary btn--full" style="margin-top: 2rem;">
         Confirm Payment
       </button>
-
     </div>
-
   </div>
 
+
   <!-- TOAST -->
-  <div id="toast" class="toast"></div>
+  <div id="toast" class="toast" role="status" aria-live="polite" aria-atomic="true"></div>
 
   <script src="app.js"></script>
 
