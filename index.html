@@ -17,13 +17,24 @@
 <body>
 
   <!-- NAVBAR -->
-  <header id="navbar" class="navbar">
+  <header id="navbar" class="navbar" role="banner">
 
     <div class="container nav-container">
 
-      <h1 class="logo">MISRAK COFFEE</h1>
+     <a href="#home" class="logo" aria-label="Misrak Coffee — Home">
+        <svg class="logo-icon" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <ellipse cx="22" cy="24" rx="14" ry="12" fill="currentColor" opacity="0.15"/>
+          <ellipse cx="22" cy="22" rx="13" ry="11" stroke="currentColor" stroke-width="2" fill="none"/>
+          <path d="M22 11 C18 6, 12 8, 14 14" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/>
+          <path d="M22 11 C26 6, 32 8, 30 14" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/>
+          <ellipse cx="22" cy="22" rx="5" ry="4" fill="currentColor" opacity="0.6"/>
+          <path d="M17 22 Q22 18 27 22" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+        </svg>
+        <span class="logo-text">Misrak <em>Coffee</em></span>
+      </a>
 
-      <nav class="nav-links">
+
+      <nav class="nav-links" aria-label="Primary Navigation">
         <a href="#home" class="nav-link active">Home</a>
         <a href="#about" class="nav-link">About</a>
         <a href="#menu" class="nav-link">Menu</a>
@@ -31,16 +42,52 @@
         <a href="#contact" class="nav-link">Contact</a>
       </nav>
 
-      <div id="hamburger" class="hamburger">
-        <span></span>
-        <span></span>
-        <span></span>
+      <!-- Nav Actions -->
+      <div class="nav-actions">
+        <!-- Theme Toggle -->
+        <button
+          id="themeToggle"
+          class="theme-toggle"
+          aria-label="Toggle dark/light mode"
+          title="Toggle theme"
+        >
+          <span class="theme-icon theme-icon--sun" aria-hidden="true">
+            <i class="fa-solid fa-sun"></i>
+          </span>
+          <span class="theme-icon theme-icon--moon" aria-hidden="true">
+            <i class="fa-solid fa-moon"></i>
+          </span>
+        </button>
+
+        <!-- Cart Icon -->
+        <button
+          id="cartToggle"
+          class="cart-toggle"
+          aria-label="Open shopping cart"
+          title="View cart"
+        >
+          <i class="fa-solid fa-bag-shopping" aria-hidden="true"></i>
+          <span id="cartBadge" class="cart-badge" aria-live="polite" aria-label="0 items in cart">0</span>
+        </button>
+
+        <!-- Hamburger -->
+        <button
+          id="hamburger"
+          class="hamburger"
+          aria-label="Toggle mobile menu"
+          aria-expanded="false"
+        >
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
       </div>
 
     </div>
 
+
     <!-- MOBILE MENU -->
-    <div id="mobileMenu" class="mobile-menu">
+    <div id="mobileMenu" class="mobile-menu" role="navigation" aria-label="Mobile Navigation">
       <a href="#home" class="mobile-nav-link">Home</a>
       <a href="#about" class="mobile-nav-link">About</a>
       <a href="#menu" class="mobile-nav-link">Menu</a>
@@ -51,73 +98,90 @@
   </header>
 
   <!-- HERO -->
-  <section id="home" class="hero">
+   <section id="home" class="hero" aria-labelledby="heroHeading">
+    <div class="hero-overlay" aria-hidden="true"></div>
 
     <div class="hero-content">
+      <!-- Inline logo for hero -->
+      <div class="hero-logo" aria-hidden="true">
+        <svg viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <ellipse cx="30" cy="33" rx="19" ry="16" fill="white" opacity="0.08"/>
+          <ellipse cx="30" cy="30" rx="18" ry="15" stroke="white" stroke-width="1.5" fill="none" opacity="0.6"/>
+          <path d="M30 15 C25 8, 16 10, 19 19" stroke="white" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.8"/>
+          <path d="M30 15 C35 8, 44 10, 41 19" stroke="white" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.8"/>
+          <ellipse cx="30" cy="30" rx="7" ry="5.5" fill="white" opacity="0.5"/>
+          <path d="M23 30 Q30 24 37 30" stroke="white" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.8"/>
+        </svg>
+      </div>
 
-      <h2>Premium Ethiopian Coffee</h2>
+      <p class="hero-eyebrow">Ethiopia's Finest Export</p>
+      <h1 id="heroHeading" class="hero-title">
+        Premium<br /><em>Ethiopian Coffee</em>
+      </h1>
+      <p class="hero-subtitle">Dark &bull; Modern &bull; Authentic</p>
 
-      <p>Dark • Modern • Authentic</p>
-      
-
-      <a href="#menu" class="btn">
-        Explore Menu
-      </a>
-
+      <div class="hero-cta">
+        <a href="#menu" class="btn btn--primary">
+          Explore Menu
+          <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+        </a>
+        <a href="#about" class="btn btn--ghost">Our Story</a>
+      </div>
     </div>
 
+    <div class="hero-scroll" aria-hidden="true">
+      <span></span>
+    </div>
   </section>
 
   <!-- ABOUT -->
 
-<section id="about" class="about-section">
+<section id="about" class="about-section" aria-labelledby="aboutHeading">
+    <div class="container about-container">
 
-  <div class="about-container">
+      <div class="about-text">
+        <span class="section-eyebrow">Who We Are</span>
+        <h2 id="aboutHeading" class="section-title">About Us</h2>
+        <p class="about-description">
+          Misrak Coffee is a premium Ethiopian coffee company dedicated to
+          delivering high-quality green beans, roasted coffee, and export
+          services to local and international markets. We specialize in sourcing
+          authentic Ethiopian Arabica coffee, professional roasting, bulk supply,
+          and customized export solutions while preserving the rich heritage and
+          flavor of Ethiopian coffee.
+        </p>
 
-    <div class="about-text">
+        <div class="about-features" role="list">
 
-      <h2 class="section-title">
-        About Us
-      </h2>
+          <div class="feature-box" role="listitem">
+            <div class="feature-box__icon" aria-hidden="true">
+              <i class="fa-solid fa-seedling"></i>
+            </div>
+            <h3 class="feature-box__title">Premium Beans</h3>
+            <p class="feature-box__desc">Sourced from Ethiopia's finest highland regions</p>
+          </div>
 
-      <p class="about-description">
-  Misrak Coffee is a premium Ethiopian coffee company dedicated to
-        delivering high-quality green beans, roasted coffee, and export
-        services to local and international markets.
+          <div class="feature-box" role="listitem">
+            <div class="feature-box__icon" aria-hidden="true">
+              <i class="fa-solid fa-mug-hot"></i>
+            </div>
+            <h3 class="feature-box__title">Expert Roasting</h3>
+            <p class="feature-box__desc">Precision roasting profiles for every palate</p>
+          </div>
 
-        We specialize in sourcing authentic Ethiopian Arabica coffee,
-        professional roasting, bulk supply, and customized export solutions
-        while preserving the rich heritage and flavor of Ethiopian coffee.
+          <div class="feature-box" role="listitem">
+            <div class="feature-box__icon" aria-hidden="true">
+              <i class="fa-solid fa-globe"></i>
+            </div>
+            <h3 class="feature-box__title">Worldwide Export</h3>
+            <p class="feature-box__desc">End-to-end shipping logistics to 40+ countries</p>
+          </div>
 
-      </p>
-
-      <div class="about-features">
-
-        <div class="feature-box">
-          <i class="fa-solid fa-seedling"></i>
-          <span>Premium Ethiopian Beans</span>
         </div>
-
-        <div class="feature-box">
-          <i class="fa-solid fa-mug-hot"></i>
-          <span>Expert Roasting</span>
-        </div>
-
-        <div class="feature-box">
-          <i class="fa-solid fa-globe"></i>
-          <span>Worldwide Export</span>
-        </div>
-
       </div>
 
     </div>
-
-  </div>
-    
-  
-    
-
-</section>
+  </section>
 
   <!-- MENU -->
   <section id="menu" class="menu-section">
