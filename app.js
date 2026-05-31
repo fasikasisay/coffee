@@ -282,7 +282,7 @@ function addToCart(id) {
   } else {
     cart.push({
       id:    item.id,
-      name:  item.name,
+      name:  item.name, 
       price: item.price,
       qty:   1,
       image: item.image,
@@ -461,6 +461,40 @@ document.addEventListener('keydown', e => {
 // Initialize cart from localStorage on load
 loadCart();
 updateCartUI();
+
+/* ════════════════════════════════════════════════════════════
+   SECTION 9 — SCROLL REVEAL
+   ════════════════════════════════════════════════════════════ */
+
+let revealObserver = null;
+
+/**
+ * Set up an IntersectionObserver to animate .reveal elements.
+ * Called after each menu render.
+ */
+function observeRevealElements() {
+  if (revealObserver) revealObserver.disconnect();
+
+  const elements = document.querySelectorAll('.reveal');
+
+  revealObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        revealObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.12 });
+
+  elements.forEach(el => revealObserver.observe(el));
+}
+
+// Also observe static sections on initial load
+observeRevealElements();
+document.querySelectorAll('.feature-box, .about-text, .contact-left, .contact-right').forEach(el => {
+  el.classList.add('reveal');
+});
+observeRevealElements();
 
 
 /* ════════════════════════════════════════════════════════════
@@ -937,39 +971,6 @@ function showToast(message, type = '', duration = 3000) {
 }
 
 
-/* ════════════════════════════════════════════════════════════
-   SECTION 9 — SCROLL REVEAL
-   ════════════════════════════════════════════════════════════ */
-
-let revealObserver = null;
-
-/**
- * Set up an IntersectionObserver to animate .reveal elements.
- * Called after each menu render.
- */
-function observeRevealElements() {
-  if (revealObserver) revealObserver.disconnect();
-
-  const elements = document.querySelectorAll('.reveal');
-
-  revealObserver = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('visible');
-        revealObserver.unobserve(entry.target);
-      }
-    });
-  }, { threshold: 0.12 });
-
-  elements.forEach(el => revealObserver.observe(el));
-}
-
-// Also observe static sections on initial load
-observeRevealElements();
-document.querySelectorAll('.feature-box, .about-text, .contact-left, .contact-right').forEach(el => {
-  el.classList.add('reveal');
-});
-observeRevealElements();
 
 
 /* ════════════════════════════════════════════════════════════
