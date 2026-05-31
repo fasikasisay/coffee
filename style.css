@@ -1132,10 +1132,18 @@ address {
 }
 
 .contact-container {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--space-16);
-  align-items: start;
+  max-width: 800px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 50px;
+}
+.contact-left,
+.contact-right {
+  width: 100%;
+}
+.contact-right {
+  text-align: center;
 }
 
 /* Form */
@@ -1243,7 +1251,7 @@ address {
   display: block;
   font-size: 0.9rem;
   color: var(--text-primary);
-  margin-bottom: 2px;
+  
 }
 
 .form-feedback p {
@@ -1258,6 +1266,7 @@ address {
   font-weight: 700;
   color: var(--text-primary);
   margin-bottom: var(--space-6);
+  margin-top: 30px;
 }
 
 .contact-info {
@@ -1266,6 +1275,7 @@ address {
   flex-direction: column;
   gap: var(--space-4);
   margin-bottom: var(--space-8);
+  margin-top: 20px;
 }
 
 .contact-info li {
@@ -1274,6 +1284,7 @@ address {
   gap: var(--space-3);
   font-size: 0.95rem;
   color: var(--text-secondary);
+  justify-content:center;
 }
 
 .contact-info li i {
@@ -1289,6 +1300,7 @@ address {
 .contact-socials {
   display: flex;
   gap: var(--space-3);
+  justify-content: center;
   flex-wrap: wrap;
 }
 
