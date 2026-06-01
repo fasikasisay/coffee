@@ -521,36 +521,24 @@ function createMenuItemHTML(item) {
   const isService = item.category === 'service';
   const btnLabel  = isService ? 'Inquire' : 'Add to cart';
   const categoryLabel = CATEGORY_LABELS[item.category] || item.category;
+return `
+<div class="product-slide">
+  <img src="${item.image}" alt="${item.name}">
 
-  return `
-    <article class="menu-item reveal">
-      <div class="menu-item__image-wrap">
-        <img
-          src="${item.image}"
-          alt="${item.name}"
-          loading="lazy"
-          decoding="async"
-        />
-        ${item.popular ? '<span class="menu-item__badge">Popular</span>' : ''}
-      </div>
-      <div class="menu-item__body">
-        <p class="menu-item__category">${categoryLabel}</p>
-        <h3 class="menu-item__name">${item.name}</h3>
-        <p class="menu-item__desc">${item.desc}</p>
-        <div class="menu-item__footer">
-          <span class="menu-item__price">$${item.price.toFixed(2)}</span>
-          <button
-            class="menu-item__add ${isService ? 'service-btn' : ''}"
-            data-id="${item.id}"
-            aria-label="${btnLabel}: ${item.name}"
-            title="${btnLabel}"
-          >
-            ${isService ? '<i class="fa-solid fa-arrow-right"></i>' : '+'}
-          </button>
-        </div>
-      </div>
-    </article>
-  `;
+  <div class="product-overlay">
+    <h3>${item.name}</h3>
+    <p>$${item.price.toFixed(2)}</p>
+
+    <button
+      class="menu-item__add ${isService ? 'service-btn' : ''}"
+      data-id="${item.id}"
+    >
+      ${isService ? 'Inquire' : 'Add To Cart'}
+    </button>
+  </div>
+</div>
+`;
+ 
 }
 
 /**
@@ -939,6 +927,23 @@ contactForm.addEventListener('submit', e => {
   }, 1800);
 });
 
+const menuSlider = document.getElementById('menuGrid');
+const menuPrev = document.getElementById('menuPrev');
+const menuNext = document.getElementById('menuNext');
+
+menuPrev.addEventListener('click', () => {
+  menuSlider.scrollBy({
+    left: -350,
+    behavior: 'smooth'
+  });
+});
+
+menuNext.addEventListener('click', () => {
+  menuSlider.scrollBy({
+    left: 350,
+    behavior: 'smooth'
+  });
+});
 
 /* ════════════════════════════════════════════════════════════
    SECTION 8 — TOAST NOTIFICATIONS

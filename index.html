@@ -177,26 +177,22 @@
 
   <!-- MENU -->
   <section id="menu" class="menu-section" aria-labelledby="menuHeading">
-    <div class="container">
+  <div class="container">
+    <h2 class="section-title">Our Products</h2>
 
-      <span class="section-eyebrow">Our Products</span>
-      <h2 id="menuHeading" class="section-title">Our Menu</h2>
+    <div class="menu-slider-wrapper">
+      <button class="slider-btn prev" id="menuPrev">
+        <i class="fa-solid fa-chevron-left"></i>
+      </button>
 
-      <!-- Category Tabs -->
-      <div class="tabs" role="tablist" aria-label="Product categories">
-        <button class="tab active" data-category="all" role="tab" aria-selected="true">All</button>
-        <button class="tab" data-category="green" role="tab" aria-selected="false">Green Beans</button>
-        <button class="tab" data-category="roasted" role="tab" aria-selected="false">Roasted</button>
-        <button class="tab" data-category="bulk" role="tab" aria-selected="false">Bulk Supply</button>
-        <button class="tab" data-category="service" role="tab" aria-selected="false">Services</button>
-      </div>
+      <div class="menu-slider" id="menuGrid"></div>
 
-      <div id="menuGrid" class="menu-grid" role="tabpanel" aria-label="Product list"></div>
-
+      <button class="slider-btn next" id="menuNext">
+        <i class="fa-solid fa-chevron-right"></i>
+      </button>
     </div>
-  </section>
-
-
+  </div>
+</section>
   <!-- CONTACT -->
   
    <section id="contact" class="contact-section" aria-labelledby="contactHeading">
