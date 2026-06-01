@@ -600,82 +600,63 @@ address {
 /* ============================================================
    ABOUT
    ============================================================ */
-.about-section {
-  padding: var(--space-32) 0;
-  background: var(--bg-secondary);
-  position: relative;
+
+.about-section{
+  padding:120px 0;
+  background:var(--bg-secondary);
 }
 
-.about-section::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: var(--border-default);
+.about-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:80px;
+  align-items:stretch;
+}
+.about-image{
+  min-height:700px; /* adjust as needed */
 }
 
-.about-container {
-  max-width: 900px;
+.about-content{
+  max-width:600px;
 }
 
-.about-text {
-  text-align: center;
+.about-title{
+  font-size:3rem;
+  line-height:1.2;
+  margin:20px 0 30px;
+  color:#1a1a1a;
 }
 
-.about-description {
-  color: var(--text-secondary);
-  line-height: 1.85;
-  font-size: 1.05rem;
-  max-width: 700px;
-  margin-inline: auto;
-  margin-bottom: var(--space-12);
+.about-content p{
+  font-size:1.15rem;
+  line-height:1.9;
+  margin-bottom:25px;
+  color:#222;
 }
 
-.about-features {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: var(--space-5);
-  margin-top: var(--space-12);
+.about-link{
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+  font-weight:700;
+  text-decoration:none;
+  color:#111;
+  font-size:1.1rem;
 }
 
-.feature-box {
-  background: var(--bg-card);
-  border: 1px solid var(--border-default);
-  border-radius: var(--radius-lg);
-  padding: var(--space-8);
-  text-align: center;
-  transition: var(--transition-base);
-  cursor: default;
+.about-link:hover{
+  transform:translateX(5px);
 }
 
-.feature-box:hover {
-  transform: translateY(-6px);
-  border-color: var(--border-hover);
-  box-shadow: var(--shadow-glow);
+.about-image img{
+  width:100%;
+  height:100%;
+  display:block;
+  border-radius:0px;
+ object-fit:cover;
+ border-radius:0;
+  box-shadow:0 25px 60px rgba(0,0,0,.15);
 }
-
-.feature-box__icon {
-  font-size: 2rem;
-  color: var(--brand-amber);
-  margin-bottom: var(--space-4);
-}
-
-.feature-box__title {
-  font-family: var(--font-display);
-  font-size: 1.05rem;
-  font-weight: 600;
-  color: var(--text-primary);
-  margin-bottom: var(--space-2);
-}
-
-.feature-box__desc {
-  font-size: 0.875rem;
-  color: var(--text-muted);
-  line-height: 1.5;
-}
-
 
 
 
