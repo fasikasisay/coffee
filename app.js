@@ -137,7 +137,7 @@ const MENU_MAP = new Map(MENU_ITEMS.map(item => [item.id, item]));
 
 /* ════════════════════════════════════════════════════════════
    SECTION 1 — THEME SYSTEM
-   ════════════════════════════════════════════════════════
+  
  **/
 const themeToggleBtn = document.getElementById('themeToggle');
 
@@ -170,7 +170,7 @@ initTheme();
 
 /* ════════════════════════════════════════════════════════════
    SECTION 2 — NAVBAR (scroll + active link + mobile menu)
-   ════════════════════════════════════════════════════════════ */
+    */
 
 const navbar      = document.getElementById('navbar');
 const navLinks    = document.querySelectorAll('.nav-link');
@@ -218,9 +218,9 @@ document.querySelectorAll('.mobile-nav-link').forEach(link => {
   });
 });
 
-/* ════════════════════════════════════════════════════════════
+/* 
    SECTION 3 — CART (localStorage + drawer + qty controls)
-   ════════════════════════════════════════════════════════════ */
+   */
 
 /** @type {Array<{id:number, name:string, price:number, qty:number, image:string}>} */
 let cart = [];
@@ -462,9 +462,9 @@ document.addEventListener('keydown', e => {
 loadCart();
 updateCartUI();
 
-/* ════════════════════════════════════════════════════════════
+/*
    SECTION 9 — SCROLL REVEAL
-   ════════════════════════════════════════════════════════════ */
+   */
 
 let revealObserver = null;
 
@@ -497,9 +497,9 @@ document.querySelectorAll('.feature-box, .about-text, .contact-left, .contact-ri
 observeRevealElements();
 
 
-/* ════════════════════════════════════════════════════════════
+/* 
    SECTION 4 — MENU RENDERING
-   ════════════════════════════════════════════════════════════ */
+    */
 
 const menuGrid = document.getElementById('menuGrid');
 const tabs     = document.querySelectorAll('.tab');
@@ -588,9 +588,9 @@ tabs.forEach(tab => {
 renderMenuItems();
 
 
-/* ════════════════════════════════════════════════════════════
+/*
    SECTION 5 — PAYMENT MODAL
-   ════════════════════════════════════════════════════════════ */
+  */
 
 const paymentModal = document.getElementById('paymentModal');
 const closePaymentBtn = document.getElementById('closePayment');
@@ -675,9 +675,9 @@ payNowBtn.addEventListener('click', () => {
 });
 
 
-/* ════════════════════════════════════════════════════════════
+/*
    SECTION 6 — SERVICE CUSTOMIZATION MODAL
-   ════════════════════════════════════════════════════════════ */
+    */
 
 const serviceModal   = document.getElementById('serviceModal');
 const serviceContent = document.getElementById('serviceContent');
@@ -789,9 +789,9 @@ function openServiceModal(item) {
 }
 
 
-/* ════════════════════════════════════════════════════════════
+/*
    SECTION 7 — CONTACT FORM VALIDATION
-   ════════════════════════════════════════════════════════════ */
+   */
 
 const contactForm    = document.getElementById('contactForm');
 const submitBtn      = document.getElementById('submitBtn');
@@ -945,9 +945,9 @@ menuNext.addEventListener('click', () => {
   });
 });
 
-/* ════════════════════════════════════════════════════════════
+/* 
    SECTION 8 — TOAST NOTIFICATIONS
-   ════════════════════════════════════════════════════════════ */
+    */
 
 const toastEl = document.getElementById('toast');
 let toastTimer = null;
@@ -978,9 +978,9 @@ function showToast(message, type = '', duration = 3000) {
 
 
 
-/* ════════════════════════════════════════════════════════════
-   SECTION 10 — INIT
-   ════════════════════════════════════════════════════════════ */
+/* 
+   SECTION 9 — INIT
+   */
 
 // Run on DOM ready
 window.addEventListener('DOMContentLoaded', () => {
