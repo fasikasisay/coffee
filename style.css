@@ -609,14 +609,14 @@ address {
   font-size:3rem;
   line-height:1.2;
   margin:20px 0 30px;
-  color:#1a1a1a;
+  color:var(--text-primary);
 }
 
 .about-content p{
   font-size:1.15rem;
   line-height:1.9;
   margin-bottom:25px;
-  color:#222;
+  color:var(--text-secondary);
 }
 
 .about-link{
@@ -625,7 +625,7 @@ address {
   gap:10px;
   font-weight:700;
   text-decoration:none;
-  color:#111;
+  color:var(--text-primary);
   font-size:1.1rem;
 }
 
