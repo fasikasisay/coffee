@@ -973,10 +973,11 @@ address {
 }
 
 .contact-container {
-  display: grid;
+  display:grid;
   grid-template-columns: minmax(280px, 0.85fr) minmax(320px, 1.15fr);
   gap: var(--space-8);
   align-items: stretch;
+ 
 }
 
 .contact-left,
@@ -986,9 +987,9 @@ address {
 
 .contact-left,
 .contact-right {
-  background: var(--bg-card);
+  background: var(--bg-primary);
   border: 1px solid var(--border-default);
-  border-radius: var(--radius-lg);
+  border-radius:5px;
   box-shadow: var(--shadow-md);
   padding: var(--space-8);
 }

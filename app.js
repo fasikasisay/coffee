@@ -931,19 +931,23 @@ const menuSlider = document.getElementById('menuGrid');
 const menuPrev = document.getElementById('menuPrev');
 const menuNext = document.getElementById('menuNext');
 
-menuPrev.addEventListener('click', () => {
-  menuSlider.scrollBy({
-    left: -350,
-    behavior: 'smooth'
-  });
-});
+if (menuPrev && menuNext && menuSlider) {
 
-menuNext.addEventListener('click', () => {
-  menuSlider.scrollBy({
-    left: 350,
-    behavior: 'smooth'
+  menuPrev.addEventListener('click', () => {
+    menuSlider.scrollBy({
+      left: -350,
+      behavior: 'smooth'
+    });
   });
-});
+
+  menuNext.addEventListener('click', () => {
+    menuSlider.scrollBy({
+      left: 350,
+      behavior: 'smooth'
+    });
+  });
+
+}
 
 /* 
    SECTION 8 — TOAST NOTIFICATIONS
