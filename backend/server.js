@@ -51,9 +51,11 @@ const allowedOrigins = (process.env.CORS_ORIGINS || '')
 // Local dev fallback — never active in production if CORS_ORIGINS is set
 if (!isProd && allowedOrigins.length === 0) {
   allowedOrigins.push(
-    'http://localhost:5500', 'http://127.0.0.1:5500',
-    'http://localhost:5501', 'http://127.0.0.1:5501',
-    'http://localhost:3000',
+    'http://localhost:5500',
+     'http://127.0.0.1:5500',
+    'http://localhost:5501', 
+    'http://127.0.0.1:5501',
+    'http://localhost:3000'
   );
 }
 
