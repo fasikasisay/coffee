@@ -1651,3 +1651,19 @@ address {
   font-size:1.2rem;
   z-index:10;
 }
+/* Customer Checkout */
+.checkout-description {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  line-height: 1.6;
+  margin-top: -0.5rem;
+  margin-bottom: var(--space-6);
+}
+
+.checkout-form .custom-group label span {
+  color: var(--brand-amber);
+}
+
+.checkout-form input:invalid:not(:placeholder-shown) {
+  border-color: #dc3545;
+}

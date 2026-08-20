@@ -616,48 +616,210 @@ function closeModal(id) {
   el.setAttribute('aria-hidden', 'true');
   document.body.style.overflow = '';
 }
+const checkoutModal = document.getElementById('checkoutModal');
+const checkoutForm = document.getElementById('checkoutForm');
+const closeCheckoutBtn = document.getElementById('closeCheckout');
 
+const customerName = document.getElementById('customerName');
+const customerEmail = document.getElementById('customerEmail');
+const customerPhone = document.getElementById('customerPhone');
+const customerCompany = document.getElementById('customerCompany');
+const customerCountry = document.getElementById('customerCountry');
+
+let checkoutCustomer = null;
+// Proceed to Checkout
 checkoutBtn.addEventListener('click', () => {
   if (cart.length === 0) {
     showToast('Your cart is empty.', 'error');
     return;
   }
+
   closeCartDrawer();
+
+  // Open customer information first
+  openModal('checkoutModal');
+});
+
+
+// Close customer information modal
+closeCheckoutBtn.addEventListener('click', () => {
+  closeModal('checkoutModal');
+});
+
+
+// Customer information form
+checkoutForm.addEventListener('submit', (e) => {
+  e.preventDefault();
+
+  const name = customerName.value.trim();
+  const email = customerEmail.value.trim();
+
+  if (!name) {
+    showToast('Please enter your full name.', 'error');
+    return;
+  }
+
+  if (!EMAIL_REGEX.test(email)) {
+    showToast('Please enter a valid email address.', 'error');
+    return;
+  }
+
+  // Save customer information temporarily
+  checkoutCustomer = {
+    name,
+    email,
+    phone: customerPhone.value.trim(),
+    company: customerCompany.value.trim(),
+    country: customerCountry.value.trim(),
+  };
+
+  closeModal('checkoutModal');
+
   selectedPayment = '';
-  paymentCards.forEach(c => c.classList.remove('active'));
+
+  paymentCards.forEach(card => {
+    card.classList.remove('active');
+    card.setAttribute('aria-checked', 'false');
+  });
+
   openModal('paymentModal');
 });
 
-closePaymentBtn.addEventListener('click', () => closeModal('paymentModal'));
 
+// Close payment modal
+closePaymentBtn.addEventListener('click', () => {
+  closeModal('paymentModal');
+});
+
+
+// Select payment method
 paymentCards.forEach(card => {
+
   card.addEventListener('click', () => {
+
     paymentCards.forEach(c => {
       c.classList.remove('active');
       c.setAttribute('aria-checked', 'false');
     });
+
     card.classList.add('active');
     card.setAttribute('aria-checked', 'true');
+
     selectedPayment = card.dataset.method;
   });
 
-  // Keyboard accessibility
   card.addEventListener('keydown', e => {
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault();
       card.click();
     }
   });
-});
 
-payNowBtn.addEventListener('click', () => {
+
+
+
+// Confirm payment and create order
+payNowBtn.addEventListener('click', async () => {
+
   if (!selectedPayment) {
     showToast('Please select a payment method.', 'error');
     return;
   }
 
+  if (!checkoutCustomer) {
+    showToast('Customer information is missing.', 'error');
+    closeModal('paymentModal');
+    openModal('checkoutModal');
+    return;
+  }
+
+  // Only send valid backend products
+  const items = cart.map(item => ({
+    productId: Number(item.id),
+    quantity: Number(item.qty),
+  }));
+
   payNowBtn.classList.add('loading');
   payNowBtn.disabled = true;
+
+  try {
+
+    const response = await fetch(
+      'http://localhost:5000/api/v1/orders',
+      {
+        method: 'POST',
+
+        headers: {
+          'Content-Type': 'application/json',
+        },
+
+        credentials: 'include',
+
+        body: JSON.stringify({
+          customer: checkoutCustomer,
+          items,
+          notes: `Payment method: ${selectedPayment}`,
+        }),
+      }
+    );
+
+    const result = await response.json();
+
+    if (!response.ok || !result.success) {
+      throw new Error(
+        result.error || result.message || 'Failed to create order.'
+      );
+    }
+
+    // Only clear cart after successful database save
+    cart = [];
+    saveCart();
+    updateCartUI();
+
+    closeModal('paymentModal');
+
+    showToast(
+      `Order ${result.data.orderNumber || ''} created successfully! 🎉`,
+      'success'
+    );
+
+    // Reset checkout data
+    checkoutCustomer = null;
+    checkoutForm.reset();
+
+    selectedPayment = '';
+
+    paymentCards.forEach(card => {
+      card.classList.remove('active');
+      card.setAttribute('aria-checked', 'false');
+    });
+
+  } catch (error) {
+
+    console.error('Order error:', error);
+
+    showToast(
+      error.message || 'Failed to create order. Please try again.',
+      'error'
+    );
+
+  } finally {
+
+    payNowBtn.classList.remove('loading');
+    payNowBtn.disabled = false;
+
+  }
+
+});
+
+ // Keyboard accessibility
+  card.addEventListener('keydown', e => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      card.click();
+    }
+  });
+
 
   // Simulate async payment processing
   setTimeout(() => {

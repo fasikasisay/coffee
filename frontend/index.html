@@ -351,6 +351,116 @@
       <div id="serviceContent"></div>
     </div>
   </div>
+  <!-- CUSTOMER CHECKOUT MODAL -->
+<div
+  id="checkoutModal"
+  class="modal"
+  role="dialog"
+  aria-modal="true"
+  aria-label="Customer information"
+  aria-hidden="true"
+>
+  <div class="modal__box">
+    <button
+      id="closeCheckout"
+      class="modal__close"
+      aria-label="Close checkout"
+    >
+      <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+    </button>
+
+    <h2 class="modal__title">Customer Information</h2>
+
+    <p class="checkout-description">
+      Please provide your details before continuing to payment.
+    </p>
+
+    <form id="checkoutForm" class="checkout-form">
+
+      <div class="custom-grid">
+
+        <div class="custom-group">
+          <label for="customerName">
+            Full Name <span>*</span>
+          </label>
+
+          <input
+            type="text"
+            id="customerName"
+            placeholder="Enter your full name"
+            maxlength="120"
+            required
+          >
+        </div>
+
+        <div class="custom-group">
+          <label for="customerEmail">
+            Email Address <span>*</span>
+          </label>
+
+          <input
+            type="email"
+            id="customerEmail"
+            placeholder="example@email.com"
+            maxlength="255"
+            required
+          >
+        </div>
+
+        <div class="custom-group">
+          <label for="customerPhone">
+            Phone Number
+          </label>
+
+          <input
+            type="tel"
+            id="customerPhone"
+            placeholder="+251..."
+            maxlength="30"
+          >
+        </div>
+
+        <div class="custom-group">
+          <label for="customerCompany">
+            Company
+          </label>
+
+          <input
+            type="text"
+            id="customerCompany"
+            placeholder="Company name (optional)"
+            maxlength="200"
+          >
+        </div>
+
+        <div class="custom-group">
+          <label for="customerCountry">
+            Country
+          </label>
+
+          <input
+            type="text"
+            id="customerCountry"
+            placeholder="Your country"
+            maxlength="100"
+          >
+        </div>
+
+      </div>
+
+      <button
+        type="submit"
+        id="continueToPaymentBtn"
+        class="btn btn--primary btn--full"
+        style="margin-top: 2rem;"
+      >
+        Continue to Payment
+        <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+      </button>
+
+    </form>
+  </div>
+</div>
 
   <!-- PAYMENT MODAL -->
   <!-- ============================

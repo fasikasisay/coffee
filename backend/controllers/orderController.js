@@ -202,14 +202,15 @@ exports.createOrder = asyncHandler(async (req, res, next) => {
     }
 
     await conn.commit();
-    
 
-    
-    Customer.upsert(cleanedCustomer)
-      .then(cid => Customer.incrementStats(cid, serverTotal))
-      .catch(() => {});  // never fail the order response on this
+try {
+  const customerId = await Customer.upsert(cleanedCustomer);
+  await Customer.incrementStats(customerId, serverTotal);
+} catch (err) {
+  console.error('Customer update failed:', err);
+}
 
-    const order = await Order.findById(orderId);
+const order = await Order.findById(orderId);
     res.status(201).json({ success: true, data: order });
 
     } catch (err) {
