@@ -1587,7 +1587,7 @@ address {
   position:relative;
   overflow:hidden;
   border-radius:20px;
-  background:#fff;
+  background:bg(--bg-primary);
 }
 
 .product-slide img{
