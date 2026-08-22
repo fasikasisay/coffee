@@ -134,9 +134,7 @@ function withImageFallback(img) {
 }
 
 
-/* ============================================================
-   SECTION 1 — THEME SYSTEM
-============================================================ */
+/* SECTION 1 — THEME SYSTEM */
 
 const themeToggleBtn = document.getElementById('themeToggle');
 
@@ -185,10 +183,7 @@ if (themeToggleBtn) {
 
 initTheme();
 
-
-/* ============================================================
-   SECTION 2 — NAVBAR
-============================================================ */
+/* SECTION 2 — NAVBAR */
 
 const navbar = document.getElementById('navbar');
 const navLinks = document.querySelectorAll('.nav-link');
@@ -278,9 +273,7 @@ document
   });
 
 
-/* ============================================================
-   SECTION 3 — CART
-============================================================ */
+/* SECTION 3 — CART */
 
 let cart = [];
 
@@ -345,9 +338,7 @@ function loadCart() {
 }
 
 
-/* ============================================================
-   ADD PRODUCT TO CART
-============================================================ */
+/* ADD PRODUCT TO CART */
 
 function addProductToCart(id) {
 
@@ -439,9 +430,7 @@ function removeFromCart(id) {
 }
 
 
-/* ============================================================
-   CART UI
-============================================================ */
+/* CART UI */
 
 function updateCartUI() {
 
@@ -674,9 +663,7 @@ function bumpBadge() {
 }
 
 
-/* ============================================================
-   CART DRAWER
-============================================================ */
+/*  CART DRAWER */
 
 function openCartDrawer() {
 
@@ -759,9 +746,7 @@ loadCart();
 updateCartUI();
 
 
-/* ============================================================
-   SECTION 4 — PRODUCTS
-============================================================ */
+/*  SECTION 4 — PRODUCT */
 
 const menuGrid =
   document.getElementById('menuGrid');
@@ -942,9 +927,7 @@ function renderProducts() {
 }
 
 
-/* ============================================================
-   SECTION 5 — SERVICES
-============================================================ */
+/*  SECTION 5 — SERVICES */
 
 const serviceGrid =
   document.getElementById('serviceGrid');
@@ -1030,9 +1013,7 @@ function renderServices() {
 }
 
 
-/* ============================================================
-   SECTION 6 — MODALS
-============================================================ */
+/* SECTION 6 — MODALS */
 
 function openModal(id) {
 
@@ -1070,9 +1051,7 @@ function closeModal(id) {
 }
 
 
-/* ============================================================
-   CHECKOUT
-============================================================ */
+/* CHECKOUT */
 
 const checkoutModal =
   document.getElementById('checkoutModal');
@@ -1218,9 +1197,7 @@ if (checkoutForm) {
 }
 
 
-/* ============================================================
-   PAYMENT
-============================================================ */
+/* PAYMENT */
 
 const paymentModal =
   document.getElementById('paymentModal');
@@ -1301,9 +1278,7 @@ paymentCards.forEach(card => {
 });
 
 
-/* ============================================================
-   CREATE ORDER — ONLY ONE EVENT LISTENER
-============================================================ */
+/*CREATE ORDER — ONLY ONE EVENT LISTEN */
 
 if (payNowBtn) {
 
@@ -1484,9 +1459,7 @@ if (payNowBtn) {
 }
 
 
-/* ============================================================
-   SECTION 7 — SERVICE ENQUIRY
-============================================================ */
+/* SECTION 7 — SERVICE ENQUIRY */
 
 const serviceModal =
   document.getElementById('serviceModal');
@@ -1876,178 +1849,112 @@ ${notes || 'None'}
 }
 
 
-/* ============================================================
-   SECTION 8 — CONTACT FORM
-============================================================ */
-
+/* SECTION 8 — CONTACT FOR */
 const contactForm =
   document.getElementById('contactForm');
-
 const submitBtn =
   document.getElementById('submitBtn');
-
 const contactSuccess =
   document.getElementById('contactSuccess');
-
 const contactError =
   document.getElementById('contactError');
-
-
 function validateField(field, value) {
-
   const v = value.trim();
-
   switch (field) {
-
     case 'name':
-
       if (!v) {
         return 'Full name is required.';
       }
-
       if (v.length < 2) {
         return 'Name must be at least 2 characters.';
       }
-
       return '';
-
-
     case 'email':
-
       if (!v) {
         return 'Email address is required.';
       }
-
       if (!EMAIL_REGEX.test(v)) {
         return 'Please enter a valid email address.';
       }
-
       return '';
-
-
     case 'message':
-
       if (!v) {
         return 'Message cannot be empty.';
       }
-
       if (v.length < 10) {
         return 'Message is too short (min 10 characters).';
       }
-
       return '';
-
-
     default:
       return '';
-
   }
-
-}
-
-
-function setFieldError(
+}function setFieldError(
   fieldId,
   errorId,
   message
 ) {
-
   const input =
     document.getElementById(fieldId);
-
   const error =
     document.getElementById(errorId);
-
   if (!input || !error) return;
-
-
   if (message) {
-
     error.textContent =
       message;
-
     input.classList.add('error');
-
     input.setAttribute(
       'aria-invalid',
       'true'
     );
-
   } else {
-
     error.textContent = '';
-
     input.classList.remove('error');
-
     input.setAttribute(
       'aria-invalid',
       'false'
     );
-
   }
-
 }
-
-
 function clearFormErrors() {
-
   setFieldError(
     'cName',
     'cNameError',
     ''
   );
-
   setFieldError(
     'cEmail',
     'cEmailError',
     ''
   );
-
   setFieldError(
     'cMessage',
     'cMessageError',
     ''
   );
-
 }
-
-
 function hideFormFeedback() {
-
   if (contactSuccess) {
     contactSuccess.hidden = true;
   }
-
   if (contactError) {
     contactError.hidden = true;
   }
-
 }
-
-
 ['cName', 'cEmail', 'cMessage']
   .forEach(id => {
-
     const input =
       document.getElementById(id);
-
     if (!input) return;
-
-
     const fieldMap = {
       cName: 'name',
       cEmail: 'email',
       cMessage: 'message'
     };
-
-
     const errorMap = {
       cName: 'cNameError',
       cEmail: 'cEmailError',
       cMessage: 'cMessageError'
     };
-
-
     input.addEventListener(
       'blur',
       () => {
@@ -2057,93 +1964,63 @@ function hideFormFeedback() {
             fieldMap[id],
             input.value
           );
-
         setFieldError(
           id,
           errorMap[id],
           error
         );
-
       }
     );
-
   });
-
-
 if (contactForm) {
-
   contactForm.addEventListener(
     'submit',
     event => {
-
       event.preventDefault();
-
-
       hideFormFeedback();
-
       clearFormErrors();
-
-
       const nameVal =
         document
           .getElementById('cName')
           .value;
-
-
       const emailVal =
         document
           .getElementById('cEmail')
           .value;
-
-
       const messageVal =
         document
           .getElementById('cMessage')
           .value;
-
-
       const nameErr =
         validateField(
           'name',
           nameVal
         );
-
-
       const emailErr =
         validateField(
           'email',
           emailVal
         );
-
-
       const messageErr =
         validateField(
           'message',
           messageVal
         );
-
-
       setFieldError(
         'cName',
         'cNameError',
         nameErr
       );
-
-
       setFieldError(
         'cEmail',
         'cEmailError',
         emailErr
       );
-
-
       setFieldError(
         'cMessage',
         'cMessageError',
         messageErr
       );
-
-
       if (
         nameErr ||
         emailErr ||
@@ -2151,268 +2028,159 @@ if (contactForm) {
       ) {
         return;
       }
-
-
       if (submitBtn) {
-
         submitBtn.classList.add(
           'loading'
         );
-
         submitBtn.disabled = true;
-
       }
-
-
       setTimeout(() => {
-
         if (submitBtn) {
-
           submitBtn.classList.remove(
             'loading'
           );
-
           submitBtn.disabled = false;
-
         }
-
-
         contactForm.reset();
-
-
         if (contactSuccess) {
           contactSuccess.hidden = false;
         }
-
-
         showToast(
           'Message sent successfully!',
           'success'
         );
-
       }, 1000);
-
     }
   );
-
 }
-
-
-/* ============================================================
-   SECTION 9 — PRODUCT AND SERVICE SLIDERS
-============================================================ */
+/* SECTION 9 — PRODUCT AND SERVICE SLIDERS */
 
 const menuSlider =
   document.getElementById('menuGrid');
-
 const menuPrev =
   document.getElementById('menuPrev');
-
 const menuNext =
   document.getElementById('menuNext');
-
-
 if (
   menuPrev &&
   menuNext &&
   menuSlider
 ) {
-
   menuPrev.addEventListener(
     'click',
     () => {
-
       menuSlider.scrollBy({
         left: -350,
         behavior: 'smooth'
       });
-
     }
   );
-
-
   menuNext.addEventListener(
     'click',
     () => {
-
       menuSlider.scrollBy({
         left: 350,
         behavior: 'smooth'
       });
-
     }
   );
-
 }
-
-
 const serviceSlider =
   document.getElementById('serviceGrid');
-
 const servicePrev =
   document.getElementById('servicePrev');
-
 const serviceNext =
   document.getElementById('serviceNext');
-
-
 if (
   servicePrev &&
   serviceNext &&
   serviceSlider
 ) {
-
   servicePrev.addEventListener(
     'click',
     () => {
-
       serviceSlider.scrollBy({
         left: -350,
         behavior: 'smooth'
       });
-
     }
   );
-
-
   serviceNext.addEventListener(
     'click',
     () => {
-
       serviceSlider.scrollBy({
         left: 350,
         behavior: 'smooth'
       });
-
     }
   );
-
 }
-
-
-/* ============================================================
-   SECTION 10 — TOAST
-============================================================ */
-
+/* SECTION 10 — TOAST */
 const toastEl =
   document.getElementById('toast');
-
 let toastTimer = null;
-
-
 function showToast(
   message,
   type = '',
   duration = 3000
 ) {
-
   if (!toastEl) return;
-
-
   clearTimeout(toastTimer);
-
-
-  const iconMap = {
-
+const iconMap = {
     success:
       '<i class="fa-solid fa-circle-check" aria-hidden="true"></i>',
-
     error:
       '<i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i>',
-
   };
-
-
   toastEl.innerHTML = `
     ${iconMap[type] || ''}
     <span>${escapeHTML(message)}</span>
   `;
-
-
   toastEl.className =
     `toast ${type} show`;
-
-
   toastTimer =
     setTimeout(() => {
-
       toastEl.classList.remove('show');
-
     }, duration);
-
 }
 
-
-/* ============================================================
-   ABOUT SLIDER
-============================================================ */
+/* ABOUT SLIDER */
 
 const slides =
   document.querySelectorAll('.about-slide');
-
 let currentSlide = 0;
-
-
 if (slides.length > 0) {
-
   setInterval(() => {
-
     slides[currentSlide]
       .classList.remove('active');
-
-
     currentSlide =
       (currentSlide + 1) %
       slides.length;
-
-
     slides[currentSlide]
       .classList.add('active');
 
   }, 4000);
 
 }
-
-
-/* ============================================================
-   ESCAPE KEY
-============================================================ */
-
+/*  ESCAPE KEY */
 document.addEventListener(
   'keydown',
   event => {
-
     if (event.key === 'Escape') {
-
       closeCartDrawer();
-
       closeModal('serviceModal');
-
       closeModal('checkoutModal');
-
       closeModal('paymentModal');
-
     }
-
   }
 );
-
-
-/* ============================================================
-   INITIALIZATION
-============================================================ */
-
+/* INITIALIZATION */
 window.addEventListener(
   'DOMContentLoaded',
   () => {
-
     handleNavScroll();
-
     updateActiveLink();
-
     renderServices();
-
     fetchProducts();
-
   }
 );
