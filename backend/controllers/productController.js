@@ -5,7 +5,7 @@ const { body, validationResult } = require('express-validator');
 
 const VALID_CATEGORIES = ['green-beans', 'roasted', 'specialty', 'blend'];
 
-// ── Validation middleware
+// ── Validation middlewar
 exports.createProductValidation = [
   body('name').trim().notEmpty().withMessage('name is required')
     .isLength({ max: 255 }).withMessage('name must be under 255 characters'),
