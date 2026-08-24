@@ -1665,6 +1665,7 @@
     if (page === 'products'  && !_pageLoaded.products)  { loadProducts();  _pageLoaded.products  = true; }
     if (page === 'orders'    && !_pageLoaded.orders)    { loadOrders();    _pageLoaded.orders    = true; }
     if (page === 'customers' && !_pageLoaded.customers) { loadCustomers(); _pageLoaded.customers = true; }
+  if (page === 'settings') { loadBusinessSettings();}
   }
 
   /* ── AUTH: Login ───────────────────────────────── */
@@ -2294,6 +2295,118 @@ async function updatePassword(event) {
     button.disabled = false;
     button.innerHTML =
       '<i class="fa-solid fa-key"></i> Update Password';
+  }
+}
+async function loadBusinessSettings() {
+  try {
+    const res = await fetch(`${API_BASE}/business-settings`, {
+      credentials: 'include'
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(data.error || 'Failed to load business settings');
+    }
+
+    const settings = data.data;
+
+    document.getElementById('businessName').value =
+      settings.businessName || '';
+
+    document.getElementById('businessEmail').value =
+      settings.businessEmail || '';
+
+    document.getElementById('businessPhone').value =
+      settings.businessPhone || '';
+
+    document.getElementById('businessAddress').value =
+      settings.businessAddress || '';
+
+    document.getElementById('businessWebsite').value =
+      settings.businessWebsite || '';
+
+    document.getElementById('businessLogo').value =
+      settings.businessLogo || '';
+
+  } catch (error) {
+    console.error('Business settings error:', error);
+    showToast(error.message, 'error');
+  }
+}
+document
+  .getElementById('businessSettingsForm')
+  .addEventListener('submit', updateBusinessSettings);
+
+
+async function updateBusinessSettings(event) {
+  event.preventDefault();
+
+  const button = document.querySelector(
+    '#businessSettingsForm button[type="submit"]'
+  );
+
+  const originalHTML = button.innerHTML;
+
+  const settings = {
+    businessName:
+      document.getElementById('businessName').value.trim(),
+
+    businessEmail:
+      document.getElementById('businessEmail').value.trim(),
+
+    businessPhone:
+      document.getElementById('businessPhone').value.trim(),
+
+    businessAddress:
+      document.getElementById('businessAddress').value.trim(),
+
+    businessWebsite:
+      document.getElementById('businessWebsite').value.trim(),
+
+    businessLogo:
+      document.getElementById('businessLogo').value.trim()
+  };
+
+  try {
+    button.disabled = true;
+
+    button.innerHTML =
+      '<i class="fa-solid fa-circle-notch fa-spin"></i> Saving...';
+
+    const res = await fetch(`${API_BASE}/business-settings`, {
+      method: 'PUT',
+
+      headers: {
+        'Content-Type': 'application/json'
+      },
+
+      credentials: 'include',
+
+      body: JSON.stringify(settings)
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(
+        data.error || 'Failed to save business settings'
+      );
+    }
+
+    showToast(
+      'Business settings saved successfully!',
+      'success'
+    );
+
+  } catch (error) {
+    console.error('Business settings update error:', error);
+
+    showToast(error.message, 'error');
+
+  } finally {
+    button.disabled = false;
+    button.innerHTML = originalHTML;
   }
 }
 </script>
