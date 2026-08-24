@@ -1656,6 +1656,9 @@
       document.getElementById('adminName').textContent = currentAdmin.name || 'Admin';
       document.getElementById('adminRole').textContent = currentAdmin.role || 'admin';
       document.getElementById('adminAvatar').textContent = initials;
+      document.getElementById('settingsAdminName').textContent = currentAdmin.name || 'Admin';
+document.getElementById('settingsAdminEmail').textContent = currentAdmin.email || 'Not available';
+document.getElementById('settingsAdminRole').textContent = currentAdmin.role || 'Admin';
     }
 
     loadDashboard();
@@ -2121,7 +2124,75 @@
 
   function capitalize(str) {
     return str ? str.charAt(0).toUpperCase() + str.slice(1) : '';
+  
   }
+  document.getElementById('passwordForm').addEventListener('submit', updatePassword);
+
+async function updatePassword(event) {
+  event.preventDefault();
+
+  const currentPassword =
+    document.getElementById('currentPassword').value;
+
+  const newPassword =
+    document.getElementById('newPassword').value;
+
+  const confirmPassword =
+    document.getElementById('confirmPassword').value;
+
+  // Check if the new passwords match
+  if (newPassword !== confirmPassword) {
+    showToast('New passwords do not match.', 'error');
+    return;
+  }
+
+  // Minimum password length
+  if (newPassword.length < 8) {
+    showToast('Password must be at least 8 characters.', 'error');
+    return;
+  }
+
+  try {
+    const button = document.querySelector('#passwordForm button[type="submit"]');
+
+    button.disabled = true;
+    button.innerHTML =
+      '<i class="fa-solid fa-circle-notch fa-spin"></i> Updating...';
+
+    const res = await fetch(`${API_BASE}/auth/updatepassword`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      credentials: 'include',
+      body: JSON.stringify({
+        currentPassword,
+        newPassword
+      })
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(data.error || 'Failed to update password.');
+    }
+
+    showToast('Password updated successfully!', 'success');
+
+    // Clear the form
+    document.getElementById('passwordForm').reset();
+
+  } catch (error) {
+    showToast(error.message, 'error');
+
+  } finally {
+    const button = document.querySelector('#passwordForm button[type="submit"]');
+
+    button.disabled = false;
+    button.innerHTML =
+      '<i class="fa-solid fa-key"></i> Update Password';
+  }
+}
 </script>
 </body>
 </html>
