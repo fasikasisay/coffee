@@ -15,6 +15,7 @@ const dashboardRoutes = require('./routes/dashboard');
 const orderRoutes     = require('./routes/orders');
 const productRoutes   = require('./routes/products');
 const enquiryRoutes   = require('./routes/enquiries');
+const businessSettingsRoutes = require('./routes/businessSettings');
 
 // Connect MySQL
 connectDB();
@@ -123,7 +124,7 @@ app.use('/api/v1/dashboard', adminLimiter,  dashboardRoutes);
 app.use('/api/v1/orders',    publicLimiter, orderRoutes);
 app.use('/api/v1/products',  publicLimiter, productRoutes);
 app.use('/api/v1/enquiries', publicLimiter, enquiryRoutes);
-
+app.use('/api/v1/business-settings', publicLimiter, businessSettingsRoutes);
 // 404
 app.use((req, res) => {
   res.status(404).json({ success: false, error: 'Route not found' });
