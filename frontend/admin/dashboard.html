@@ -967,7 +967,23 @@
     align-items: flex-start;
   }
 }
+.business-settings-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  margin-bottom: 20px;
+}
 
+.business-save-btn {
+  width: auto;
+  padding: 11px 20px;
+}
+
+@media (max-width: 700px) {
+  .business-settings-grid {
+    grid-template-columns: 1fr;
+  }
+}
   </style>
 </head>
 <body>
@@ -1396,7 +1412,94 @@
       </button>
     </div>
   </div>
+<!-- Business Settings -->
+<div class="panel settings-card settings-full">
 
+  <div class="settings-header">
+    <div class="settings-icon">
+      <i class="fa-solid fa-building"></i>
+    </div>
+
+    <div>
+      <h2>Business Settings</h2>
+      <p>Manage your company's public information.</p>
+    </div>
+  </div>
+
+  <form id="businessSettingsForm">
+
+    <div class="business-settings-grid">
+
+      <div class="form-group">
+        <label class="form-label">Business Name</label>
+        <input
+          type="text"
+          id="businessName"
+          class="form-input"
+          placeholder="Enter business name"
+          maxlength="150"
+          required>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Business Email</label>
+        <input
+          type="email"
+          id="businessEmail"
+          class="form-input"
+          placeholder="Enter business email">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Phone Number</label>
+        <input
+          type="text"
+          id="businessPhone"
+          class="form-input"
+          placeholder="Enter phone number"
+          maxlength="50">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Address</label>
+        <input
+          type="text"
+          id="businessAddress"
+          class="form-input"
+          placeholder="Enter business address"
+          maxlength="255">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Website</label>
+        <input
+          type="url"
+          id="businessWebsite"
+          class="form-input"
+          placeholder="https://example.com"
+          maxlength="255">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Logo URL</label>
+        <input
+          type="url"
+          id="businessLogo"
+          class="form-input"
+          placeholder="https://example.com/logo.png"
+          maxlength="500">
+      </div>
+
+    </div>
+
+    <button type="submit" class="btn-login business-save-btn">
+      <i class="fa-solid fa-floppy-disk"></i>
+      Save Business Settings
+    </button>
+
+  </form>
+
+</div>
 
   <!-- Security -->
   <div class="panel settings-card settings-full">
