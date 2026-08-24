@@ -837,6 +837,137 @@
       .stats-grid { grid-template-columns: 1fr; }
       .login-card { padding: 36px 24px; margin: 16px; }
     }
+/* ================= SETTINGS ================= */
+
+.settings-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.settings-card {
+  padding: 24px;
+}
+
+.settings-full {
+  grid-column: 1 / -1;
+}
+
+.settings-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 24px;
+}
+
+.settings-header h2 {
+  margin: 0;
+  font-size: 1.1rem;
+  color: var(--text-primary);
+}
+
+.settings-header p {
+  margin: 4px 0 0;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+.settings-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  display: grid;
+  place-items: center;
+  background: rgba(200, 146, 42, 0.12);
+  color: var(--brand-gold);
+  font-size: 1rem;
+}
+
+.profile-details {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.profile-item {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.profile-item span {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.profile-item strong {
+  font-size: 0.95rem;
+  color: var(--text-primary);
+}
+
+.theme-setting {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+}
+
+.theme-setting p {
+  margin: 5px 0 0;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+.settings-theme-btn {
+  border: 1px solid var(--border);
+  background: var(--bg-elevated);
+  color: var(--text-primary);
+  padding: 10px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: inherit;
+  white-space: nowrap;
+}
+
+.settings-theme-btn:hover {
+  background: var(--bg-hover);
+}
+
+.password-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+#passwordForm .btn-login {
+  width: auto;
+  padding: 11px 20px;
+}
+
+@media (max-width: 800px) {
+  .settings-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .settings-full {
+    grid-column: auto;
+  }
+
+  .password-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 500px) {
+  .theme-setting {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
   </style>
 </head>
 <body>
@@ -1205,10 +1336,127 @@
         <h1>Settings</h1>
         <p>Configure your admin preferences.</p>
       </div>
-      <div class="panel" style="padding:48px;text-align:center;color:var(--text-muted)">
-        <i class="fa-solid fa-gear" style="font-size:2.5rem;color:var(--brand-gold);margin-bottom:16px;display:block"></i>
-        <p style="font-size:0.95rem">Settings page coming soon.</p>
+  <div class="settings-grid">
+
+  <!-- Admin Profile -->
+  <div class="panel settings-card">
+    <div class="settings-header">
+      <div class="settings-icon">
+        <i class="fa-solid fa-user"></i>
       </div>
+      <div>
+        <h2>Admin Profile</h2>
+        <p>Your account information.</p>
+      </div>
+    </div>
+
+    <div class="profile-details">
+      <div class="profile-item">
+        <span>Name</span>
+        <strong id="settingsAdminName">Loading...</strong>
+      </div>
+
+      <div class="profile-item">
+        <span>Email</span>
+        <strong id="settingsAdminEmail">Loading...</strong>
+      </div>
+
+      <div class="profile-item">
+        <span>Role</span>
+        <strong id="settingsAdminRole">Loading...</strong>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Appearance -->
+  <div class="panel settings-card">
+    <div class="settings-header">
+      <div class="settings-icon">
+        <i class="fa-solid fa-palette"></i>
+      </div>
+      <div>
+        <h2>Appearance</h2>
+        <p>Customize your dashboard appearance.</p>
+      </div>
+    </div>
+
+    <div class="theme-setting">
+      <div>
+        <strong>Dark Mode</strong>
+        <p>Switch between light and dark mode.</p>
+      </div>
+
+      <button
+        type="button"
+        class="settings-theme-btn"
+        onclick="toggleTheme()">
+        <i class="fa-solid fa-moon"></i>
+        Toggle Theme
+      </button>
+    </div>
+  </div>
+
+
+  <!-- Security -->
+  <div class="panel settings-card settings-full">
+    <div class="settings-header">
+      <div class="settings-icon">
+        <i class="fa-solid fa-lock"></i>
+      </div>
+      <div>
+        <h2>Security</h2>
+        <p>Change your admin account password.</p>
+      </div>
+    </div>
+
+    <form id="passwordForm">
+
+      <div class="password-grid">
+
+        <div class="form-group">
+          <label class="form-label">Current Password</label>
+          <input
+            class="form-input"
+            type="password"
+            id="currentPassword"
+            placeholder="Enter current password"
+            required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">New Password</label>
+          <input
+            class="form-input"
+            type="password"
+            id="newPassword"
+            placeholder="Enter new password"
+            minlength="8"
+            required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Confirm New Password</label>
+          <input
+            class="form-input"
+            type="password"
+            id="confirmPassword"
+            placeholder="Confirm new password"
+            minlength="8"
+            required>
+        </div>
+
+      </div>
+
+      <button type="submit" class="btn-login">
+        <i class="fa-solid fa-key"></i>
+        Update Password
+      </button>
+
+    </form>
+  </div>
+
+</div>
     </div>
 
   </main>
