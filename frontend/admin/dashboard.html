@@ -9,71 +9,109 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
   <style>
    
-    :root {
-      
-      --brand-espresso:   #2C1A0E;
-      --brand-roast:      #5C3D1E;
-      --brand-gold:       #C8922A;
-      --brand-gold-light: #E8B84B;
-      --brand-bean:       #8B5E3C;
+ :root {
+  /* ── MISRAK COFFEE BRAND ── */
+  --brand-espresso: #2C1A0E;
+  --brand-roast: #8B5E35;
+  --brand-gold: #C08457;
+  --brand-gold-light: #D4A574;
+  --brand-bean: #5C3D1E;
 
-      /* Light theme */
-      --bg-base:     #F7F3EE;
-      --bg-surface:  #FFFFFF;
-      --bg-elevated: #FDFAF6;
-      --bg-hover:    #F0EAE0;
-      --border:      #E5DDD2;
-      --border-subtle: #EDE7DC;
+  /* ── LIGHT THEME ── */
+  --bg-base: #F3EEE7;
+  --bg-surface: #FBF8F4;
+  --bg-elevated: #FFFFFF;
+  --bg-hover: #E9E0D5;
 
-      --text-primary:   #1A1008;
-      --text-secondary: #6B5744;
-      --text-muted:     #9E856E;
-      --text-inverse:   #F7F3EE;
+  --border: #DED3C5;
+  --border-subtle: #E9E1D7;
 
-      --sidebar-bg:     #1E120A;
-      --sidebar-text:   #C9B49A;
-      --sidebar-active-bg: rgba(200,146,42,0.15);
-      --sidebar-active-text: #E8B84B;
-      --sidebar-hover-bg: rgba(255,255,255,0.06);
-      --sidebar-border: rgba(255,255,255,0.08);
+  --text-primary: #1A120A;
+  --text-secondary: #4A3728;
+  --text-muted: #8A7468;
+  --text-inverse: #FAF7F2;
 
-      --shadow-sm: 0 1px 3px rgba(44,26,14,0.08);
-      --shadow-md: 0 4px 16px rgba(44,26,14,0.10);
-      --shadow-lg: 0 8px 32px rgba(44,26,14,0.14);
+  /* Sidebar */
+  --sidebar-bg: #24140A;
+  --sidebar-text: #BCA996;
+  --sidebar-active-bg: rgba(192, 132, 87, 0.18);
+  --sidebar-active-text: #D4A574;
+  --sidebar-hover-bg: rgba(255, 255, 255, 0.07);
+  --sidebar-border: rgba(255, 255, 255, 0.08);
 
-      --radius-sm: 6px;
-      --radius-md: 12px;
-      --radius-lg: 18px;
+  /* Shadows */
+  --shadow-sm: 0 2px 6px rgba(44, 26, 14, 0.05);
+  --shadow-md: 0 6px 18px rgba(44, 26, 14, 0.08);
+  --shadow-lg: 0 14px 35px rgba(44, 26, 14, 0.11);
 
-      --transition: 0.2s cubic-bezier(0.4,0,0.2,1);
-      --sidebar-w: 260px;
-      --topbar-h: 64px;
-    }
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 18px;
 
-    [data-theme="dark"] {
-      --bg-base:     #0F0A06;
-      --bg-surface:  #1A1008;
-      --bg-elevated: #221508;
-      --bg-hover:    #2A1C0D;
-      --border:      #3A2515;
-      --border-subtle: #2E1C0E;
+  --transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 
-      --text-primary:   #F0E6D6;
-      --text-secondary: #C4A882;
-      --text-muted:     #7A6350;
-      --text-inverse:   #1A1008;
+  --sidebar-w: 260px;
+  --topbar-h: 64px;
+}
 
-      --sidebar-bg:     #0D0703;
-      --sidebar-text:   #9A7E65;
-      --sidebar-active-bg: rgba(200,146,42,0.18);
-      --sidebar-active-text: #E8B84B;
-      --sidebar-hover-bg: rgba(255,255,255,0.04);
-      --sidebar-border: rgba(255,255,255,0.06);
 
-      --shadow-sm: 0 1px 3px rgba(0,0,0,0.3);
-      --shadow-md: 0 4px 16px rgba(0,0,0,0.4);
-      --shadow-lg: 0 8px 32px rgba(0,0,0,0.5);
-    }
+/* ── EXPLICIT LIGHT MODE ── */
+
+[data-theme="light"] {
+  --bg-base: #F3EEE7;
+  --bg-surface: #FBF8F4;
+  --bg-elevated: #FFFFFF;
+  --bg-hover: #E9E0D5;
+
+  --border: #DED3C5;
+  --border-subtle: #E9E1D7;
+
+  --text-primary: #1A120A;
+  --text-secondary: #4A3728;
+  --text-muted: #8A7468;
+  --text-inverse: #FAF7F2;
+
+ 
+  --sidebar-bg: #0D0703;
+  --sidebar-text: #BCA996;
+  --sidebar-active-bg: rgba(192, 132, 87, 0.18);
+  --sidebar-active-text: #D4A574;
+  --sidebar-hover-bg: rgba(255, 255, 255, 0.07);
+  --sidebar-border: rgba(255, 255, 255, 0.08);
+
+  --shadow-sm: 0 2px 6px rgba(44, 26, 14, 0.05);
+  --shadow-md: 0 6px 18px rgba(44, 26, 14, 0.08);
+  --shadow-lg: 0 14px 35px rgba(44, 26, 14, 0.11);
+}
+
+
+/* ── DARK MODE ── */
+
+[data-theme="dark"] {
+  --bg-base: #090E17;
+  --bg-surface:#111827;
+  --bg-elevated:  #1A2535;
+  --bg-hover: #192236;
+
+  --border: rgba(255, 255, 255, 0.07);
+  --border-subtle: #2E1C0E;
+
+  --text-primary: #F0E6D6;
+  --text-secondary: #C4A882;
+  --text-muted: #9A7E65;
+  --text-inverse: #1A1008;
+
+  --sidebar-bg: #0D0703;
+  --sidebar-text: #9A7E65;
+  --sidebar-active-bg: rgba(192, 132, 87, 0.18);
+  --sidebar-active-text: #D4A574;
+  --sidebar-hover-bg: rgba(255, 255, 255, 0.04);
+  --sidebar-border: rgba(255, 255, 255, 0.06);
+
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.30);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.40);
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.50);
+}
 
     /* RESET & BASE */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -1378,7 +1416,7 @@
     <p>Manage your account, appearance, and business information.</p>
   </div>
 
-  <div class="settings-container">
+  < class="settings-container">
 
     <!-- PROFILE -->
     <section class="panel settings-section">
@@ -1562,11 +1600,7 @@
       </form>
 
     </section>
-
-  </div>
-
-</div>
-
+    
   <!-- Security -->
   <div class="panel  settings-section">
     <div class="settings-section-header">
