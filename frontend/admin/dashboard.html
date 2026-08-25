@@ -837,151 +837,174 @@
       .stats-grid { grid-template-columns: 1fr; }
       .login-card { padding: 36px 24px; margin: 16px; }
     }
-/* ================= SETTINGS ================= */
 
-.settings-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 20px;
+    /* ================= SETTINGS ================= */
+/* ── SETTINGS ───────────────────────────── */
+
+#page-settings {
+  width: 100%;
+  max-width: 900px;
 }
 
-.settings-card {
-  padding: 24px;
-}
-
-.settings-full {
-  grid-column: 1 / -1;
-}
-
-.settings-header {
+.settings-container {
   display: flex;
-  align-items: center;
-  gap: 14px;
-  margin-bottom: 24px;
+  flex-direction: column;
+  gap: 10px;
 }
 
+/* Every settings section */
+.settings-section,
+.settings-card {
+  padding: 16px 18px;
+  margin: 0;
+  min-height: auto;
+}
+
+/* Section title */
+.settings-section-header,
+.settings-header {
+  margin-bottom: 14px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+  display: block;
+}
+
+.settings-section-header h2,
 .settings-header h2 {
   margin: 0;
-  font-size: 1.1rem;
-  color: var(--text-primary);
-}
-
-.settings-header p {
-  margin: 4px 0 0;
-  font-size: 0.82rem;
-  color: var(--text-muted);
-}
-
-.settings-icon {
-  width: 42px;
-  height: 42px;
-  border-radius: 10px;
-  display: grid;
-  place-items: center;
-  background: rgba(200, 146, 42, 0.12);
-  color: var(--brand-gold);
   font-size: 1rem;
+  font-weight: 600;
 }
 
-.profile-details {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.profile-item {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-}
-
-.profile-item span {
-  font-size: 0.75rem;
+.settings-section-header p,
+.settings-header p {
+  margin: 3px 0 0;
+  font-size: 0.8rem;
   color: var(--text-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
 }
 
-.profile-item strong {
-  font-size: 0.95rem;
-  color: var(--text-primary);
+/* Remove large icon boxes from old design */
+.settings-icon {
+  display: none;
 }
 
+/* PROFILE */
+.settings-form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.settings-section .form-group,
+.settings-card .form-group {
+  margin-bottom: 0;
+}
+
+.settings-section .form-input,
+.settings-card .form-input {
+  padding: 9px 11px;
+  font-size: 0.85rem;
+}
+
+/* Role and save button */
+.profile-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+
+/* APPEARANCE */
+.compact-setting-row,
 .theme-setting {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  gap: 20px;
+  justify-content: space-between;
+  gap: 15px;
 }
 
+.compact-setting-row p,
 .theme-setting p {
-  margin: 5px 0 0;
-  font-size: 0.82rem;
+  margin: 3px 0 0;
+  font-size: 0.8rem;
   color: var(--text-muted);
 }
 
+/* BUSINESS */
+.business-settings-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.settings-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* SECURITY */
+.password-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+/* Buttons — preserve Misrak Coffee colors */
+.profile-save-btn,
+.business-save-btn,
+#passwordForm .btn-login {
+  width: auto;
+  margin-top: 0;
+  padding: 9px 16px;
+  background: var(--brand-espresso);
+  color: var(--brand-gold);
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.profile-save-btn:hover,
+.business-save-btn:hover,
+#passwordForm .btn-login:hover {
+  background: var(--brand-roast);
+}
+
+/* Theme button */
 .settings-theme-btn {
+  padding: 8px 14px;
   border: 1px solid var(--border);
   background: var(--bg-elevated);
   color: var(--text-primary);
-  padding: 10px 14px;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   cursor: pointer;
   font-family: inherit;
-  white-space: nowrap;
+  font-size: 0.82rem;
 }
 
-.settings-theme-btn:hover {
-  background: var(--bg-hover);
-}
+/* Mobile */
+@media (max-width: 700px) {
 
-.password-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 16px;
-  margin-bottom: 20px;
-}
-
-#passwordForm .btn-login {
-  width: auto;
-  padding: 11px 20px;
-}
-
-@media (max-width: 800px) {
-  .settings-grid {
-    grid-template-columns: 1fr;
+  #page-settings {
+    max-width: 100%;
   }
 
-  .settings-full {
-    grid-column: auto;
-  }
-
+  .settings-form-row,
+  .business-settings-grid,
   .password-grid {
     grid-template-columns: 1fr;
   }
-}
 
-@media (max-width: 500px) {
+  .profile-footer,
+  .compact-setting-row,
   .theme-setting {
-    flex-direction: column;
     align-items: flex-start;
-  }
-}
-.business-settings-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 16px;
-  margin-bottom: 20px;
-}
-
-.business-save-btn {
-  width: auto;
-  padding: 11px 20px;
-}
-
-@media (max-width: 700px) {
-  .business-settings-grid {
-    grid-template-columns: 1fr;
+    flex-direction: column;
   }
 }
   </style>
@@ -1347,163 +1370,206 @@
       </div>
     </div>
 
-    <div class="page-content" id="page-settings" style="display:none">
-      <div class="page-header">
-        <h1>Settings</h1>
-        <p>Configure your admin preferences.</p>
-      </div>
-  <div class="settings-grid">
+   <!-- SETTINGS PAGE -->
+<div class="page-content" id="page-settings" style="display:none">
 
-  <!-- Admin Profile -->
-  <div class="panel settings-card">
-    <div class="settings-header">
-      <div class="settings-icon">
-        <i class="fa-solid fa-user"></i>
-      </div>
-      <div>
-        <h2>Admin Profile</h2>
-        <p>Your account information.</p>
-      </div>
-    </div>
-
-    <div class="profile-details">
-      <div class="profile-item">
-        <span>Name</span>
-        <strong id="settingsAdminName">Loading...</strong>
-      </div>
-
-      <div class="profile-item">
-        <span>Email</span>
-        <strong id="settingsAdminEmail">Loading...</strong>
-      </div>
-
-      <div class="profile-item">
-        <span>Role</span>
-        <strong id="settingsAdminRole">Loading...</strong>
-      </div>
-    </div>
+  <div class="page-header settings-page-header">
+    <h1>Settings</h1>
+    <p>Manage your account, appearance, and business information.</p>
   </div>
 
+  <div class="settings-container">
 
-  <!-- Appearance -->
-  <div class="panel settings-card">
-    <div class="settings-header">
-      <div class="settings-icon">
-        <i class="fa-solid fa-palette"></i>
-      </div>
-      <div>
-        <h2>Appearance</h2>
-        <p>Customize your dashboard appearance.</p>
-      </div>
-    </div>
-
-    <div class="theme-setting">
-      <div>
-        <strong>Dark Mode</strong>
-        <p>Switch between light and dark mode.</p>
+    <!-- PROFILE -->
+    <section class="panel settings-section">
+      <div class="settings-section-header">
+        <div>
+          <h2>Profile</h2>
+          <p>Manage your account information.</p>
+        </div>
       </div>
 
-      <button
-        type="button"
-        class="settings-theme-btn"
-        onclick="toggleTheme()">
-        <i class="fa-solid fa-moon"></i>
-        Toggle Theme
-      </button>
-    </div>
+      <form id="profileSettingsForm">
+
+        <div class="settings-form-row">
+          <div class="form-group">
+            <label class="form-label" for="settingsAdminName">
+              Name
+            </label>
+
+            <input
+              type="text"
+              id="settingsAdminName"
+              class="form-input"
+              maxlength="60"
+              required
+            >
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">
+              Email
+            </label>
+
+            <input
+              type="email"
+              id="settingsAdminEmail"
+              class="form-input"
+              readonly
+            >
+          </div>
+        </div>
+
+        <div class="profile-footer">
+
+          <div class="role-display">
+            <span>Role</span>
+            <strong id="settingsAdminRole">Loading...</strong>
+          </div>
+
+          <button
+            type="submit"
+            class="profile-save-btn"
+          >
+            <i class="fa-solid fa-check"></i>
+            Save Changes
+          </button>
+
+        </div>
+
+      </form>
+    </section>
+
+
+    <!-- APPEARANCE -->
+    <section class="panel settings-section">
+      <div class="settings-section-header">
+        <div>
+          <h2>Appearance</h2>
+          <p>Customize how your dashboard looks.</p>
+        </div>
+      </div>
+
+      <div class="compact-setting-row">
+
+        <div>
+          <strong>Theme</strong>
+          <p>Switch between light and dark mode.</p>
+        </div>
+
+        <button
+          type="button"
+          class="settings-theme-btn"
+          onclick="toggleTheme()"
+        >
+          <i class="fa-solid fa-moon"></i>
+          Toggle Theme
+        </button>
+
+      </div>
+    </section>
+
+
+    <!-- BUSINESS SETTINGS -->
+    <section class="panel settings-section">
+
+      <div class="settings-section-header">
+        <div>
+          <h2>Business Information</h2>
+          <p>Manage your company's public information.</p>
+        </div>
+      </div>
+
+      <form id="businessSettingsForm">
+
+        <div class="business-settings-grid">
+
+          <div class="form-group">
+            <label class="form-label">Business Name</label>
+            <input
+              type="text"
+              id="businessName"
+              class="form-input"
+              placeholder="Enter business name"
+              maxlength="150"
+              required
+            >
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Business Email</label>
+            <input
+              type="email"
+              id="businessEmail"
+              class="form-input"
+              placeholder="Enter business email"
+            >
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Phone Number</label>
+            <input
+              type="text"
+              id="businessPhone"
+              class="form-input"
+              placeholder="Enter phone number"
+              maxlength="50"
+            >
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Address</label>
+            <input
+              type="text"
+              id="businessAddress"
+              class="form-input"
+              placeholder="Enter business address"
+            >
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Website</label>
+            <input
+              type="text"
+              id="businessWebsite"
+              class="form-input"
+              placeholder="Enter website URL"
+            >
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Logo URL</label>
+            <input
+              type="text"
+              id="businessLogo"
+              class="form-input"
+              placeholder="Enter logo URL"
+            >
+          </div>
+
+        </div>
+
+        <div class="settings-actions">
+          <button
+            type="submit"
+            class="business-save-btn"
+          >
+            <i class="fa-solid fa-check"></i>
+            Save Business Settings
+          </button>
+        </div>
+
+      </form>
+
+    </section>
+
   </div>
-<!-- Business Settings -->
-<div class="panel settings-card settings-full">
-
-  <div class="settings-header">
-    <div class="settings-icon">
-      <i class="fa-solid fa-building"></i>
-    </div>
-
-    <div>
-      <h2>Business Settings</h2>
-      <p>Manage your company's public information.</p>
-    </div>
-  </div>
-
-  <form id="businessSettingsForm">
-
-    <div class="business-settings-grid">
-
-      <div class="form-group">
-        <label class="form-label">Business Name</label>
-        <input
-          type="text"
-          id="businessName"
-          class="form-input"
-          placeholder="Enter business name"
-          maxlength="150"
-          required>
-      </div>
-
-      <div class="form-group">
-        <label class="form-label">Business Email</label>
-        <input
-          type="email"
-          id="businessEmail"
-          class="form-input"
-          placeholder="Enter business email">
-      </div>
-
-      <div class="form-group">
-        <label class="form-label">Phone Number</label>
-        <input
-          type="text"
-          id="businessPhone"
-          class="form-input"
-          placeholder="Enter phone number"
-          maxlength="50">
-      </div>
-
-      <div class="form-group">
-        <label class="form-label">Address</label>
-        <input
-          type="text"
-          id="businessAddress"
-          class="form-input"
-          placeholder="Enter business address"
-          maxlength="255">
-      </div>
-
-      <div class="form-group">
-        <label class="form-label">Website</label>
-        <input
-          type="url"
-          id="businessWebsite"
-          class="form-input"
-          placeholder="https://example.com"
-          maxlength="255">
-      </div>
-
-      <div class="form-group">
-        <label class="form-label">Logo URL</label>
-        <input
-          type="url"
-          id="businessLogo"
-          class="form-input"
-          placeholder="https://example.com/logo.png"
-          maxlength="500">
-      </div>
-
-    </div>
-
-    <button type="submit" class="btn-login business-save-btn">
-      <i class="fa-solid fa-floppy-disk"></i>
-      Save Business Settings
-    </button>
-
-  </form>
 
 </div>
 
   <!-- Security -->
-  <div class="panel settings-card settings-full">
-    <div class="settings-header">
+  <div class="panel  settings-section">
+    <div class="settings-section-header">
       <div class="settings-icon">
         <i class="fa-solid fa-lock"></i>
       </div>

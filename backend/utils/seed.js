@@ -160,7 +160,26 @@ const seed = async () => {
   } else {
     console.log('⚠️  Admin already exists — skipping admin seed');
   }
+// Mentor Admin
+const mentorEmail = process.env.MENTOR_EMAIL;
 
+if (mentorEmail && process.env.MENTOR_PASSWORD) {
+  const existingMentor = await Admin.findByEmail(mentorEmail);
+
+  if (!existingMentor) {
+    await Admin.create({
+      name: process.env.MENTOR_NAME || 'Project Mentor',
+      email: mentorEmail,
+      password: process.env.MENTOR_PASSWORD,
+      role: 'admin',
+    });
+
+    console.log('✅ Mentor account created');
+    console.log(`   Email: ${mentorEmail}`);
+  } else {
+    console.log('⚠️ Mentor account already exists — skipping');
+  }
+}
   
   const toSlug = (name) => name.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]/g, '').slice(0, 200);
 
