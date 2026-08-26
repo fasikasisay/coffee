@@ -1383,7 +1383,7 @@
             </div>
             <div>
               <label style="font-size:0.82rem;font-weight:500;color:var(--text-secondary);display:block;margin-bottom:4px">Min Order (kg)</label>
-              <input class="form-input" id="pMinOrder" type="number" min="1" placeholder="50" style="width:100%">
+              <input class="form-input" id="pMinOrder" type="number" min="1" placeholder="1" style="width:100%">
             </div>
           </div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem">
@@ -2218,7 +2218,7 @@ document.getElementById('settingsAdminRole').textContent = currentAdmin.role || 
       name:        document.getElementById('pName').value.trim(),
       category:    document.getElementById('pCategory').value,
       pricePerKg:  Number(document.getElementById('pPrice').value),
-      minOrderKg:  Number(document.getElementById('pMinOrder').value)||50,
+      minOrderKg:  Number(document.getElementById('pMinOrder').value)||1,
       stock:       Number(document.getElementById('pStock').value)||0,
       region:      document.getElementById('pRegion').value.trim()||undefined,
       description: document.getElementById('pDesc').value.trim()||undefined,

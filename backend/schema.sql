@@ -36,7 +36,7 @@ CREATE TABLE IF NOT EXISTS products (
   category      ENUM('green-beans','roasted','specialty','blend') NOT NULL,
   description   TEXT          NULL,
   price_per_kg  DECIMAL(10,2) NOT NULL CHECK (price_per_kg > 0),
-  min_order_kg  INT UNSIGNED  NOT NULL DEFAULT 50,
+  min_order_kg  INT UNSIGNED  NOT NULL DEFAULT 1,
   stock         INT UNSIGNED  NOT NULL DEFAULT 0,
   origin        VARCHAR(100)  NOT NULL DEFAULT 'Ethiopia',
   region        VARCHAR(100)  NULL,
