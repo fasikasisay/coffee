@@ -1183,7 +1183,7 @@
     <div class="page-content" id="page-dashboard">
 
       <div class="page-header">
-        <h1>Good morning ☕</h1>
+      <h1 id="dashboardGreeting">Good morning </h1>
         <p>Here's what's happening with Misrak Coffee today.</p>
       </div>
 
@@ -2507,6 +2507,22 @@ async function updateBusinessSettings(event) {
     button.innerHTML = originalHTML;
   }
 }
+function updateDashboardGreeting() {
+  const hour = new Date().getHours();
+  const greeting = document.getElementById('dashboardGreeting');
+
+  if (!greeting) return;
+
+  if (hour < 12) {
+    greeting.textContent = 'Good morning ☕';
+  } else if (hour < 18) {
+    greeting.textContent = 'Good afternoon ☕';
+  } else {
+    greeting.textContent = 'Good evening ☕';
+  }
+}
+
+updateDashboardGreeting();
 </script>
 </body>
 </html>
