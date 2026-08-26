@@ -62,7 +62,7 @@ const Product = {
     `, [
       data.name.trim(), slug, data.category,
       data.description ? data.description.trim() : null,
-      data.pricePerKg, data.minOrderKg ?? 50,
+      data.pricePerKg, data.minOrderKg ?? 1,
       data.stock ?? 0, data.origin ?? 'Ethiopia',
       data.region  ? data.region.trim()  : null,
       data.process ? data.process.trim() : null,

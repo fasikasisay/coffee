@@ -823,46 +823,31 @@ async function fetchProducts() {
 
 }
 
-
 function createProductHTML(product) {
-
   const available =
     product.isAvailable !== false;
-
-
   const buttonText =
     available
       ? 'Add To Cart'
       : 'Unavailable';
-
-
   return `
-
-    <div class="product-slide">
-
-      <img
+  <div class="product-slide">
+    <img
         src="${escapeHTML(
           resolveProductImage(product)
         )}"
         alt="${escapeHTML(product.name)}"
         loading="lazy"
       >
-
-
       <div class="product-overlay">
-
-        <h3>
+      <h3>
           ${escapeHTML(product.name)}
         </h3>
-
-
         <p>
           $${Number(
             product.pricePerKg
           ).toFixed(2)}
         </p>
-
-
         <button
           class="menu-item__add"
           data-id="${product.id}"
