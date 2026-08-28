@@ -876,7 +876,7 @@
       .login-card { padding: 36px 24px; margin: 16px; }
     }
 
-    /* ================= SETTINGS ================= */
+    
 /* ── SETTINGS ───────────────────────────── */
 
 #page-settings {
@@ -1130,7 +1130,10 @@
         <i class="fa-solid fa-users"></i>
         <span>Customers</span>
       </div>
-
+<div class="nav-item" onclick="setActivePage('messages', this)">
+  <i class="fa-solid fa-envelope"></i>
+  <span>Messages</span>
+</div>
       <div class="nav-section-label">Settings</div>
 
       <div class="nav-item" onclick="setActivePage('settings', this)">
@@ -1167,12 +1170,11 @@
         <div class="breadcrumb-title" id="pageTitle">Dashboard</div>
         <div class="breadcrumb-sub" id="pageDate"></div>
       </div>
-
-      <div class="topbar-actions">
-        <button class="topbar-btn" title="Notifications">
-          <i class="fa-solid fa-bell"></i>
-          <span class="notif-dot"></span>
-        </button>
+<div class="topbar-actions">
+  <button class="topbar-btn" title="Notifications">
+    <i class="fa-solid fa-bell"></i>
+    <span class="notif-dot"></span>
+  </button>
         <button class="theme-toggle-btn" onclick="toggleTheme()" title="Toggle theme" id="themeBtn">
           <i class="fa-solid fa-moon"></i>
         </button>
@@ -1407,7 +1409,44 @@
         </form>
       </div>
     </div>
-
+<!-- MESSAGES PAGE -->
+<div class="page-content" id="page-messages" style="display:none">
+  <div class="page-header">
+    <h1>Customer Messages</h1>
+    <p>View and manage messages sent by customers.</p>
+  </div>
+ <div class="panel">
+    <div
+      id="messages-count"
+      style="font-size:0.85rem;color:var(--text-muted);margin-bottom:1rem"
+    >
+      Loading messages...
+    </div>
+    <div style="overflow-x:auto">
+      <table class="orders-table">
+        <thead>
+          <tr>
+            <th>Customer</th>
+            <th>Email</th>
+            <th>Message</th>
+            <th>Status</th>
+            <th>Date</th>
+          </tr>
+        </thead>
+        <tbody id="messagesBody">
+          <tr>
+            <td
+              colspan="5"
+              style="text-align:center;padding:2rem;color:var(--text-muted)"
+            >
+              Loading messages...
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
    <!-- SETTINGS PAGE -->
 <div class="page-content" id="page-settings" style="display:none">
 
@@ -1738,8 +1777,8 @@
   }
 
   /* ── PAGE NAVIGATION ───────────────────────────── */
-  const pages = ['dashboard', 'products', 'orders', 'customers', 'settings'];
-  const _pageLoaded = { products: false, orders: false, customers: false };
+  const pages = ['dashboard', 'products', 'orders', 'customers', 'messages', 'settings'];
+  const _pageLoaded = { products: false, orders: false, customers: false, messages: false };
 
   function setActivePage(page, navEl) {
     pages.forEach(p => {
@@ -1754,6 +1793,7 @@
       products: 'Products',
       orders: 'Orders',
       customers: 'Customers',
+      messages: 'Messages',
       settings: 'Settings',
     };
     document.getElementById('pageTitle').textContent = titles[page] || page;
@@ -1763,7 +1803,8 @@
     if (page === 'products'  && !_pageLoaded.products)  { loadProducts();  _pageLoaded.products  = true; }
     if (page === 'orders'    && !_pageLoaded.orders)    { loadOrders();    _pageLoaded.orders    = true; }
     if (page === 'customers' && !_pageLoaded.customers) { loadCustomers(); _pageLoaded.customers = true; }
-  if (page === 'settings') { loadBusinessSettings();}
+    if (page === 'messages' && !_pageLoaded.messages) { loadMessages(); _pageLoaded.messages = true; }
+    if (page === 'settings') { loadBusinessSettings();}
   }
 
   /* ── AUTH: Login ───────────────────────────────── */
@@ -2523,6 +2564,99 @@ function updateDashboardGreeting() {
 }
 
 updateDashboardGreeting();
+let _allMessages = [];
+
+async function loadMessages() {
+  try {
+    const res = await apiFetch('/enquiries');
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(data.error || 'Failed to load messages.');
+    }
+
+    _allMessages = data.data || [];
+
+    renderMessagesTable(_allMessages);
+
+  } catch (err) {
+
+    document.getElementById('messagesBody').innerHTML = `
+      <tr>
+        <td
+          colspan="5"
+          style="text-align:center;padding:2rem;color:#E88080"
+        >
+          ${err.message}
+        </td>
+      </tr>
+    `;
+  }
+}
+
+function renderMessagesTable(messages) {
+
+  document.getElementById('messages-count').textContent =
+    `${messages.length} message${messages.length !== 1 ? 's' : ''}`;
+
+  if (messages.length === 0) {
+
+    document.getElementById('messagesBody').innerHTML = `
+      <tr>
+        <td
+          colspan="5"
+          style="text-align:center;padding:2rem;color:var(--text-muted)"
+        >
+          No customer messages yet.
+        </td>
+      </tr>
+    `;
+
+    return;
+  }
+
+  document.getElementById('messagesBody').innerHTML =
+    messages.map(message => {
+
+      const date = new Date(message.createdAt).toLocaleDateString(
+        'en-US',
+        {
+          month: 'short',
+          day: 'numeric',
+          year: 'numeric'
+        }
+      );
+
+      return `
+        <tr>
+
+          <td style="font-weight:600">
+            ${esc(message.name)}
+          </td>
+
+          <td>
+            ${esc(message.email)}
+          </td>
+
+          <td style="max-width:350px;white-space:normal">
+            ${esc(message.message)}
+          </td>
+
+          <td>
+            <span class="status-badge">
+              ${esc(message.status)}
+            </span>
+          </td>
+
+          <td>
+            ${date}
+          </td>
+
+        </tr>
+      `;
+
+    }).join('');
+}
 </script>
 </body>
 </html>

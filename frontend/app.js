@@ -1964,48 +1964,43 @@ if (contactForm) {
       event.preventDefault();
       hideFormFeedback();
       clearFormErrors();
+
       const nameVal =
-        document
-          .getElementById('cName')
-          .value;
+        document.getElementById('cName').value;
+
       const emailVal =
-        document
-          .getElementById('cEmail')
-          .value;
+        document.getElementById('cEmail').value;
+
       const messageVal =
-        document
-          .getElementById('cMessage')
-          .value;
+        document.getElementById('cMessage').value;
+
       const nameErr =
-        validateField(
-          'name',
-          nameVal
-        );
+        validateField('name', nameVal);
+
       const emailErr =
-        validateField(
-          'email',
-          emailVal
-        );
+        validateField('email', emailVal);
+
       const messageErr =
-        validateField(
-          'message',
-          messageVal
-        );
+        validateField('message', messageVal);
+
       setFieldError(
         'cName',
         'cNameError',
         nameErr
       );
+
       setFieldError(
         'cEmail',
         'cEmailError',
         emailErr
       );
+
       setFieldError(
         'cMessage',
         'cMessageError',
         messageErr
       );
+
       if (
         nameErr ||
         emailErr ||
@@ -2013,31 +2008,77 @@ if (contactForm) {
       ) {
         return;
       }
+
       if (submitBtn) {
-        submitBtn.classList.add(
-          'loading'
-        );
+        submitBtn.classList.add('loading');
         submitBtn.disabled = true;
       }
-      setTimeout(() => {
-        if (submitBtn) {
-          submitBtn.classList.remove(
-            'loading'
+
+      fetch(
+        'http://127.0.0.1:5000/api/v1/enquiries',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            name: nameVal.trim(),
+            email: emailVal.trim(),
+            message: messageVal.trim()
+          })
+        }
+      )
+        .then(async response => {
+          const data = await response.json();
+
+          if (!response.ok) {
+            throw new Error(
+              data.message ||
+              data.error ||
+              'Failed to send message.'
+            );
+          }
+
+          contactForm.reset();
+
+          if (contactSuccess) {
+            contactSuccess.hidden = false;
+          }
+
+          showToast(
+            'Message sent successfully!',
+            'success'
           );
-          submitBtn.disabled = false;
-        }
-        contactForm.reset();
-        if (contactSuccess) {
-          contactSuccess.hidden = false;
-        }
-        showToast(
-          'Message sent successfully!',
-          'success'
-        );
-      }, 1000);
+        })
+        .catch(error => {
+          console.error(
+            'Message error:',
+            error
+          );
+
+          if (contactError) {
+            contactError.hidden = false;
+          }
+
+          showToast(
+            error.message ||
+            'Failed to send message.',
+            'error'
+          );
+        })
+        .finally(() => {
+          if (submitBtn) {
+            submitBtn.classList.remove(
+              'loading'
+            );
+
+            submitBtn.disabled = false;
+          }
+        });
     }
   );
 }
+
 /* SECTION 9 — PRODUCT AND SERVICE SLIDERS */
 
 const menuSlider =
