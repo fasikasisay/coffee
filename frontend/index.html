@@ -121,434 +121,64 @@
 
   <!-- ABOUT -->
 
-<section id="about" class="about-section">
-  <div class="container about-grid">
-
-    <div class="about-content">
-      <span class="section-eyebrow">Who We Are</span>
-
-      <h2 class="about-title">
-        Premium Ethiopian Coffee for Local & Global Markets
-      </h2>
-
-      <p>
-        Misrak Coffee is dedicated to sourcing, processing, roasting,
-        and exporting exceptional Ethiopian Arabica coffee while preserving
-        the rich heritage and unique flavor profiles that make Ethiopian
-        coffee world-renowned.
-      </p>
-
-      <p>
-        We work directly with farmers and coffee-producing communities
-        to ensure quality, sustainability, and consistency across every
-        shipment. From green beans to roasted coffee and export services,
-        we deliver excellence at every stage.
-      </p>
-
-      <a href="#contact" class="about-link">
-        Contact Us
-        <i class="fa-solid fa-arrow-right"></i>
-      </a>
-    </div>
-
-    <div class="about-slider">
-  <img src="images/about1.jpg" class="about-slide active">
-  <img src="images/about2.jpg" class="about-slide">
-  <img src="images/about3.jpg" class="about-slide">
-  <img src="images/about4.jpg" class="about-slide">
-  <img src="images/about5.jpg" class="about-slide">
-</div>
-  </div>
-</section>
+<div id="about-section"></div>
 
   <!-- PRODUCTS -->
-<section id="menu" class="menu-section" aria-labelledby="menuHeading">
-  <div class="container">
-
-    <h2 id="menuHeading" class="section-title">Our Products</h2>
-
-    <div class="menu-slider-wrapper">
-
-      <button class="slider-btn prev" id="menuPrev">
-        <i class="fa-solid fa-chevron-left"></i>
-      </button>
-
-      <div class="menu-slider" id="menuGrid"></div>
-
-      <button class="slider-btn next" id="menuNext">
-        <i class="fa-solid fa-chevron-right"></i>
-      </button>
-
-    </div>
-
-  </div>
-</section>
-
+<div id="products-section"></div>
 
 <!-- SERVICES -->
-<section id="services" class="menu-section" aria-labelledby="servicesHeading">
-  <div class="container">
-
-    <h2 id="servicesHeading" class="section-title">Our Services</h2>
-
-    <div class="menu-slider-wrapper">
-
-      <button class="slider-btn prev" id="servicePrev">
-        <i class="fa-solid fa-chevron-left"></i>
-      </button>
-
-      <div class="menu-slider" id="serviceGrid"></div>
-
-      <button class="slider-btn next" id="serviceNext">
-        <i class="fa-solid fa-chevron-right"></i>
-      </button>
-
-    </div>
-
-  </div>
-</section>
+<div id="services-section"></div>
   <!-- CONTACT -->
-  <section id="contact" class="contact-section" aria-labelledby="contactHeading">
-    <div class="container"> 
-      <div class="contact-header">
-        <span class="section-eyebrow">Export inquiries</span>
-        <h2 id="contactHeading" class="section-title">Contact Misrak Coffee</h2>
-        
-        <div class="contact-socials" aria-label="Social links">
-              <a href="https://www.linkedin.com/in/fasika-sisay-778663348/" target="_blank" rel="noopener" class="social-link" aria-label="LinkedIn">
-                <i class="fa-brands fa-linkedin-in" aria-hidden="true"></i>
-              </a>
-
-              <a href="https://instagram.com/fa_fi_22" target="_blank" rel="noopener" class="social-link" aria-label="Instagram">
-                <i class="fa-brands fa-instagram" aria-hidden="true"></i>
-              </a>
-
-              <a href="https://t.me/fasikawit" target="_blank" rel="noopener" class="social-link" aria-label="Telegram">
-                <i class="fa-brands fa-telegram" aria-hidden="true"></i>
-              </a>
-            </div>
-
-      </div>
-
-      <div class="contact-container">
-        <div class="contact-left">
-          <div class="company-contact">
-            <h3>Get in Touch</h3>
-            <p class="contact-intro">
-              We'd love to hear from you! Reach out to us with any questions or inquiries.
-            </p>
-          
-          
-            <ul class="contact-info">
-              <li>
-                <i class="fa-solid fa-phone" aria-hidden="true"></i>
-                <div>
-                  <span>Phone</span>
-                  <a href="tel:+251912345678">+251 912 345 678</a>
-                </div>
-              </li>
-
-              <li>
-                <i class="fa-solid fa-envelope" aria-hidden="true"></i>
-                <div>
-                  <span>Email</span>
-                  <a href="mailto:info@misrakcoffee.com">info@misrakcoffee.com</a>
-                </div>
-              </li>
-
-              <li>
-                <i class="fa-solid fa-location-dot" aria-hidden="true"></i>
-                <div>
-                  <span>Location</span>
-                  <strong>Addis Ababa, Ethiopia</strong>
-                </div>
-              </li>
-            </ul>
-
-          </div>
-        </div>
-
-        <div class="contact-right">
-          <h3>Send a Message</h3>
-
-          <form id="contactForm" class="contact-form" novalidate>
-            <div class="form-group">
-              <label for="cName">Full Name <span aria-hidden="true">*</span></label>
-              <input
-                type="text"
-                id="cName"
-                name="name"
-                placeholder="Your full name"
-                autocomplete="name"
-                aria-describedby="cNameError"
-                aria-invalid="false"
-              />
-              <span id="cNameError" class="field-error" aria-live="polite"></span>
-            </div>
-
-            <div class="form-group">
-              <label for="cEmail">Email Address <span aria-hidden="true">*</span></label>
-              <input
-                type="email"
-                id="cEmail"
-                name="email"
-                placeholder="you@example.com"
-                autocomplete="email"
-                aria-describedby="cEmailError"
-                aria-invalid="false"
-              />
-              <span id="cEmailError" class="field-error" aria-live="polite"></span>
-            </div>
-
-            <div class="form-group">
-              <label for="cMessage">Message <span aria-hidden="true">*</span></label>
-              <textarea
-                id="cMessage"
-                name="message"
-                placeholder="Tell us about your coffee needs..."
-                aria-describedby="cMessageError"
-                aria-invalid="false"
-              ></textarea>
-              <span id="cMessageError" class="field-error" aria-live="polite"></span>
-            </div>
-
-            <button id="submitBtn" type="submit" class="btn btn--primary btn--full">
-              <span class="btn-text">Send Message</span>
-              <span class="btn-loader" aria-hidden="true"></span>
-            </button>
-<div id="contactSuccess" hidden> 
   
-</div>
-<div id="contactError" hidden>
-  
-</div>
-
-            
-          </form>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  
- 
-  
-
+<div id="contact-section"></div>
  <!--  CART DRAWER-->
-  <div id="cartOverlay" class="cart-overlay" aria-hidden="true"></div>
-
-  <aside
-    id="cartDrawer"
-    class="cart-drawer"
-    role="dialog"
-    aria-modal="true"
-    aria-label="Shopping cart"
-    aria-hidden="true"
-  >
-    <div class="cart-drawer__header">
-      <h2 class="cart-drawer__title">
-        <i class="fa-solid fa-bag-shopping" aria-hidden="true"></i>
-        Your Cart
-        <span id="cartCount" class="cart-drawer__count">0 items</span>
-      </h2>
-      <button id="closeCart" class="cart-drawer__close" aria-label="Close cart">
-        <i class="fa-solid fa-xmark" aria-hidden="true"></i>
-      </button>
-    </div>
-    
-
-    <div id="cartItems" class="cart-drawer__items" aria-live="polite"></div>
-
-    <div class="cart-drawer__footer">
-      <div class="cart-subtotal">
-        <span>Subtotal</span>
-        <span id="cartTotalAmount">$0.00</span>
-      </div>
-      <p class="cart-note">Shipping & taxes calculated at checkout</p>
-      <button id="checkoutBtn" class="btn btn--primary btn--full">
-        Proceed to Checkout
-        <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
-      </button>
-      <button id="continueShopping" class="btn btn--ghost btn--full">Continue Shopping</button>
-    </div>
-  </aside>
-
-  <!-- SERVICE MODAL -->
-   <div id="serviceModal" class="modal" role="dialog" aria-modal="true" aria-label="Service customization" aria-hidden="true">
-    <div class="modal__box">
-      <div id="serviceContent"></div>
-    </div>
-  </div>
-  <!-- CUSTOMER CHECKOUT MODAL -->
-<div
-  id="checkoutModal"
-  class="modal"
-  role="dialog"
-  aria-modal="true"
-  aria-label="Customer information"
-  aria-hidden="true"
->
-  <div class="modal__box">
-    <button
-      id="closeCheckout"
-      class="modal__close"
-      aria-label="Close checkout"
-    >
-      <i class="fa-solid fa-xmark" aria-hidden="true"></i>
-    </button>
-
-    <h2 class="modal__title">Customer Information</h2>
-
-    <p class="checkout-description">
-      Please provide your details before continuing to payment.
-    </p>
-
-    <form id="checkoutForm" class="checkout-form">
-
-      <div class="custom-grid">
-
-        <div class="custom-group">
-          <label for="customerName">
-            Full Name <span>*</span>
-          </label>
-
-          <input
-            type="text"
-            id="customerName"
-            placeholder="Enter your full name"
-            maxlength="120"
-            required
-          >
-        </div>
-
-        <div class="custom-group">
-          <label for="customerEmail">
-            Email Address <span>*</span>
-          </label>
-
-          <input
-            type="email"
-            id="customerEmail"
-            placeholder="example@email.com"
-            maxlength="255"
-            required
-          >
-        </div>
-
-        <div class="custom-group">
-          <label for="customerPhone">
-            Phone Number
-          </label>
-
-          <input
-            type="tel"
-            id="customerPhone"
-            placeholder="+251..."
-            maxlength="30"
-          >
-        </div>
-
-        <div class="custom-group">
-          <label for="customerCompany">
-            Company
-          </label>
-
-          <input
-            type="text"
-            id="customerCompany"
-            placeholder="Company name (optional)"
-            maxlength="200"
-          >
-        </div>
-
-        <div class="custom-group">
-          <label for="customerCountry">
-            Country
-          </label>
-
-          <input
-            type="text"
-            id="customerCountry"
-            placeholder="Your country"
-            maxlength="100"
-          >
-        </div>
-
-      </div>
-
-      <button
-        type="submit"
-        id="continueToPaymentBtn"
-        class="btn btn--primary btn--full"
-        style="margin-top: 2rem;"
-      >
-        Continue to Payment
-        <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
-      </button>
-
-    </form>
-  </div>
-</div>
-
-  <!-- PAYMENT MODAL -->
-  <!-- ============================
-       PAYMENT MODAL
-  ============================= -->
-  <div id="paymentModal" class="modal" role="dialog" aria-modal="true" aria-label="Payment options" aria-hidden="true">
-    <div class="modal__box">
-      <button id="closePayment" class="modal__close" aria-label="Close payment modal">
-        <i class="fa-solid fa-xmark" aria-hidden="true"></i>
-      </button>
-
-      <h2 class="modal__title">Select Payment Method</h2>
-
-      <div class="payment-methods" role="radiogroup" aria-label="Payment methods">
-
-        <div class="payment-card" data-method="telebirr" role="radio" aria-checked="false" tabindex="0">
-          <div class="payment-card__icon" aria-hidden="true">
-            <i class="fa-solid fa-mobile-screen"></i>
-          </div>
-          <h3>Telebirr</h3>
-          <p>Fast mobile payment</p>
-        </div>
-
-        <div class="payment-card" data-method="cbe" role="radio" aria-checked="false" tabindex="0">
-          <div class="payment-card__icon" aria-hidden="true">
-            <i class="fa-solid fa-building-columns"></i>
-          </div>
-          <h3>CBE Birr</h3>
-          <p>Commercial Bank transfer</p>
-        </div>
-
-        <div class="payment-card" data-method="cash" role="radio" aria-checked="false" tabindex="0">
-          <div class="payment-card__icon" aria-hidden="true">
-            <i class="fa-solid fa-money-bill-wave"></i>
-          </div>
-          <h3>Cash</h3>
-          <p>Pay at pickup/delivery</p>
-        </div>
-
-        <div class="payment-card" data-method="card" role="radio" aria-checked="false" tabindex="0">
-          <div class="payment-card__icon" aria-hidden="true">
-            <i class="fa-brands fa-cc-visa"></i>
-          </div>
-          <h3>Visa / Mastercard</h3>
-          <p>Secure online payment</p>
-        </div>
-
-      </div>
-
-      <button id="payNowBtn" class="btn btn--primary btn--full" style="margin-top: 2rem;">
-        Confirm Payment
-      </button>
-    </div>
-  </div>
-
-
+  
+<div id="cart-section"></div>
   <!-- TOAST -->
   <div id="toast" class="toast" role="status" aria-live="polite" aria-atomic="true"></div>
 
-  <script src="app.js"></script>
+ <script>
+  async function loadSection(id, file) {
+    const container = document.getElementById(id);
+
+    if (!container) {
+      console.error(`Container #${id} not found`);
+      return;
+    }
+
+    try {
+      const response = await fetch(file);
+
+      if (!response.ok) {
+        throw new Error(
+          `Failed to load ${file}: ${response.status}`
+        );
+      }
+
+      container.innerHTML = await response.text();
+
+    } catch (error) {
+      console.error(`Error loading ${file}:`, error);
+    }
+  }
+
+  async function loadPageSections() {
+    await Promise.all([
+      loadSection('about-section', 'sections/about.html'),
+      loadSection('products-section', 'sections/products.html'),
+      loadSection('services-section', 'sections/services.html'),
+      loadSection('contact-section', 'sections/contact.html'),
+      loadSection('cart-section', 'sections/cart.html')
+    ]);
+
+    // Load app.js only after all sections are loaded
+    const script = document.createElement('script');
+    script.src = 'app.js';
+    document.body.appendChild(script);
+  }
+
+  loadPageSections();
+</script>
 
 </body>
 

@@ -2201,12 +2201,11 @@ document.addEventListener(
   }
 );
 /* INITIALIZATION */
-window.addEventListener(
-  'DOMContentLoaded',
-  () => {
-    handleNavScroll();
-    updateActiveLink();
-    renderServices();
-    fetchProducts();
-  }
-);
+function initializeApp() {
+  handleNavScroll();
+  updateActiveLink();
+  renderServices();
+  fetchProducts();
+}
+
+initializeApp();
