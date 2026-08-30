@@ -784,16 +784,13 @@ address {
 .cart-drawer__items::-webkit-scrollbar {
   width: 4px;
 }
-
 .cart-drawer__items::-webkit-scrollbar-track {
   background: transparent;
 }
-
 .cart-drawer__items::-webkit-scrollbar-thumb {
   background: var(--border-default);
   border-radius: 2px;
 }
-
 /* Empty Cart State */
 .cart-empty-state {
   display: flex;
