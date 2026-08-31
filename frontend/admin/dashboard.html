@@ -90,10 +90,17 @@
         <span class="nav-badge" id="pendingBadge">—</span>
       </div>
 
+    <div class="nav-item" onclick="setActivePage('services', this)">
+  <i class="fa-solid fa-concierge-bell"></i>
+  <span>Services</span>
+   <span class="nav-badge" id="serviceBadge">0</span>
+</div>
+
       <div class="nav-item" onclick="setActivePage('customers', this)">
         <i class="fa-solid fa-users"></i>
         <span>Customers</span>
       </div>
+
 <div class="nav-item" onclick="setActivePage('messages', this)">
   <i class="fa-solid fa-envelope"></i>
   <span>Messages</span>
@@ -273,8 +280,8 @@
       </div>
 
       <!-- Filter bar -->
-      <div class="panel" style="padding:1rem 1.25rem;margin-bottom:1rem">
-        <div style="display:flex;gap:0.5rem;flex-wrap:wrap;align-items:center">
+     <div class="panel services-filter-panel">
+        <div>
           <span style="font-size:0.82rem;color:var(--text-muted);margin-right:0.25rem">Filter:</span>
           <button class="orders-filter-btn active" data-status="all"    onclick="filterOrders(this)">All</button>
           <button class="orders-filter-btn" data-status="pending"       onclick="filterOrders(this)">Pending</button>
@@ -299,7 +306,88 @@
         </div>
       </div>
     </div>
-
+<!-- SERVICES PAGE -->
+<div class="page-content" id="page-services" style="display:none">
+  <div class="page-header">
+    <h1>Service Requests</h1>
+    <p>View and manage service requests submitted by customers.</p>
+  </div>
+  <div class="panel">
+  <div style="display:flex;gap:0.5rem;flex-wrap:wrap;align-items:center">
+    <span style="font-size:0.82rem;color:var(--text-muted);margin-right:0.25rem">
+      Filter:
+    </span>
+    <button
+      class="orders-filter-btn active"
+      data-status="all"
+      onclick="filterServices(this)">
+      All
+    </button>
+    <button
+      class="orders-filter-btn"
+      data-status="new"
+      onclick="filterServices(this)">
+      New
+    </button>
+    <button
+      class="orders-filter-btn"
+      data-status="read"
+      onclick="filterServices(this)">
+      Read
+    </button>
+    <button
+      class="orders-filter-btn"
+      data-status="responded"
+      onclick="filterServices(this)">
+      Responded
+    </button>
+    <button
+      class="orders-filter-btn"
+      data-status="archived"
+      onclick="filterServices(this)">
+      Archived
+    </button>
+  </div>
+</div>
+  <!-- Service Requests Table -->
+  <div class="panel">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.25rem; flex-wrap:wrap;  gap:0.75rem ">
+      <span
+        id="services-count"
+        style="font-size:0.85rem;color:var(--text-muted)">
+        Loading…
+      </span>
+    </div>
+    <div class="services-table-wrapper">
+      <table class="orders-table" id="servicesTable">
+        <thead>
+          <tr>
+            <th>Request #</th>
+            <th>Customer</th>
+            <th>Service</th>
+            <th>Details</th>
+            <th>Status</th>
+            <th>Date</th>
+            <th>Update</th>
+          </tr>
+        </thead>
+        <tbody id="servicesBody">
+          <tr>
+            <td
+              colspan="7"
+              style="
+                text-align:center;
+                padding:2rem;
+                color:var(--text-muted)
+              ">
+              Loading service requests…
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
     <!--  CUSTOMERS PAGE  -->
     <div class="page-content" id="page-customers" style="display:none">
       <div class="page-header">
@@ -319,7 +407,6 @@
         </div>
       </div>
     </div>
-
     <!--  ADD PRODUCT MODAL  -->
     <div id="addProductModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:999;align-items:center;justify-content:center;padding:1rem">
       <div style="background:var(--bg-surface);border:1px solid var(--border);border-radius:12px;padding:2rem;max-width:480px;width:100%;max-height:90vh;overflow-y:auto">
@@ -373,6 +460,7 @@
         </form>
       </div>
     </div>
+ 
 <!-- MESSAGES PAGE -->
 <div class="page-content" id="page-messages" style="display:none">
   <div class="page-header">

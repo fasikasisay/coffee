@@ -65,8 +65,8 @@
   }
 
   /* ── PAGE NAVIGATION ───────────────────────────── */
-  const pages = ['dashboard', 'products', 'orders', 'customers', 'messages', 'settings'];
-  const _pageLoaded = { products: false, orders: false, customers: false, messages: false };
+  const pages = ['dashboard', 'products', 'orders', 'customers','services', 'messages', 'settings'];
+  const _pageLoaded = { products: false, orders: false, customers: false, services: false, messages: false };
 
   function setActivePage(page, navEl) {
     pages.forEach(p => {
@@ -81,6 +81,7 @@
       products: 'Products',
       orders: 'Orders',
       customers: 'Customers',
+      services: 'Services',
       messages: 'Messages',
       settings: 'Settings',
     };
@@ -91,6 +92,7 @@
     if (page === 'products'  && !_pageLoaded.products)  { loadProducts();  _pageLoaded.products  = true; }
     if (page === 'orders'    && !_pageLoaded.orders)    { loadOrders();    _pageLoaded.orders    = true; }
     if (page === 'customers' && !_pageLoaded.customers) { loadCustomers(); _pageLoaded.customers = true; }
+    if (page === 'services' && !_pageLoaded.services) { loadServices(); _pageLoaded.services = true; }
     if (page === 'messages' && !_pageLoaded.messages) { loadMessages(); _pageLoaded.messages = true; }
     if (page === 'settings') { loadBusinessSettings();}
   }
@@ -421,12 +423,19 @@ document.getElementById('settingsAdminRole').textContent = currentAdmin.role || 
     }).join('');
   }
 
-  function filterOrders(btn) {
-    document.querySelectorAll('.orders-filter-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    const status = btn.dataset.status;
-    renderOrdersTable(status === 'all' ? _allOrders : _allOrders.filter(o => o.status === status));
-  }
+ function filterOrders(btn) {
+  // Only affect filter buttons inside Orders
+  document
+    .querySelectorAll('#page-orders .orders-filter-btn')
+    .forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const status = btn.dataset.status;
+  renderOrdersTable(
+    status === 'all'
+      ? _allOrders
+      : _allOrders.filter(o => o.status === status)
+  );
+}
 
   async function changeOrderStatus(orderId, newStatus, selectEl) {
     selectEl.disabled = true;
@@ -944,4 +953,329 @@ function renderMessagesTable(messages) {
       `;
 
     }).join('');
+}
+let _allServices = [];
+
+async function loadServices() {
+  try {
+    const res = await apiFetch('/enquiries');
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(data.error || 'Failed to load service requests.');
+    }
+
+    // Service requests are stored as enquiries.
+    // We identify them by the "Service Request:" prefix.
+    _allServices = (data.data || []).filter(enquiry =>
+      enquiry.message &&
+      enquiry.message.trim().startsWith('Service Request:')
+    );
+
+    renderServicesTable(_allServices);
+
+    const badge = document.getElementById('serviceBadge');
+
+    if (badge) {
+      const newServices = _allServices.filter(
+        service => service.status === 'new'
+      ).length;
+
+      badge.textContent = newServices;
+    }
+
+  } catch (err) {
+
+    console.error('Service loading error:', err);
+
+    document.getElementById('servicesBody').innerHTML = `
+      <tr>
+        <td
+          colspan="6"
+          style="text-align:center;padding:2rem;color:#E88080"
+        >
+          ${esc(err.message)}
+        </td>
+      </tr>
+    `;
+
+  }
+}
+function renderServicesTable(services) {
+
+  const countEl = document.getElementById('services-count');
+  const bodyEl = document.getElementById('servicesBody');
+
+  countEl.textContent =
+    `${services.length} service request${services.length !== 1 ? 's' : ''}`;
+
+  if (services.length === 0) {
+
+    bodyEl.innerHTML = `
+      <tr>
+        <td
+          colspan="7"
+          style="text-align:center;padding:2rem;color:var(--text-muted)">
+          No service requests found.
+        </td>
+      </tr>
+    `;
+
+    return;
+  }
+
+  const STATUS_OPTIONS = [
+    'new',
+    'read',
+    'responded',
+    'archived'
+  ];
+
+  bodyEl.innerHTML = services.map(service => {
+
+    const lines = service.message
+      .split('\n')
+      .map(line => line.trim())
+      .filter(Boolean);
+
+    const getDetail = (label) => {
+
+      const line = lines.find(line =>
+        line.toLowerCase().startsWith(label.toLowerCase())
+      );
+
+      return line
+        ? line.substring(label.length).trim()
+        : '—';
+    };
+
+    const serviceName =
+      getDetail('Service Request:') !== '—'
+        ? getDetail('Service Request:')
+        : 'Service Request';
+
+    const quantity = getDetail('Quantity:');
+    const packaging = getDetail('Packaging:');
+    const roast = getDetail('Roast Level:');
+
+    const instructionsIndex = lines.findIndex(line =>
+      line.toLowerCase().startsWith('special instructions:')
+    );
+
+    let instructions = '—';
+
+    if (instructionsIndex !== -1) {
+      instructions =
+        lines.slice(instructionsIndex + 1).join(' ') || '—';
+    }
+
+    const date = service.createdAt
+      ? new Date(service.createdAt).toLocaleDateString(
+          'en-US',
+          {
+            month: 'short',
+            day: 'numeric',
+            year: 'numeric'
+          }
+        )
+      : '—';
+
+    const opts = STATUS_OPTIONS.map(status => `
+      <option
+        value="${status}"
+        ${service.status === status ? 'selected' : ''}>
+        ${capitalize(status)}
+      </option>
+    `).join('');
+
+    return `
+      <tr>
+
+        <!-- Request number -->
+        <td>
+          <span class="order-num">
+            SR-${String(service.id).padStart(4, '0')}
+          </span>
+        </td>
+
+        <!-- Customer -->
+        <td>
+          <div style="font-weight:500;font-size:0.9rem">
+            ${esc(service.name)}
+          </div>
+
+          <div
+            style="
+              font-size:0.75rem;
+              color:var(--text-muted);
+              margin-top:3px;
+            ">
+            ${esc(service.email)}
+          </div>
+        </td>
+
+        <!-- Service -->
+        <td>
+          <div style="font-weight:600">
+            ${esc(serviceName)}
+          </div>
+        </td>
+
+        <!-- Details -->
+        <td
+          style="
+            white-space:normal;
+            min-width:280px;
+            font-size:0.8rem;
+            line-height:1.7;
+          ">
+
+          <div>
+            <strong>Quantity:</strong>
+            ${esc(quantity)}
+          </div>
+
+          <div>
+            <strong>Packaging:</strong>
+            ${esc(packaging)}
+          </div>
+
+          <div>
+            <strong>Roast:</strong>
+            ${esc(roast)}
+          </div>
+
+          <div>
+            <strong>Instructions:</strong>
+            ${esc(instructions)}
+          </div>
+
+        </td>
+
+        <!-- Status -->
+        <td>
+          <span class="status-badge status-${esc(service.status)}">
+            ${capitalize(esc(service.status))}
+          </span>
+        </td>
+
+        <!-- Date -->
+        <td
+          style="
+            color:var(--text-muted);
+            font-size:0.8rem;
+            white-space:nowrap;
+          ">
+          ${date}
+        </td>
+
+        <!-- Update status -->
+        <td>
+
+          <select
+            onchange="changeServiceStatus(
+              ${Number(service.id)},
+              this.value,
+              this
+            )"
+            style="
+              font-size:0.78rem;
+              padding:0.3rem 0.5rem;
+              border:1px solid var(--border);
+              border-radius:5px;
+              background:var(--bg-surface);
+              color:var(--text-primary);
+              cursor:pointer;
+            ">
+
+            ${opts}
+
+          </select>
+
+        </td>
+
+      </tr>
+    `;
+
+  }).join('');
+}
+function filterServices(btn) {
+  // Only affect filter buttons inside Services
+  document
+    .querySelectorAll('#page-services .orders-filter-btn')
+    .forEach(b => b.classList.remove('active'));
+
+  btn.classList.add('active');
+
+  const status = btn.dataset.status;
+
+  renderServicesTable(
+    status === 'all'
+      ? _allServices
+      : _allServices.filter(service => service.status === status)
+  );
+}
+
+async function changeServiceStatus(serviceId, newStatus, selectEl) {
+
+  selectEl.disabled = true;
+
+  try {
+
+    const res = await apiFetch(
+      `/enquiries/${serviceId}/status`,
+      {
+        method: 'PATCH',
+        body: JSON.stringify({
+          status: newStatus
+        })
+      }
+    );
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(data.error || 'Failed to update status');
+    }
+
+    const service = _allServices.find(
+      item => item.id === serviceId
+    );
+
+    if (service) {
+      service.status = newStatus;
+    }
+
+    const row = selectEl.closest('tr');
+
+    const badge = row.querySelector('.status-badge');
+
+    badge.className =
+      `status-badge status-${newStatus}`;
+
+    badge.textContent =
+      capitalize(newStatus);
+
+    showToast(
+      `Service request marked as ${newStatus}`,
+      'success'
+    );
+
+  } catch (err) {
+
+    const service = _allServices.find(
+      item => item.id === serviceId
+    );
+
+    if (service) {
+      selectEl.value = service.status;
+    }
+
+    showToast(err.message, 'error');
+
+  } finally {
+
+    selectEl.disabled = false;
+
+  }
 }

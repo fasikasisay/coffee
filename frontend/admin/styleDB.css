@@ -1061,3 +1061,104 @@
   font-size: 1.1rem;
   display: block;
 }
+/* =========================================================
+   ORDERS & SERVICES FILTER BAR
+   ========================================================= */
+
+/* The filter panel is the panel immediately after the page header */
+#page-orders .page-header + .panel,
+#page-services .page-header + .panel {
+  padding: 10px 14px;
+  margin: 0 0 16px 0;
+  border-radius: var(--radius-md);
+}
+
+/* Keep the contents of the filter panel compact */
+#page-orders .page-header + .panel > div,
+#page-services .page-header + .panel > div {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* Filter label */
+#page-orders .page-header + .panel span,
+#page-services .page-header + .panel span {
+  font-size: 0.8rem !important;
+  margin-right: 4px !important;
+}
+
+/* Filter buttons */
+#page-orders .orders-filter-btn,
+#page-services .orders-filter-btn {
+  padding: 7px 16px;
+  min-height: 34px;
+  border-radius: 18px;
+
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+
+  font-size: 0.78rem;
+  font-weight: 600;
+
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.15s ease;
+}
+
+/* Hover */
+#page-orders .orders-filter-btn:hover,
+#page-services .orders-filter-btn:hover {
+  background: var(--bg-hover);
+  border-color: var(--brand-gold);
+  color: var(--brand-gold);
+}
+
+/* ONLY SELECTED FILTER IS BROWN */
+#page-orders .orders-filter-btn.active,
+#page-services .orders-filter-btn.active {
+  background: var(--brand-gold);
+  border-color: var(--brand-gold);
+  color: #fff;
+}
+
+/* Prevent active button from looking too large */
+#page-orders .orders-filter-btn.active:hover,
+#page-services .orders-filter-btn.active:hover {
+  background: var(--brand-roast);
+  border-color: var(--brand-roast);
+  color: #fff;
+}
+
+/* Space before the actual table panel */
+#page-orders .page-header + .panel + .panel,
+#page-services .page-header + .panel + .panel {
+  margin-top: 0;
+}
+
+/* =========================================================
+   FILTER PANEL RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 600px) {
+
+  #page-orders .page-header + .panel,
+  #page-services .page-header + .panel {
+    padding: 10px;
+  }
+
+  #page-orders .page-header + .panel > div,
+  #page-services .page-header + .panel > div {
+    gap: 6px;
+  }
+
+  #page-orders .orders-filter-btn,
+  #page-services .orders-filter-btn {
+    padding: 6px 12px;
+    font-size: 0.75rem;
+  }
+}
