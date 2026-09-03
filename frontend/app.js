@@ -870,7 +870,9 @@ function createProductHTML(product) {
         >
           ${buttonText}
         </button>
-
+        <button class="wishlist-btn" data-id="${product.id}" onclick="toggleWishlist(${product.id}, this)">
+          <i class="fa-solid fa-heart"></i>
+        </button>
       </div>
 
     </div>
@@ -2221,6 +2223,366 @@ function initializeApp() {
   updateActiveLink();
   renderServices();
   fetchProducts();
+  initCustomerState();
 }
 
+/* ============================================================
+   CUSTOMER ACCOUNT SYSTEM
+============================================================ */
+let currentUser = null;
+
+async function initCustomerState() {
+  try {
+    const res = await fetch(`${API_BASE}/customers/auth/me`, {credentials: 'include'});
+    if(res.ok) {
+      const data = await res.json();
+      if(data.success && data.data) {
+        currentUser = data.data;
+      }
+    }
+  } catch(e) {}
+  
+  updateAuthUI();
+  
+  if(currentUser) {
+    loadMyOrders();
+    loadWishlist();
+    prefillCheckoutForm();
+  }
+}
+
+function updateAuthUI() {
+  const authUI = document.getElementById('auth-ui');
+  const dashboardUI = document.getElementById('dashboard-ui');
+  const navAccount = document.getElementById('nav-account');
+  const mobileNavAccount = document.getElementById('mobile-nav-account');
+  
+  if(currentUser) {
+    if(authUI) authUI.style.display = 'none';
+    if(dashboardUI) dashboardUI.style.display = 'block';
+    
+    if(navAccount) navAccount.textContent = 'Dashboard';
+    if(mobileNavAccount) mobileNavAccount.textContent = 'Dashboard';
+
+   const profileFieldMap = {
+  name: 'prof-name',
+  company: 'prof-company',
+  phone: 'prof-phone',
+  street: 'prof-street',
+  city: 'prof-city',
+  postal_code: 'prof-postal',
+  country: 'prof-country'
+};
+Object.entries(profileFieldMap).forEach(
+  ([field, elementId]) => {
+    const el = document.getElementById(elementId);
+    if (el && currentUser[field] != null) {
+      el.value = currentUser[field];
+    }
+  }
+);
+  } else {
+    if(authUI) authUI.style.display = 'block';
+    if(dashboardUI) dashboardUI.style.display = 'none';
+    
+    if(navAccount) navAccount.textContent = 'Account';
+    if(mobileNavAccount) mobileNavAccount.textContent = 'Account';
+  }
+}
+
+function switchAuthTab(tab) {
+  const loginForm = document.getElementById('login-form');
+  const registerForm = document.getElementById('register-form');
+  const tabs = document.querySelectorAll('.auth-tab');
+  
+  tabs.forEach(t => t.classList.remove('active'));
+  
+  if(tab === 'login') {
+    loginForm.style.display = 'block';
+    registerForm.style.display = 'none';
+    tabs[0].classList.add('active');
+  } else {
+    loginForm.style.display = 'none';
+    registerForm.style.display = 'block';
+    tabs[1].classList.add('active');
+  }
+}
+
+async function handleLogin(e) {
+  e.preventDefault();
+  const email = document.getElementById('login-email').value;
+  const password = document.getElementById('login-password').value;
+  
+  try {
+    const res = await fetch(`${API_BASE}/customers/auth/login`, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({email, password}),
+      credentials: 'include'
+    });
+    const data = await res.json();
+    if(!res.ok) throw new Error(data.error || 'Login failed');
+    
+    currentUser = data.data;
+    showToast('Logged in successfully', 'success');
+    updateAuthUI();
+    loadMyOrders();
+    loadWishlist();
+    prefillCheckoutForm();
+  } catch(err) {
+    showToast(err.message, 'error');
+  }
+}
+
+async function handleRegister(e) {
+  e.preventDefault();
+  const name = document.getElementById('reg-name').value;
+  const email = document.getElementById('reg-email').value;
+  const password = document.getElementById('reg-password').value;
+  
+  try {
+    const res = await fetch(`${API_BASE}/customers/auth/register`, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({name, email, password}),
+      credentials: 'include'
+    });
+    const data = await res.json();
+    if(!res.ok) throw new Error(data.error || 'Registration failed');
+    
+    currentUser = data.data;
+    showToast('Account created', 'success');
+    updateAuthUI();
+  } catch(err) {
+    showToast(err.message, 'error');
+  }
+}
+
+async function handleLogout() {
+  try {
+    await fetch(`${API_BASE}/customers/auth/logout`, {credentials: 'include'});
+    currentUser = null;
+    showToast('Logged out', 'success');
+    updateAuthUI();
+    document.getElementById('orders-list').innerHTML = '';
+    document.getElementById('wishlist-grid').innerHTML = '';
+  } catch(e) {}
+}
+
+async function handleProfileUpdate(e) {
+  e.preventDefault();
+  const body = {
+    name: document.getElementById('prof-name').value,
+    company: document.getElementById('prof-company').value,
+    phone: document.getElementById('prof-phone').value,
+    street: document.getElementById('prof-street').value,
+    city: document.getElementById('prof-city').value,
+    postal_code: document.getElementById('prof-postal').value,
+    country: document.getElementById('prof-country').value,
+  };
+  
+  try {
+    const res = await fetch(`${API_BASE}/customers/profile`, {
+      method: 'PUT',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify(body),
+      credentials: 'include'
+    });
+    const data = await res.json();
+    if(!res.ok) throw new Error(data.error);
+    currentUser = data.data;
+    showToast('Profile updated', 'success');
+    prefillCheckoutForm();
+  } catch(err) {
+    showToast(err.message, 'error');
+  }
+}
+
+function prefillCheckoutForm() {
+  if(!currentUser) return;
+  const map = {
+    'customerName': currentUser.name,
+    'customerEmail': currentUser.email,
+    'customerPhone': currentUser.phone,
+    'customerCompany': currentUser.company,
+    'customerCountry': currentUser.country,
+    'customerStreet': currentUser.street,
+    'customerCity': currentUser.city,
+    'customerPostal': currentUser.postal_code,
+  };
+  for(const [id, val] of Object.entries(map)) {
+    const el = document.getElementById(id);
+    if(el && val) el.value = val;
+  }
+}
+
+/* ============================================================
+   ORDER TRACKING & HISTORY
+============================================================ */
+async function loadMyOrders() {
+  try {
+    const res = await fetch(`${API_BASE}/customers/profile/orders`, {credentials:'include'});
+    const data = await res.json();
+    if(!data.success) return;
+    
+    const tbody = document.getElementById('orders-list');
+    if(!tbody) return;
+    
+    if(data.data.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="5">No orders found.</td></tr>';
+      return;
+    }
+    
+    tbody.innerHTML = data.data.map(o => `
+      <tr>
+        <td>${o.order_number}</td>
+        <td>${new Date(o.created_at).toLocaleDateString()}</td>
+        <td><span style="text-transform:capitalize">${o.status}</span></td>
+        <td>$${Number(o.total_amount).toFixed(2)}</td>
+        <td><button class="btn btn--primary" style="padding:4px 10px;font-size:0.8rem" onclick="openOrderModal(${o.id})">View</button></td>
+      </tr>
+    `).join('');
+  } catch(e) {}
+}
+
+async function openOrderModal(id) {
+  try {
+    const res = await fetch(`${API_BASE}/customers/profile/orders/${id}`, {credentials:'include'});
+    const data = await res.json();
+    if(!data.success) throw new Error();
+    
+    const order = data.data;
+    document.getElementById('modal-order-id').textContent = `Order ${order.order_number}`;
+    
+    renderOrderTracker(order.status);
+    
+    const ul = document.getElementById('modal-order-items');
+    ul.innerHTML = order.items.map(item => `
+      <li>${item.quantity}x ${item.name} - $${Number(item.unit_price * item.quantity).toFixed(2)}</li>
+    `).join('');
+    
+    document.getElementById('modal-order-total').innerHTML = `<strong>Total: $${Number(order.total_amount).toFixed(2)}</strong>`;
+    
+    document.getElementById('reorder-btn').onclick = () => handleReorder(order.items);
+    
+    const modal = document.getElementById('order-modal');
+    modal.classList.add('open');
+    modal.setAttribute('aria-hidden', 'false');
+  } catch(e) {
+    showToast('Failed to load order', 'error');
+  }
+}
+
+function closeOrderModal() {
+  const modal = document.getElementById('order-modal');
+  if(modal) {
+    modal.classList.remove('open');
+    modal.setAttribute('aria-hidden', 'true');
+  }
+}
+
+function renderOrderTracker(status) {
+  const container = document.getElementById('order-progress');
+  const statuses = ['pending', 'confirmed', 'processing', 'shipped', 'delivered'];
+  const labels = ['Pending', 'Confirmed', 'Preparing', 'Ready', 'Delivered'];
+  const icons = ['fa-clock', 'fa-check', 'fa-box', 'fa-truck', 'fa-home'];
+  
+  // canceled status check
+  if(status === 'cancelled') {
+    container.innerHTML = '<div style="color:red; font-weight:bold; text-align:center; width:100%">Order Cancelled</div>';
+    return;
+  }
+  
+  let currentIndex = statuses.indexOf(status);
+  if(currentIndex === -1) currentIndex = 0;
+  
+  container.innerHTML = statuses.map((s, i) => {
+    let stateClass = '';
+    if(i < currentIndex) stateClass = 'completed';
+    else if(i === currentIndex) stateClass = 'current';
+    
+    return `
+      <div class="progress-step ${stateClass}">
+        <div class="step-icon"><i class="fa-solid ${icons[i]}"></i></div>
+        <div class="step-label">${labels[i]}</div>
+      </div>
+    `;
+  }).join('');
+}
+
+function handleReorder(items) {
+  items.forEach(item => {
+    const p = PRODUCT_MAP.get(Number(item.product_id));
+    if(p) {
+      for(let i=0; i<item.quantity; i++) addProductToCart(p.id);
+    }
+  });
+  closeOrderModal();
+}
+
+/* ============================================================
+   WISHLIST
+============================================================ */
+async function toggleWishlist(productId, btnNode) {
+  if(!currentUser) {
+    showToast('Please log in to save favorites', 'error');
+    return;
+  }
+  
+  const isActive = btnNode.classList.contains('active');
+  try {
+    if(isActive) {
+      await fetch(`${API_BASE}/customers/wishlist/${productId}`, {method: 'DELETE', credentials:'include'});
+      btnNode.classList.remove('active');
+    } else {
+      await fetch(`${API_BASE}/customers/wishlist`, {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({productId}),
+        credentials: 'include'
+      });
+      btnNode.classList.add('active');
+    }
+    loadWishlist();
+  } catch(e) {}
+}
+
+async function loadWishlist() {
+  if(!currentUser) return;
+  try {
+    const res = await fetch(`${API_BASE}/customers/wishlist`, {credentials:'include'});
+    const data = await res.json();
+    if(!data.success) return;
+    
+    const grid = document.getElementById('wishlist-grid');
+    const emptyMsg = document.getElementById('wishlist-empty');
+    if(!grid || !emptyMsg) return;
+    
+    // Update product buttons active state
+    document.querySelectorAll('.wishlist-btn').forEach(btn => {
+      const id = Number(btn.getAttribute('data-id'));
+      if(data.data.some(w => w.id === id)) btn.classList.add('active');
+      else btn.classList.remove('active');
+    });
+    
+    if(data.data.length === 0) {
+      emptyMsg.style.display = 'block';
+      grid.innerHTML = '';
+    } else {
+      emptyMsg.style.display = 'none';
+      grid.innerHTML = data.data.map(createProductHTML).join('');
+    }
+  } catch(e) {}
+}
+
+window.switchAuthTab = switchAuthTab;
+window.handleLogin = handleLogin;
+window.handleRegister = handleRegister;
+window.handleLogout = handleLogout;
+window.handleProfileUpdate = handleProfileUpdate;
+window.openOrderModal = openOrderModal;
+window.closeOrderModal = closeOrderModal;
+window.toggleWishlist = toggleWishlist;
+
 initializeApp();
+

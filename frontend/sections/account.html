@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"content="width=device-width, initial-scale=1.0">
+  <title>My Account | Misrak Coffee</title>
+  <!-- Main website CSS -->
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" >
+ <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" >
+</head>
+
+<section
+  id="account-section"
+  class="account-section"
+>
+
+  <!-- =====================================================
+       LOGIN / REGISTER
+  ====================================================== -->
+
+  <div
+    id="auth-ui"
+    class="auth-container"
+  >
+
+    <!-- Tabs -->
+    <div class="auth-tabs">
+
+      <button
+        type="button"
+        class="auth-tab active"
+        onclick="switchAuthTab('login')"
+      >
+        Login
+      </button>
+
+      <button
+        type="button"
+        class="auth-tab"
+        onclick="switchAuthTab('register')"
+      >
+        Register
+      </button>
+
+    </div>
+
+
+    <!-- LOGIN -->
+    <form
+      id="login-form"
+      class="auth-form"
+      onsubmit="handleLogin(event)"
+    >
+
+      <div class="form-group">
+
+        <label for="login-email">
+          Email
+        </label>
+
+        <input
+          type="email"
+          id="login-email"
+          placeholder="Enter your email"
+          autocomplete="email"
+          required
+        >
+
+      </div>
+
+
+      <div class="form-group">
+
+        <label for="login-password">
+          Password
+        </label>
+
+        <input
+          type="password"
+          id="login-password"
+          placeholder="Enter your password"
+          autocomplete="current-password"
+          required
+        >
+
+      </div>
+
+
+      <button
+        type="submit"
+        class="btn btn--primary auth-submit"
+      >
+        Log In
+      </button>
+
+    </form>
+
+
+    <!-- REGISTER -->
+    <form
+      id="register-form"
+      class="auth-form"
+      onsubmit="handleRegister(event)"
+      style="display:none;"
+    >
+
+      <div class="form-group">
+
+        <label for="reg-name">
+          Full Name
+        </label>
+
+        <input
+          type="text"
+          id="reg-name"
+          placeholder="Enter your full name"
+          autocomplete="name"
+          required
+        >
+
+      </div>
+
+
+      <div class="form-group">
+
+        <label for="reg-email">
+          Email
+        </label>
+
+        <input
+          type="email"
+          id="reg-email"
+          placeholder="Enter your email"
+          autocomplete="email"
+          required
+        >
+
+      </div>
+
+
+      <div class="form-group">
+
+        <label for="reg-password">
+          Password
+        </label>
+
+        <input
+          type="password"
+          id="reg-password"
+          placeholder="Create a password"
+          autocomplete="new-password"
+          required
+        >
+
+      </div>
+
+
+      <button
+        type="submit"
+        class="btn btn--primary auth-submit"
+      >
+        Create Account
+      </button>
+
+    </form>
+
+  </div>
+
+
+  <!-- =====================================================
+       USER DASHBOARD
+  ====================================================== -->
+
+  <div
+    id="dashboard-ui"
+    class="customer-dashboard"
+    style="display:none;"
+  >
+
+    <div class="dashboard-header">
+
+      <div>
+
+        <span class="section-eyebrow">
+          Welcome back
+        </span>
+
+        <h2>
+          My Account
+        </h2>
+
+      </div>
+
+
+      <button
+        type="button"
+        onclick="handleLogout()"
+        class="btn btn--ghost"
+      >
+        <i class="fa-solid fa-right-from-bracket"></i>
+        Log Out
+      </button>
+
+    </div>
+
+
+    <div class="dashboard-grid">
+
+      <!-- PROFILE -->
+      <div class="dashboard-card">
+
+        <h3>
+          Profile & Default Address
+        </h3>
+
+        <form
+          id="profile-form"
+          onsubmit="handleProfileUpdate(event)"
+        >
+
+          <div class="form-group">
+
+            <label for="prof-name">
+              Name
+            </label>
+
+            <input
+              type="text"
+              id="prof-name"
+            >
+
+          </div>
+
+
+          <div class="form-group">
+
+            <label for="prof-company">
+              Company
+            </label>
+
+            <input
+              type="text"
+              id="prof-company"
+            >
+
+          </div>
+
+
+          <div class="form-group">
+
+            <label for="prof-phone">
+              Phone
+            </label>
+
+            <input
+              type="text"
+              id="prof-phone"
+            >
+
+          </div>
+
+
+          <div class="form-group">
+
+            <label for="prof-street">
+              Street
+            </label>
+
+            <input
+              type="text"
+              id="prof-street"
+            >
+
+          </div>
+
+
+          <div class="form-group">
+
+            <label for="prof-city">
+              City
+            </label>
+
+            <input
+              type="text"
+              id="prof-city"
+            >
+
+          </div>
+
+
+          <div class="form-group">
+
+            <label for="prof-postal">
+              Postal Code
+            </label>
+
+            <input
+              type="text"
+              id="prof-postal"
+            >
+
+          </div>
+
+
+          <div class="form-group">
+
+            <label for="prof-country">
+              Country
+            </label>
+
+            <input
+              type="text"
+              id="prof-country"
+            >
+
+          </div>
+
+
+          <button
+            type="submit"
+            class="btn btn--primary"
+          >
+            Save Changes
+          </button>
+
+        </form>
+
+      </div>
+
+
+      <!-- ORDER HISTORY -->
+      <div class="dashboard-card">
+
+        <h3>
+          Order History
+        </h3>
+
+        <div class="table-responsive">
+
+          <table class="orders-table">
+
+            <thead>
+
+              <tr>
+                <th>Order ID</th>
+                <th>Date</th>
+                <th>Status</th>
+                <th>Total</th>
+                <th>Action</th>
+              </tr>
+
+            </thead>
+
+            <tbody id="orders-list">
+              <!-- Loaded by app.js -->
+            </tbody>
+
+          </table>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- =====================================================
+       ORDER DETAILS MODAL
+  ====================================================== -->
+
+  <div
+    id="order-modal"
+    class="modal"
+    aria-hidden="true"
+  >
+
+    <div class="modal-content order-modal-content">
+
+      <button
+        type="button"
+        class="modal-close"
+        onclick="closeOrderModal()"
+        aria-label="Close"
+      >
+        &times;
+      </button>
+
+
+      <h3 id="modal-order-id">
+        Order Details
+      </h3>
+
+
+      <div
+        class="progress-tracker"
+        id="order-progress"
+      >
+        <!-- Loaded by JS -->
+      </div>
+
+
+      <div class="order-summary">
+
+        <h4>
+          Items
+        </h4>
+
+        <ul id="modal-order-items"></ul>
+
+        <div
+          class="order-total"
+          id="modal-order-total"
+        ></div>
+
+
+        <button
+          type="button"
+          class="btn btn--primary"
+          id="reorder-btn"
+        >
+          Reorder these items
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
