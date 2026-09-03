@@ -79,6 +79,7 @@ function escapeHTML(value) {
 
 function resolveProductImage(product) {
 
+  // Keep all your existing product images
   const imageMap = {
     'Yirgacheffe Grade 1':
       'images/greencoffeebeans.webp',
@@ -105,24 +106,38 @@ function resolveProductImage(product) {
       'images/high-angle-view-beans.jpg'
   };
 
-  // First use the specific image assigned to the product name
+  // Original products keep their existing images
   if (imageMap[product.name]) {
     return imageMap[product.name];
   }
 
-  // Otherwise use the image from the backend
-  if (
-    product.image &&
-    typeof product.image === 'string' &&
-    product.image.trim() !== ''
-  ) {
-    return product.image;
+  // No image
+  if (!product.image || typeof product.image !== 'string') {
+    return 'images/greencoffeebeans.webp';
   }
 
-  // Final fallback
-  return 'images/greencoffeebeans.webp';
-}
+  const image = product.image.trim();
 
+  if (!image) {
+    return 'images/greencoffeebeans.webp';
+  }
+
+  
+  // Full external URL
+  if (image.startsWith('http://') || image.startsWith('https://')) {
+    return image;
+  }
+
+  // Uploaded backend image
+  if (image.startsWith('/uploads/')) {
+    const backendUrl = API_BASE.replace('/api/v1', '');
+    console.log('Product image:', product.image);
+console.log('Final image URL:', `${backendUrl}${image}`);
+    return `${backendUrl}${image}`;
+  }
+
+  return image;
+}
 function withImageFallback(img) {
   img.addEventListener(
     'error',

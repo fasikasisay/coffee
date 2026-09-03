@@ -128,6 +128,7 @@ CREATE TABLE IF NOT EXISTS enquiries (
   id            INT UNSIGNED  NOT NULL AUTO_INCREMENT,
   name          VARCHAR(120)  NOT NULL,
   email         VARCHAR(255)  NOT NULL,
+   phone         VARCHAR(50)   DEFAULT NULL,
   message       TEXT          NOT NULL,
   status        ENUM('new','read','responded','archived') NOT NULL DEFAULT 'new',
   created_at    DATETIME      NOT NULL DEFAULT CURRENT_TIMESTAMP,

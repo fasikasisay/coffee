@@ -25,9 +25,6 @@ exports.createProductValidation = [
     .trim().isLength({ max: 100 }),
   body('grade').optional({ nullable: true, checkFalsy: true })
     .trim().isLength({ max: 50 }),
-  body('image').optional({ nullable: true, checkFalsy: true })
-    .trim().isURL().withMessage('image must be a valid URL')
-    .isLength({ max: 500 }),
 ];
 
 exports.updateProductValidation = [
@@ -42,8 +39,7 @@ exports.updateProductValidation = [
   body('region').optional({ nullable: true, checkFalsy: true }).trim().isLength({ max: 100 }),
   body('process').optional({ nullable: true, checkFalsy: true }).trim().isLength({ max: 100 }),
   body('grade').optional({ nullable: true, checkFalsy: true }).trim().isLength({ max: 50 }),
-  body('image').optional({ nullable: true, checkFalsy: true }).trim().isURL().isLength({ max: 500 }),
-  body('isAvailable').optional().isBoolean(),
+ body('image').optional().isString().isLength({ max: 255 }).withMessage('image path must be under 255 characters'),
 ];
 
 
@@ -68,11 +64,26 @@ exports.getProduct = asyncHandler(async (req, res, next) => {
 // POST /api/v1/products  (admin)
 exports.createProduct = asyncHandler(async (req, res, next) => {
   const errors = validationResult(req);
+
   if (!errors.isEmpty()) {
     return next(new ErrorResponse(errors.array()[0].msg, 400));
   }
-  const product = await Product.create(req.body);
-  res.status(201).json({ success: true, data: product });
+
+  const productData = {
+    ...req.body,
+  };
+
+  // Save uploaded image path
+  if (req.file) {
+    productData.image = `/uploads/products/${req.file.filename}`;
+  }
+
+  const product = await Product.create(productData);
+
+  res.status(201).json({
+    success: true,
+    data: product,
+  });
 });
 
 // PUT /api/v1/products/:id  (admin)

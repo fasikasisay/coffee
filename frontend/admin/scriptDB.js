@@ -535,45 +535,140 @@ document.getElementById('settingsAdminRole').textContent = currentAdmin.role || 
     } catch(err) { showToast(err.message,'error'); }
   }
 
-  function openAddProductModal() {
-    document.getElementById('addProductModal').style.display='flex';
-    document.getElementById('addProductForm').reset();
-    document.getElementById('addProductError').style.display='none';
-  }
+ function openAddProductModal() {
+  document.getElementById('addProductModal').style.display = 'flex';
+
+  document.getElementById('addProductForm').reset();
+  document.getElementById('addProductError').style.display = 'none';
+
+  const preview = document.getElementById('pImagePreview');
+  preview.src = '';
+  preview.style.display = 'none';
+}
   function closeAddProductModal() {
     document.getElementById('addProductModal').style.display='none';
   }
   document.getElementById('addProductModal').addEventListener('click',function(e){
     if(e.target===this) closeAddProductModal();
   });
+const productImageInput = document.getElementById('pImage');
+const productImagePreview = document.getElementById('pImagePreview');
 
-  async function submitAddProduct(e) {
-    e.preventDefault();
-    const btn   = document.getElementById('addProductBtn');
-    const errEl = document.getElementById('addProductError');
-    errEl.style.display = 'none';
-    const payload = {
-      name:        document.getElementById('pName').value.trim(),
-      category:    document.getElementById('pCategory').value,
-      pricePerKg:  Number(document.getElementById('pPrice').value),
-      minOrderKg:  Number(document.getElementById('pMinOrder').value)||1,
-      stock:       Number(document.getElementById('pStock').value)||0,
-      region:      document.getElementById('pRegion').value.trim()||undefined,
-      description: document.getElementById('pDesc').value.trim()||undefined,
-    };
-    btn.disabled=true; btn.textContent='Adding…';
-    try {
-      const res  = await apiFetch('/products',{method:'POST',body:JSON.stringify(payload)});
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error);
-      _allProducts.unshift(data.data);
-      renderProductsTable(_allProducts);
-      closeAddProductModal();
-      showToast(`"${data.data.name}" added`,'success');
-    } catch(err) { errEl.textContent=err.message; errEl.style.display='block'; }
-    finally { btn.disabled=false; btn.textContent='Add Product'; }
+productImageInput.addEventListener('change', function () {
+  const file = this.files[0];
+
+  if (!file) {
+    productImagePreview.src = '';
+    productImagePreview.style.display = 'none';
+    return;
   }
 
+  // Validate file size (5MB)
+  if (file.size > 5 * 1024 * 1024) {
+    showToast('Image must be smaller than 5MB', 'error');
+
+    this.value = '';
+    productImagePreview.src = '';
+    productImagePreview.style.display = 'none';
+    return;
+  }
+
+  const reader = new FileReader();
+
+  reader.onload = function (event) {
+    productImagePreview.src = event.target.result;
+    productImagePreview.style.display = 'block';
+  };
+
+  reader.readAsDataURL(file);
+});
+async function submitAddProduct(e) {
+  e.preventDefault();
+
+  const btn = document.getElementById('addProductBtn');
+  const errEl = document.getElementById('addProductError');
+  const imageInput = document.getElementById('pImage');
+
+  errEl.style.display = 'none';
+
+  const formData = new FormData();
+
+  formData.append(
+    'name',
+    document.getElementById('pName').value.trim()
+  );
+
+  formData.append(
+    'category',
+    document.getElementById('pCategory').value
+  );
+
+  formData.append(
+    'pricePerKg',
+    document.getElementById('pPrice').value
+  );
+
+  formData.append(
+    'minOrderKg',
+    document.getElementById('pMinOrder').value || '1'
+  );
+
+  formData.append(
+    'stock',
+    document.getElementById('pStock').value || '0'
+  );
+
+  formData.append(
+    'region',
+    document.getElementById('pRegion').value.trim()
+  );
+
+  formData.append(
+    'description',
+    document.getElementById('pDesc').value.trim()
+  );
+
+  // Add image file
+  if (imageInput.files.length > 0) {
+    formData.append('image', imageInput.files[0]);
+  }
+
+  btn.disabled = true;
+  btn.textContent = 'Adding…';
+
+  try {
+    const res = await fetch(`${API_BASE}/products`, {
+      method: 'POST',
+      credentials: 'include',
+      body: formData,
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(data.error || 'Failed to add product');
+    }
+
+    _allProducts.unshift(data.data);
+
+    renderProductsTable(_allProducts);
+
+    closeAddProductModal();
+
+    showToast(
+      `"${data.data.name}" added successfully`,
+      'success'
+    );
+
+  } catch (err) {
+    errEl.textContent = err.message;
+    errEl.style.display = 'block';
+
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Add Product';
+  }
+}
 
   /*  CUSTOMERS PAGE */
 
@@ -1121,14 +1216,13 @@ function renderServicesTable(services) {
           </div>
         </td>
 
-        <!-- Details -->
-        <td
-          style="
-            white-space:normal;
-            min-width:280px;
-            font-size:0.8rem;
-            line-height:1.7;
-          ">
+       <!-- Details -->
+<td
+  style="
+    white-space:normal;
+    font-size:0.78rem;
+    line-height:1.4;
+  ">
 
           <div>
             <strong>Quantity:</strong>

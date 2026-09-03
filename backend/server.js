@@ -1,6 +1,7 @@
 require('dotenv').config();
 
 const express      = require('express');
+const path = require('path');
 const helmet       = require('helmet');
 const cors         = require('cors');
 const morgan       = require('morgan');
@@ -26,7 +27,6 @@ const isProd = process.env.NODE_ENV === 'production';
 // Helmet (security headers) 
 app.use(
   helmet({
-    
     contentSecurityPolicy: isProd ? {
       directives: {
         defaultSrc: ["'self'"],
@@ -104,7 +104,17 @@ const adminLimiter = rateLimit({
 app.use(express.json({ limit: '16kb' }));
 app.use(express.urlencoded({ extended: false, limit: '16kb' }));
 app.use(cookieParser());
-
+app.use(
+  '/uploads',
+  (req, res, next) => {
+    res.setHeader(
+      'Cross-Origin-Resource-Policy',
+      'cross-origin'
+    );
+    next();
+  },
+  express.static(path.join(__dirname, 'uploads'))
+);
 
 if (!isProd) {
   app.use(morgan('dev'));
@@ -125,6 +135,17 @@ app.use('/api/v1/orders',    publicLimiter, orderRoutes);
 app.use('/api/v1/products',  publicLimiter, productRoutes);
 app.use('/api/v1/enquiries', publicLimiter, enquiryRoutes);
 app.use('/api/v1/business-settings', publicLimiter, businessSettingsRoutes);
+app.use(
+  '/uploads',
+  (req, res, next) => {
+    res.setHeader(
+      'Cross-Origin-Resource-Policy',
+      'cross-origin'
+    );
+    next();
+  },
+  express.static(path.join(__dirname, 'uploads'))
+);
 // 404
 app.use((req, res) => {
   res.status(404).json({ success: false, error: 'Route not found' });
