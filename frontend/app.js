@@ -783,7 +783,7 @@ async function fetchProducts() {
 
     const response =
       await fetch(
-        `${API_BASE}/products`
+        `${API_BASE}/products?available=true`
       );
 
 

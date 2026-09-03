@@ -112,9 +112,7 @@ const Product = {
 
  async delete(id) {
   const [result] = await pool.execute(
-    `UPDATE products
-     SET is_available = 0, updated_at = NOW()
-     WHERE id = ?`,
+   'DELETE FROM products WHERE id = ?',
     [id]
   );
 

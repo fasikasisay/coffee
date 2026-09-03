@@ -40,6 +40,7 @@ exports.updateProductValidation = [
   body('process').optional({ nullable: true, checkFalsy: true }).trim().isLength({ max: 100 }),
   body('grade').optional({ nullable: true, checkFalsy: true }).trim().isLength({ max: 50 }),
  body('image').optional().isString().isLength({ max: 255 }).withMessage('image path must be under 255 characters'),
+body('isAvailable').optional().isBoolean() .withMessage('isAvailable must be true or false'),
 ];
 
 
