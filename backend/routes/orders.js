@@ -9,8 +9,10 @@ const {
 } = require('../controllers/orderController');
 const { protect, authorize } = require('../middleware/auth');
 
+const { optionalCustomerAuth } = require('../middleware/customerAuth');
+
 // Public — storefront order submission (no auth required)
-router.post('/', createOrderValidation, createOrder);
+router.post('/', optionalCustomerAuth, createOrderValidation, createOrder);
 
 // Admin read access — any active admin or superadmin may view orders
 router.get('/',     protect, authorize('admin', 'superadmin'), getOrders);
