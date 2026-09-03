@@ -17,6 +17,7 @@ const orderRoutes     = require('./routes/orders');
 const productRoutes   = require('./routes/products');
 const enquiryRoutes   = require('./routes/enquiries');
 const businessSettingsRoutes = require('./routes/businessSettings');
+const customerRoutes  = require('./routes/customerRoutes');
 
 // Connect MySQL
 connectDB();
@@ -130,6 +131,7 @@ app.get('/health', (_req, res) => {
 
 // API routes
 app.use('/api/v1/auth',      authLimiter,   authRoutes);
+app.use('/api/v1/customers', publicLimiter, customerRoutes);
 app.use('/api/v1/dashboard', adminLimiter,  dashboardRoutes);
 app.use('/api/v1/orders',    publicLimiter, orderRoutes);
 app.use('/api/v1/products',  publicLimiter, productRoutes);

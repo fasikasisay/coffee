@@ -58,8 +58,12 @@ CREATE TABLE IF NOT EXISTS customers (
   id            INT UNSIGNED  NOT NULL AUTO_INCREMENT,
   name          VARCHAR(255)  NOT NULL,
   email         VARCHAR(255)  NOT NULL UNIQUE,
+  password      VARCHAR(255)  NULL,
   company       VARCHAR(255)  NULL,
   country       VARCHAR(100)  NULL,
+  street        VARCHAR(255)  NULL,
+  city          VARCHAR(100)  NULL,
+  postal_code   VARCHAR(20)   NULL,
   phone         VARCHAR(50)   NULL,
   total_orders  INT UNSIGNED  NOT NULL DEFAULT 0,
   total_spent   DECIMAL(14,2) NOT NULL DEFAULT 0.00,
@@ -79,6 +83,7 @@ CREATE TABLE IF NOT EXISTS orders (
   id                   INT UNSIGNED  NOT NULL AUTO_INCREMENT,
   order_number         VARCHAR(20)   NOT NULL UNIQUE,   -- MC-00001
   -- customer snapshot
+  customer_id          INT UNSIGNED  NULL,
   customer_name        VARCHAR(255)  NOT NULL,
   customer_email       VARCHAR(255)  NOT NULL,
   customer_company     VARCHAR(255)  NULL,
@@ -102,7 +107,10 @@ CREATE TABLE IF NOT EXISTS orders (
   PRIMARY KEY (id),
   INDEX idx_status     (status),
   INDEX idx_created_at (created_at),
-  INDEX idx_cust_email (customer_email)
+  INDEX idx_cust_email (customer_email),
+  INDEX idx_cust_id    (customer_id),
+  CONSTRAINT fk_orders_customer
+    FOREIGN KEY (customer_id) REFERENCES customers(id) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --  order_items
@@ -138,4 +146,17 @@ CREATE TABLE IF NOT EXISTS enquiries (
   PRIMARY KEY (id),
   INDEX idx_status     (status),
   INDEX idx_created_at (created_at)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- wishlists
+CREATE TABLE IF NOT EXISTS wishlists (
+  customer_id   INT UNSIGNED  NOT NULL,
+  product_id    INT UNSIGNED  NOT NULL,
+  created_at    DATETIME      NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+  PRIMARY KEY (customer_id, product_id),
+  CONSTRAINT fk_wishlist_customer
+    FOREIGN KEY (customer_id) REFERENCES customers(id) ON DELETE CASCADE,
+  CONSTRAINT fk_wishlist_product
+    FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

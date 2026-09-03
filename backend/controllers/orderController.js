@@ -171,15 +171,27 @@ exports.createOrder = asyncHandler(async (req, res, next) => {
       phone:   customer.phone   ? customer.phone.trim()    : null,
     };
 
+    // Ensure customer row exists and stats are updated in transaction
+    let customerId;
+    try {
+      customerId = await Customer.upsert(cleanedCustomer, conn);
+      await Customer.incrementStats(customerId, serverTotal, conn);
+    } catch (err) {
+      console.error('Customer update failed:', err);
+      // Fallback if upsert fails for some reason
+      customerId = req.customer ? req.customer.id : null;
+    }
+
     const [orderResult] = await conn.execute(`
       INSERT INTO orders (
-        order_number, customer_name, customer_email, customer_company,
+        order_number, customer_id, customer_name, customer_email, customer_company,
         customer_country, customer_phone,
         total_amount, status, notes,
         shipping_street, shipping_city, shipping_country, shipping_postal_code
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, 'pending', ?, ?, ?, ?, ?)
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'pending', ?, ?, ?, ?, ?)
     `, [
       orderNumber,
+      customerId,
       cleanedCustomer.name, cleanedCustomer.email,
       cleanedCustomer.company, cleanedCustomer.country, cleanedCustomer.phone,
       serverTotal,
@@ -202,13 +214,6 @@ exports.createOrder = asyncHandler(async (req, res, next) => {
     }
 
     await conn.commit();
-
-try {
-  const customerId = await Customer.upsert(cleanedCustomer);
-  await Customer.incrementStats(customerId, serverTotal);
-} catch (err) {
-  console.error('Customer update failed:', err);
-}
 
 const order = await Order.findById(orderId);
     res.status(201).json({ success: true, data: order });
