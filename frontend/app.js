@@ -2309,31 +2309,123 @@ function switchAuthTab(tab) {
 }
 
 async function handleLogin(e) {
-  e.preventDefault();
-  const email = document.getElementById('login-email').value;
-  const password = document.getElementById('login-password').value;
-  
-  try {
-    const res = await fetch(`${API_BASE}/customers/auth/login`, {
-      method: 'POST',
-      headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({email, password}),
-      credentials: 'include'
-    });
-    const data = await res.json();
-    if(!res.ok) throw new Error(data.error || 'Login failed');
-    
-    currentUser = data.data;
-    showToast('Logged in successfully', 'success');
-    updateAuthUI();
-    loadMyOrders();
-    loadWishlist();
-    prefillCheckoutForm();
-  } catch(err) {
-    showToast(err.message, 'error');
-  }
-}
 
+  e.preventDefault();
+
+
+  const email =
+    document
+      .getElementById('login-email')
+      .value
+      .trim();
+
+  const password =
+    document
+      .getElementById('login-password')
+      .value;
+
+
+  console.log(
+    'Sending login request for:',
+    email
+  );
+
+
+  try {
+
+    const res = await fetch(
+      `${API_BASE}/customers/auth/login`,
+      {
+
+        method: 'POST',
+
+        headers: {
+          'Content-Type':
+            'application/json'
+        },
+
+        body: JSON.stringify({
+          email,
+          password
+        }),
+
+        credentials: 'include'
+
+      }
+    );
+
+
+    const data =
+      await res.json();
+
+
+    console.log(
+      'Login response:',
+      res.status,
+      data
+    );
+
+
+    if (!res.ok) {
+
+      throw new Error(
+
+        data.error ||
+        data.message ||
+        'Login failed'
+
+      );
+
+    }
+
+
+    currentUser = data.data;
+
+
+    if (!currentUser) {
+
+      throw new Error(
+        'Login succeeded but user data was not returned'
+      );
+
+    }
+
+
+    showToast(
+      'Logged in successfully',
+      'success'
+    );
+
+
+    updateAuthUI();
+
+    loadMyOrders();
+
+    loadWishlist();
+
+    prefillCheckoutForm();
+
+
+  } catch (err) {
+
+    console.error(
+      'Login error:',
+      err
+    );
+
+
+    showToast(
+
+      err.message ||
+      'Unable to log in',
+
+      'error'
+
+    );
+
+  }
+
+}
 async function handleRegister(e) {
   e.preventDefault();
   const name = document.getElementById('reg-name').value;

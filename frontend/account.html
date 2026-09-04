@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>My Account | Misrak Coffee</title>
+
+  <!-- Main Website CSS -->
+  <link rel="stylesheet" href="style.css">
+
+  <!-- Fonts -->
+  <link
+    rel="preconnect"
+    href="https://fonts.googleapis.com"
+  >
+
+  <link
+    rel="preconnect"
+    href="https://fonts.gstatic.com"
+    crossorigin
+  >
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=DM+Sans:wght@300;400;500;600&display=swap"
+    rel="stylesheet"
+  >
+
+  <!-- Icons -->
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+  >
+</head>
+
+
+<body>
+
+  <!-- NAVBAR -->
+
+  <header id="navbar" class="navbar">
+
+    <div class="container nav-container">
+
+      <a
+        href="index.html#home"
+        class="logo"
+      >
+        <img
+          src="logo2.png"
+          alt="Misrak Coffee Logo"
+          class="logo-image"
+        >
+
+        <span class="logo-text">
+          Misrak <em>Coffee</em>
+        </span>
+      </a>
+
+
+      <nav
+        class="nav-links"
+        aria-label="Primary Navigation"
+      >
+
+        <a href="index.html#home" class="nav-link">
+          Home
+        </a>
+
+        <a href="index.html#about" class="nav-link">
+          About
+        </a>
+
+        <a href="index.html#menu" class="nav-link">
+          Menu
+        </a>
+
+        <a href="index.html#contact" class="nav-link">
+          Contact
+        </a>
+
+        <a
+          href="account.html"
+          class="nav-link active"
+        >
+          Account
+        </a>
+
+      </nav>
+
+
+      <div class="nav-actions">
+
+        <button
+          id="themeToggle"
+          class="theme-toggle"
+          aria-label="Toggle theme"
+        >
+          <i class="fa-solid fa-sun"></i>
+        </button>
+
+
+        <button
+          id="cartToggle"
+          class="cart-toggle"
+          aria-label="Open cart"
+        >
+          <i class="fa-solid fa-bag-shopping"></i>
+
+          <span
+            id="cartBadge"
+            class="cart-badge"
+          >
+            0
+          </span>
+        </button>
+
+
+        <button
+          id="hamburger"
+          class="hamburger"
+          aria-label="Toggle menu"
+        >
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+
+      </div>
+
+    </div>
+
+  </header>
+
+
+  <!-- ACCOUNT PAGE -->
+
+  <main class="account-page-main">
+
+    <!-- Account section loads here -->
+    <div id="account-section-wrapper"></div>
+
+
+    <!-- Wishlist loads here -->
+    <div id="wishlist-section-wrapper"></div>
+
+  </main>
+
+
+  <!-- CART -->
+
+  <div id="cart-section"></div>
+
+
+  <!-- Load sections -->
+
+  <div id="toast"class="toast"role="status" aria-live="polite"
+></div>
+   <script>
+  async function loadSection(containerId, filePath) {
+    const container = document.getElementById(containerId);
+    if (!container) {
+      console.error(`Container not found: ${containerId}`);
+      return;
+    }
+    try {
+      const response = await fetch(filePath);
+      if (!response.ok) {
+        throw new Error(
+          `Failed to load ${filePath}: ${response.status}`
+        );
+      }
+
+      const html = await response.text();
+
+      container.innerHTML = html;
+
+      console.log(`Loaded successfully: ${filePath}`);
+
+    } catch (error) {
+
+      console.error(
+        `Error loading ${filePath}:`,
+        error
+      );
+
+      container.innerHTML = `
+        <p style="padding: 100px 20px; color: red;">
+          Failed to load ${filePath}
+        </p>
+      `;
+    }
+  }
+
+
+  async function initializeAccountPage() {
+
+    console.log('Initializing account page...');
+
+    await loadSection(
+      'account-section-wrapper',
+      './sections/account.html'
+    );
+
+    await loadSection(
+      'wishlist-section-wrapper',
+      './sections/wishlist.html'
+    );
+
+    await loadSection(
+      'cart-section',
+      './sections/cart.html'
+    );
+
+
+    const script = document.createElement('script');
+
+    script.src = './app.js';
+
+    script.onload = () => {
+
+      console.log('app.js loaded successfully');
+ const loginForm =
+    document.getElementById('login-form');
+
+  const registerForm =
+    document.getElementById('register-form');
+
+
+  if (loginForm) {
+
+    loginForm.addEventListener(
+      'submit',
+      async event => {
+
+        event.preventDefault();
+
+        console.log('Login form submitted');
+
+        if (
+          typeof window.handleLogin ===
+          'function'
+        ) {
+
+          await window.handleLogin(event);
+
+        } else {
+
+          console.error(
+            'handleLogin function was not found'
+          );
+
+        }
+
+      }
+    );
+
+  }
+
+
+  if (registerForm) {
+
+    registerForm.addEventListener(
+      'submit',
+      async event => {
+
+        event.preventDefault();
+
+        console.log('Register form submitted');
+
+        if (
+          typeof window.handleRegister ===
+          'function'
+        ) {
+
+          await window.handleRegister(event);
+
+        } else {
+
+          console.error(
+            'handleRegister function was not found'
+          );
+
+        }
+
+      }
+    );
+
+  }
+    };
+
+    script.onerror = () => {
+
+      console.error('Failed to load app.js');
+
+    };
+
+    document.body.appendChild(script);
+  }
+
+
+  document.addEventListener(
+    'DOMContentLoaded',
+    initializeAccountPage
+  );
+
+  </script>
+
+</body>
+</html>
