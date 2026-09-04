@@ -39,25 +39,63 @@ exports.register = asyncHandler(async (req, res, next) => {
   const { name, email, password } = req.body;
 
   if (!name || !email || !password) {
-    return next(new ErrorResponse('Please provide name, email, and password', 400));
+    return next(
+      new ErrorResponse('Please provide name, email, and password', 400)
+    );
   }
 
-  // Check if customer exists
-  const [existing] = await pool.query('SELECT * FROM customers WHERE email = ?', [email]);
-  if (existing.length > 0) {
-    return next(new ErrorResponse('Email already registered', 400));
-  }
+  const normalizedEmail = email.trim().toLowerCase();
+
+  // Check if customer already exists
+  const [existing] = await pool.query(
+    'SELECT * FROM customers WHERE email = ?',
+    [normalizedEmail]
+  );
 
   const salt = await bcrypt.genSalt(10);
   const hashedPassword = await bcrypt.hash(password, salt);
 
+  // Customer already exists
+  if (existing.length > 0) {
+    const customer = existing[0];
+
+    // Already a registered customer
+    if (customer.password) {
+      return next(
+        new ErrorResponse('Email already registered', 400)
+      );
+    }
+
+    // Existing guest customer:
+    // Add password to the existing account
+    await pool.query(
+      `UPDATE customers
+       SET name = ?, password = ?
+       WHERE id = ?`,
+      [name.trim(), hashedPassword, customer.id]
+    );
+
+    // Get updated customer
+    const [rows] = await pool.query(
+      'SELECT * FROM customers WHERE id = ?',
+      [customer.id]
+    );
+
+    sendTokenResponse(rows[0], 201, res);
+    return;
+  }
+
+  // Create completely new customer
   const [result] = await pool.query(
     'INSERT INTO customers (name, email, password) VALUES (?, ?, ?)',
-    [name, email, hashedPassword]
+    [name.trim(), normalizedEmail, hashedPassword]
   );
 
-  const [rows] = await pool.query('SELECT * FROM customers WHERE id = ?', [result.insertId]);
-  
+  const [rows] = await pool.query(
+    'SELECT * FROM customers WHERE id = ?',
+    [result.insertId]
+  );
+
   sendTokenResponse(rows[0], 201, res);
 });
 

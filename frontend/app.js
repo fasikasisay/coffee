@@ -4,7 +4,11 @@
    CONFIG
 ============================================================ */
 
-const API_BASE = 'http://localhost:5000/api/v1';
+const API_HOST = window.location.hostname === '127.0.0.1'
+  ? '127.0.0.1'
+  : 'localhost';
+
+const API_BASE = `http://${API_HOST}:5000/api/v1`;
 
 const STORAGE_KEYS = {
   CART: 'misrak_cart',
@@ -2616,27 +2620,51 @@ function handleReorder(items) {
    WISHLIST
 ============================================================ */
 async function toggleWishlist(productId, btnNode) {
-  if(!currentUser) {
+  if (!currentUser) {
     showToast('Please log in to save favorites', 'error');
     return;
   }
-  
+
   const isActive = btnNode.classList.contains('active');
+
   try {
-    if(isActive) {
-      await fetch(`${API_BASE}/customers/wishlist/${productId}`, {method: 'DELETE', credentials:'include'});
-      btnNode.classList.remove('active');
-    } else {
-      await fetch(`${API_BASE}/customers/wishlist`, {
-        method: 'POST',
-        headers: {'Content-Type':'application/json'},
-        body: JSON.stringify({productId}),
+    if (isActive) {
+      const res = await fetch(`${API_BASE}/customers/wishlist/${productId}`, {
+        method: 'DELETE',
         credentials: 'include'
       });
+
+      if (!res.ok) {
+        throw new Error('Failed to remove from wishlist');
+      }
+
+      btnNode.classList.remove('active');
+      showToast('Removed from your wishlist', 'success');
+
+    } else {
+      const res = await fetch(`${API_BASE}/customers/wishlist`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ productId }),
+        credentials: 'include'
+      });
+
+      if (!res.ok) {
+        throw new Error('Failed to add to wishlist');
+      }
+
       btnNode.classList.add('active');
+      showToast('Added to your wishlist ❤️', 'success');
     }
+
     loadWishlist();
-  } catch(e) {}
+
+  } catch (e) {
+    console.error('Wishlist error:', e);
+    showToast(e.message || 'Something went wrong', 'error');
+  }
 }
 
 async function loadWishlist() {
