@@ -912,24 +912,6 @@ function renderProducts() {
     .querySelectorAll('.product-slide img')
     .forEach(withImageFallback);
 
-
-  menuGrid
-    .querySelectorAll('.menu-item__add')
-    .forEach(btn => {
-
-      btn.addEventListener('click', () => {
-
-        if (btn.disabled) return;
-
-        const productId =
-          Number(btn.dataset.id);
-
-        addProductToCart(productId);
-
-      });
-
-    });
-
 }
 
 
@@ -2562,7 +2544,7 @@ async function openOrderModal(id) {
     document.getElementById('reorder-btn').onclick = () => handleReorder(order.items);
     
     const modal = document.getElementById('order-modal');
-    modal.classList.add('open');
+    modal.classList.add('show');
     modal.setAttribute('aria-hidden', 'false');
   } catch(e) {
     showToast('Failed to load order', 'error');
@@ -2572,7 +2554,7 @@ async function openOrderModal(id) {
 function closeOrderModal() {
   const modal = document.getElementById('order-modal');
   if(modal) {
-    modal.classList.remove('open');
+    modal.classList.remove('show');
     modal.setAttribute('aria-hidden', 'true');
   }
 }
@@ -2607,13 +2589,111 @@ function renderOrderTracker(status) {
 }
 
 function handleReorder(items) {
+
+  if (!Array.isArray(items) || items.length === 0) {
+
+    showToast(
+      'No items available to reorder',
+      'error'
+    );
+
+    return;
+
+  }
+
+
+  let addedCount = 0;
+
+
   items.forEach(item => {
-    const p = PRODUCT_MAP.get(Number(item.product_id));
-    if(p) {
-      for(let i=0; i<item.quantity; i++) addProductToCart(p.id);
+
+    const product =
+      PRODUCT_MAP.get(
+        Number(item.product_id)
+      );
+
+
+    if (!product) {
+
+      console.warn(
+        'Product no longer exists:',
+        item.product_id
+      );
+
+      return;
+
     }
+
+
+    const existingItem =
+      cart.find(
+        cartItem =>
+          Number(cartItem.id) ===
+          Number(product.id)
+      );
+
+
+    if (existingItem) {
+
+      existingItem.qty +=
+        Number(item.quantity);
+
+    } else {
+
+      cart.push({
+
+        id: Number(product.id),
+
+        name: product.name,
+
+        price: Number(
+          product.pricePerKg
+        ),
+
+        qty: Number(item.quantity),
+
+        image:
+          resolveProductImage(product)
+
+      });
+
+    }
+
+
+    addedCount +=
+      Number(item.quantity);
+
   });
+
+
+  saveCart();
+
+  updateCartUI();
+
+  bumpBadge();
+
+
   closeOrderModal();
+
+  openCartDrawer();
+
+
+  if (addedCount > 0) {
+
+    showToast(
+      'Items added to your cart',
+      'success'
+    );
+
+  } else {
+
+    showToast(
+      'Some products are no longer available',
+      'error'
+    );
+
+  }
+
 }
 
 /* ============================================================
@@ -2691,6 +2771,8 @@ async function loadWishlist() {
     } else {
       emptyMsg.style.display = 'none';
       grid.innerHTML = data.data.map(createProductHTML).join('');
+    grid
+  .querySelectorAll('.product-slide img') .forEach(withImageFallback);  
     }
   } catch(e) {}
 }
@@ -2703,6 +2785,23 @@ window.handleProfileUpdate = handleProfileUpdate;
 window.openOrderModal = openOrderModal;
 window.closeOrderModal = closeOrderModal;
 window.toggleWishlist = toggleWishlist;
+
+// Global Add to Cart listener
+document.addEventListener('click', event => {
+
+  const addButton = event.target.closest('.menu-item__add');
+
+  if (!addButton) return;
+
+  if (addButton.disabled) return;
+
+  const productId = Number(addButton.dataset.id);
+
+  if (!productId) return;
+
+  addProductToCart(productId);
+
+});
 
 initializeApp();
 

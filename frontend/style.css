@@ -2792,3 +2792,679 @@ width: 150px;
   }
 
 }
+/* ============================================================
+   ACCOUNT PAGE + WISHLIST RESPONSIVE FIX
+============================================================ */
+
+/* Prevent horizontal overflow */
+.account-page-main,
+.account-section,
+.customer-dashboard,
+.dashboard-grid,
+.dashboard-card,
+.wishlist-section,
+.wishlist-grid {
+  min-width: 0;
+}
+
+
+/* ============================================================
+   ACCOUNT PAGE
+============================================================ */
+
+.account-page-main {
+  width: 100%;
+  min-height: 100vh;
+  box-sizing: border-box;
+
+  padding:
+    150px
+    clamp(16px, 4vw, 64px)
+    clamp(48px, 8vw, 96px);
+
+  background: var(--bg-primary);
+}
+
+
+.account-section {
+  width: 100%;
+  max-width: 1100px;
+
+  margin:
+    0 auto
+    clamp(48px, 8vw, 96px);
+}
+
+
+/* ============================================================
+   AUTH SECTION
+============================================================ */
+
+.auth-container {
+  width: 100%;
+  max-width: 560px;
+
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+
+.auth-tabs {
+  width: 100%;
+}
+
+
+.auth-tab {
+  min-width: 0;
+  white-space: nowrap;
+}
+
+
+/* ============================================================
+   DASHBOARD
+============================================================ */
+
+.customer-dashboard {
+  width: 100%;
+}
+
+
+.dashboard-header {
+  width: 100%;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: var(--space-5);
+
+  margin-bottom: var(--space-8);
+}
+
+
+.dashboard-grid {
+  width: 100%;
+
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 1fr)
+    minmax(0, 1fr);
+
+  gap: var(--space-6);
+}
+
+
+.dashboard-card {
+  width: 100%;
+  min-width: 0;
+
+  box-sizing: border-box;
+}
+
+
+/* ============================================================
+   PROFILE FORM
+============================================================ */
+
+#profile-form {
+  width: 100%;
+}
+
+
+#profile-form .form-group {
+  width: 100%;
+}
+
+
+#profile-form input {
+  max-width: 100%;
+}
+
+
+/* ============================================================
+   ORDERS TABLE
+============================================================ */
+
+.table-responsive {
+  width: 100%;
+  max-width: 100%;
+
+  overflow-x: auto;
+
+  -webkit-overflow-scrolling: touch;
+}
+
+
+.orders-table {
+  min-width: 600px;
+}
+
+
+/* ============================================================
+   WISHLIST
+============================================================ */
+
+.wishlist-section {
+  width: 100%;
+  max-width: 1200px;
+
+  margin: 0 auto;
+
+  padding: 0;
+
+  box-sizing: border-box;
+}
+
+
+.wishlist-header {
+  margin-bottom: var(--space-8);
+}
+
+
+.wishlist-grid {
+  width: 100%;
+
+  display: grid;
+
+  grid-template-columns:
+    repeat(4, minmax(0, 1fr));
+
+  gap: clamp(16px, 2vw, 28px);
+
+  align-items: stretch;
+}
+
+
+/* ============================================================
+   WISHLIST PRODUCT CARDS
+============================================================ */
+
+.wishlist-grid .product-slide {
+  width: 100%;
+  min-width: 0;
+
+  height: 100%;
+  border-radius: var(--radius-lg);
+}
+
+
+.wishlist-grid .product-slide img {
+  width: 100%;
+
+  height: clamp(240px, 25vw, 320px);
+
+  object-fit: cover;
+}
+
+
+/* Make overlay work better on touch devices */
+
+.wishlist-grid .product-overlay {
+  padding: 16px;
+}
+
+
+.wishlist-grid .product-overlay button {
+  max-width: 100%;
+}
+
+
+/* Empty state */
+
+.wishlist-empty {
+  width: 100%;
+
+  box-sizing: border-box;
+
+  padding:
+    clamp(32px, 6vw, 64px)
+    clamp(16px, 4vw, 32px);
+}
+
+
+/* ============================================================
+   TABLET
+============================================================ */
+
+@media (max-width: 1000px) {
+
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+
+
+  .wishlist-grid {
+    grid-template-columns:
+      repeat(3, minmax(0, 1fr));
+  }
+
+}
+
+
+/* ============================================================
+   TABLET / MOBILE
+============================================================ */
+
+@media (max-width: 768px) {
+
+  .account-page-main {
+    padding:
+      120px
+      var(--space-4)
+      var(--space-12);
+  }
+
+
+  .account-section {
+    margin-bottom: var(--space-12);
+  }
+
+
+  .auth-container {
+    padding: var(--space-6);
+  }
+
+
+  .dashboard-header {
+    flex-direction: column;
+
+    align-items: flex-start;
+  }
+
+
+  .dashboard-header .btn {
+    width: 100%;
+  }
+
+
+  .dashboard-card {
+    padding: var(--space-5);
+  }
+
+
+  .wishlist-grid {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+
+    gap: var(--space-4);
+  }
+
+
+  .wishlist-grid .product-slide img {
+    height: 280px;
+  }
+
+}
+
+
+/* ============================================================
+   MOBILE
+============================================================ */
+
+@media (max-width: 480px) {
+
+  .account-page-main {
+    padding:
+      105px
+      12px
+      var(--space-10);
+  }
+
+
+  .auth-container {
+    padding: var(--space-5);
+  }
+
+
+  .auth-tabs {
+    margin-bottom: var(--space-6);
+  }
+
+
+  .auth-tab {
+    padding:
+      var(--space-3)
+      var(--space-2);
+
+    font-size: 0.9rem;
+  }
+
+
+  .dashboard-header h2 {
+    font-size: 2rem;
+  }
+
+
+  .dashboard-card {
+    padding: var(--space-4);
+  }
+
+
+  .dashboard-card h3 {
+    font-size: 1.2rem;
+  }
+
+
+  #profile-form input,
+  .auth-form input {
+    padding: 12px;
+  }
+
+
+  .wishlist-header h2 {
+    font-size: 2rem;
+  }
+
+
+  .wishlist-grid {
+    grid-template-columns: 1fr;
+  }
+
+
+  .wishlist-grid .product-slide {
+    max-width: 100%;
+  }
+
+
+  .wishlist-grid .product-slide img {
+    height: 340px;
+  }
+
+
+  .wishlist-empty {
+    padding:
+      var(--space-8)
+      var(--space-4);
+  }
+
+}
+
+
+/* ============================================================
+   VERY SMALL DEVICES
+============================================================ */
+
+@media (max-width: 360px) {
+
+  .account-page-main {
+    padding-inline: 10px;
+  }
+
+
+  .auth-container {
+    padding: var(--space-4);
+  }
+
+
+  .wishlist-grid .product-slide img {
+    height: 300px;
+  }
+
+}
+.wishlist-section {
+  margin-bottom: clamp(60px, 8vw, 120px);
+  padding: 0 clamp(16px, 4vw, 32px);
+}
+/* ============================================================
+   ORDER PROGRESS TRACKER
+============================================================ */
+
+.progress-tracker {
+
+  width: 100%;
+
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: flex-start;
+
+  gap: 8px;
+
+  margin:
+    var(--space-8)
+    0;
+
+  position: relative;
+
+}
+
+
+.progress-step {
+
+  flex: 1;
+
+  min-width: 0;
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+
+  text-align: center;
+
+  position: relative;
+
+  color: var(--text-muted);
+
+}
+
+
+/* Connecting line */
+
+.progress-step:not(:last-child)::after {
+
+  content: "";
+
+  position: absolute;
+
+  top: 20px;
+
+  left: 60%;
+
+  width: 80%;
+
+  height: 2px;
+
+  background:
+    var(--border-default);
+
+  z-index: 0;
+
+}
+
+
+.progress-step.completed:not(:last-child)::after {
+
+  background:
+    var(--brand-amber);
+
+}
+
+
+/* Step icon */
+
+.step-icon {
+
+  width: 42px;
+
+  height: 42px;
+
+  border-radius: 50%;
+
+  background:
+    var(--bg-tertiary);
+
+  border:
+    2px solid
+    var(--border-default);
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  position: relative;
+
+  z-index: 1;
+
+  transition:
+    var(--transition-base);
+
+}
+
+
+.progress-step.completed .step-icon {
+
+  background:
+    var(--brand-amber);
+
+  border-color:
+    var(--brand-amber);
+
+  color: white;
+
+}
+
+
+.progress-step.current .step-icon {
+
+  border-color:
+    var(--brand-amber);
+
+  color:
+    var(--brand-amber);
+
+  box-shadow:
+    0 0 0 5px
+    rgba(192, 132, 87, 0.15);
+
+}
+
+
+/* Step text */
+
+.step-label {
+
+  margin-top:
+    var(--space-3);
+
+  font-size: 0.8rem;
+
+  white-space: nowrap;
+
+}
+
+
+.progress-step.completed .step-label,
+.progress-step.current .step-label {
+
+  color:
+    var(--text-primary);
+
+}
+
+
+/* ============================================================
+   ORDER MODAL RESPONSIVE
+============================================================ */
+
+.order-summary {
+
+  width: 100%;
+
+}
+
+
+#modal-order-items {
+
+  list-style: none;
+
+  padding: 0;
+
+  margin:
+    var(--space-5)
+    0;
+
+}
+
+
+#modal-order-items li {
+
+  padding:
+    var(--space-3)
+    0;
+
+  border-bottom:
+    1px solid
+    var(--border-default);
+
+}
+
+
+.order-total {
+
+  margin:
+    var(--space-6)
+    0;
+
+  font-size: 1.1rem;
+
+}
+
+
+/* Mobile tracker */
+
+@media (max-width: 600px) {
+
+  .progress-tracker {
+
+    flex-direction: column;
+
+    align-items: flex-start;
+
+    gap: 16px;
+
+  }
+
+
+  .progress-step {
+
+    width: 100%;
+
+    flex-direction: row;
+
+    justify-content: flex-start;
+
+    gap: 14px;
+
+    text-align: left;
+
+  }
+
+
+  .progress-step:not(:last-child)::after {
+
+    top: 42px;
+
+    left: 20px;
+
+    width: 2px;
+
+    height: 28px;
+
+  }
+
+
+  .step-label {
+
+    margin-top: 0;
+
+    white-space: normal;
+
+  }
+
+}
