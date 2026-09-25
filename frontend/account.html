@@ -96,44 +96,157 @@
 
       <div class="nav-actions">
 
-        <button
-          id="themeToggle"
-          class="theme-toggle"
-          aria-label="Toggle theme"
-        >
-          <i class="fa-solid fa-sun"></i>
-        </button>
+  <button
+    id="themeToggle"
+    class="theme-toggle"
+    aria-label="Toggle theme"
+  >
+    <i class="fa-solid fa-sun"></i>
+  </button>
 
+  <a
+    href="account.html#wishlist"
+    class="nav-icon-link"
+    aria-label="Wishlist"
+    title="Wishlist"
+  >
+    <i class="fa-regular fa-heart"></i>
+  </a>
 
-        <button
-          id="cartToggle"
-          class="cart-toggle"
-          aria-label="Open cart"
-        >
-          <i class="fa-solid fa-bag-shopping"></i>
+  <button
+    id="cartToggle"
+    class="cart-toggle"
+    aria-label="Open cart"
+  >
+    <i class="fa-solid fa-bag-shopping"></i>
 
-          <span
-            id="cartBadge"
-            class="cart-badge"
-          >
-            0
-          </span>
-        </button>
+    <span
+      id="cartBadge"
+      class="cart-badge"
+    >0</span>
+  </button>
 
+  <div
+    id="loggedOutAccount"
+    class="nav-account-menu"
+  >
+    <button
+      type="button"
+      class="nav-account-trigger nav-signin-trigger"
+      id="signInTrigger"
+      aria-expanded="false"
+      aria-haspopup="true"
+    >
+      <i class="fa-solid fa-user"></i>
+      <span>Sign In</span>
+      <i class="fa-solid fa-chevron-down account-chevron"></i>
+    </button>
 
-        <button
-          id="hamburger"
-          class="hamburger"
-          aria-label="Toggle menu"
-        >
-          <span></span>
-          <span></span>
-          <span></span>
-        </button>
+    <div
+      id="signInDropdown"
+      class="nav-account-dropdown"
+    >
+      <a
+        href="account.html#login"
+        class="account-dropdown-link"
+      >
+        <i class="fa-solid fa-right-to-bracket"></i>
+        <span>Login</span>
+      </a>
 
-      </div>
-
+      <a
+        href="account.html#register"
+        class="account-dropdown-link"
+      >
+        <i class="fa-solid fa-user-plus"></i>
+        <span>Create Account</span>
+      </a>
     </div>
+  </div>
+
+  <div
+    id="loggedInAccount"
+    class="nav-account-menu"
+    style="display:none;"
+  >
+    <button
+      type="button"
+      class="nav-account-trigger"
+      id="accountMenuTrigger"
+      aria-expanded="false"
+      aria-haspopup="true"
+    >
+      <span
+        id="navAccountAvatar"
+        class="nav-account-avatar"
+      >M</span>
+
+      <span
+        id="navAccountName"
+        class="nav-account-name"
+      >Account</span>
+
+      <i class="fa-solid fa-chevron-down account-chevron"></i>
+    </button>
+
+    <div
+      id="accountDropdown"
+      class="nav-account-dropdown"
+    >
+      <a
+        href="account.html"
+        class="account-dropdown-link"
+      >
+        <i class="fa-regular fa-user"></i>
+        <span>My Account</span>
+      </a>
+
+      <a
+        href="account.html#orders"
+        class="account-dropdown-link"
+      >
+        <i class="fa-solid fa-box"></i>
+        <span>My Orders</span>
+      </a>
+
+      <a
+        href="account.html#wishlist"
+        class="account-dropdown-link"
+      >
+        <i class="fa-regular fa-heart"></i>
+        <span>Wishlist</span>
+      </a>
+
+      <a
+        href="account.html#settings"
+        class="account-dropdown-link"
+      >
+        <i class="fa-solid fa-gear"></i>
+        <span>Settings</span>
+      </a>
+
+      <button
+        type="button"
+        id="navLogoutBtn"
+        class="account-dropdown-link account-logout"
+      >
+        <i class="fa-solid fa-right-from-bracket"></i>
+        <span>Logout</span>
+      </button>
+    </div>
+  </div>
+
+  <button
+    id="hamburger"
+    class="hamburger"
+    aria-label="Toggle menu"
+  >
+    <span></span>
+    <span></span>
+    <span></span>
+  </button>
+
+</div>
 
   </header>
 <!-- MOBILE MENU -->

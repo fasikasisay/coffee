@@ -2209,6 +2209,8 @@ function initializeApp() {
   updateActiveLink();
   renderServices();
   fetchProducts();
+
+  initCustomerNavbar();
   initCustomerState();
 }
 
@@ -2245,67 +2247,396 @@ function updateAccountStat(elementId, value) {
 function updateAuthUI() {
   const authUI = document.getElementById('auth-ui');
   const dashboardUI = document.getElementById('dashboard-ui');
+
   const navAccount = document.getElementById('nav-account');
   const mobileNavAccount = document.getElementById('mobile-nav-account');
-  
-  if(currentUser) {
-    if(authUI) authUI.style.display = 'none';
-    if(dashboardUI) dashboardUI.style.display = 'block';
-    
-    if(navAccount) navAccount.textContent = 'Dashboard';
-    if(mobileNavAccount) mobileNavAccount.textContent = 'Dashboard';
 
-   const profileFieldMap = {
-  name: 'prof-name',
-  company: 'prof-company',
-  phone: 'prof-phone',
-  street: 'prof-street',
-  city: 'prof-city',
-  postal_code: 'prof-postal',
-  country: 'prof-country'
-};
-Object.entries(profileFieldMap).forEach(
-  ([field, elementId]) => {
-    const el = document.getElementById(elementId);
-    if (el && currentUser[field] != null) {
-      el.value = currentUser[field];
+  const loggedOutAccount =
+    document.getElementById('loggedOutAccount');
+
+  const loggedInAccount =
+    document.getElementById('loggedInAccount');
+
+  const navAccountName =
+    document.getElementById('navAccountName');
+
+  const navAccountAvatar =
+    document.getElementById('navAccountAvatar');
+
+  const mobileLogoutBtn =
+    document.getElementById('mobileLogoutBtn');
+
+  if (currentUser) {
+
+    /* -----------------------------------------
+       ACCOUNT PAGE UI
+    ----------------------------------------- */
+
+    if (authUI) {
+      authUI.style.display = 'none';
     }
-  }
-);
 
-    // Premium dashboard personalization (name, avatar, settings info)
-    const firstName = (currentUser.name || '').trim().split(' ')[0];
-    const greetingEl = document.getElementById('acct-greeting');
+    if (dashboardUI) {
+      dashboardUI.style.display = 'block';
+    }
+
+    if (navAccount) {
+      navAccount.textContent = 'Dashboard';
+    }
+
+    if (mobileNavAccount) {
+      mobileNavAccount.innerHTML =
+        '<i class="fa-regular fa-user"></i> My Account';
+    }
+
+    /* -----------------------------------------
+       NAVBAR — LOGGED IN
+    ----------------------------------------- */
+
+    if (loggedOutAccount) {
+      loggedOutAccount.style.display = 'none';
+    }
+
+    if (loggedInAccount) {
+      loggedInAccount.style.display = 'block';
+    }
+
+    const displayName =
+      (currentUser.name || currentUser.email || 'Account').trim();
+
+    const firstName =
+      displayName.split(' ')[0] || 'Account';
+
+    if (navAccountName) {
+      navAccountName.textContent = firstName;
+    }
+
+    if (navAccountAvatar) {
+      navAccountAvatar.textContent =
+        displayName.charAt(0).toUpperCase();
+    }
+
+    if (mobileLogoutBtn) {
+      mobileLogoutBtn.style.display = 'flex';
+    }
+
+    /* -----------------------------------------
+       PROFILE INFORMATION
+    ----------------------------------------- */
+
+    const profileFieldMap = {
+      name: 'prof-name',
+      company: 'prof-company',
+      phone: 'prof-phone',
+      street: 'prof-street',
+      city: 'prof-city',
+      postal_code: 'prof-postal',
+      country: 'prof-country'
+    };
+
+    Object.entries(profileFieldMap).forEach(
+      ([field, elementId]) => {
+
+        const el =
+          document.getElementById(elementId);
+
+        if (
+          el &&
+          currentUser[field] != null
+        ) {
+          el.value = currentUser[field];
+        }
+
+      }
+    );
+
+    /* -----------------------------------------
+       ACCOUNT DASHBOARD PERSONALIZATION
+    ----------------------------------------- */
+
+    const greetingEl =
+      document.getElementById('acct-greeting');
+
     if (greetingEl) {
-      greetingEl.textContent = firstName ? `Welcome back, ${firstName}` : 'My Account';
+      greetingEl.textContent =
+        firstName
+          ? `Welcome back, ${firstName}`
+          : 'My Account';
     }
 
-    const avatarInitialEl = document.getElementById('acct-avatar-initial');
+    const avatarInitialEl =
+      document.getElementById('acct-avatar-initial');
+
     if (avatarInitialEl) {
-      avatarInitialEl.textContent = (currentUser.name || currentUser.email || 'M').trim().charAt(0).toUpperCase();
+      avatarInitialEl.textContent =
+        displayName.charAt(0).toUpperCase();
     }
 
-    const settingsEmailEl = document.getElementById('acct-settings-email');
-    if (settingsEmailEl) settingsEmailEl.textContent = currentUser.email || '—';
+    const settingsEmailEl =
+      document.getElementById('acct-settings-email');
+
+    if (settingsEmailEl) {
+      settingsEmailEl.textContent =
+        currentUser.email || '—';
+    }
 
     let memberSince = '—';
+
     if (currentUser.created_at) {
-      const joined = new Date(currentUser.created_at);
+
+      const joined =
+        new Date(currentUser.created_at);
+
       if (!isNaN(joined)) {
-        memberSince = joined.toLocaleDateString(undefined, { month: 'short', year: 'numeric' });
+
+        memberSince =
+          joined.toLocaleDateString(
+            undefined,
+            {
+              month: 'short',
+              year: 'numeric'
+            }
+          );
       }
     }
-    updateAccountStat('acct-stat-member-since', memberSince);
-    updateAccountStat('acct-settings-member-since', memberSince);
+
+    updateAccountStat(
+      'acct-stat-member-since',
+      memberSince
+    );
+
+    updateAccountStat(
+      'acct-settings-member-since',
+      memberSince
+    );
+
   } else {
-    if(authUI) authUI.style.display = 'block';
-    if(dashboardUI) dashboardUI.style.display = 'none';
-    
-    if(navAccount) navAccount.textContent = 'Account';
-    if(mobileNavAccount) mobileNavAccount.textContent = 'Account';
+
+    /* -----------------------------------------
+       ACCOUNT PAGE UI
+    ----------------------------------------- */
+
+    if (authUI) {
+      authUI.style.display = 'block';
+    }
+
+    if (dashboardUI) {
+      dashboardUI.style.display = 'none';
+    }
+
+    if (navAccount) {
+      navAccount.textContent = 'Account';
+    }
+
+    if (mobileNavAccount) {
+      mobileNavAccount.innerHTML =
+        '<i class="fa-regular fa-user"></i> My Account';
+    }
+
+    /* -----------------------------------------
+       NAVBAR — LOGGED OUT
+    ----------------------------------------- */
+
+    if (loggedOutAccount) {
+      loggedOutAccount.style.display = 'block';
+    }
+
+    if (loggedInAccount) {
+      loggedInAccount.style.display = 'none';
+    }
+
+    if (mobileLogoutBtn) {
+      mobileLogoutBtn.style.display = 'none';
+    }
   }
 }
+/* ============================================================
+   CUSTOMER NAVBAR ACCOUNT MENU
+============================================================ */
 
+function initCustomerNavbar() {
+
+  const signInTrigger =
+    document.getElementById('signInTrigger');
+
+  const signInDropdown =
+    document.getElementById('signInDropdown');
+
+  const accountMenuTrigger =
+    document.getElementById('accountMenuTrigger');
+
+  const accountDropdown =
+    document.getElementById('accountDropdown');
+
+  const navLogoutBtn =
+    document.getElementById('navLogoutBtn');
+
+  const mobileLogoutBtn =
+    document.getElementById('mobileLogoutBtn');
+
+
+  function closeAllDropdowns() {
+
+    if (signInDropdown) {
+      signInDropdown.classList.remove('open');
+    }
+
+    if (accountDropdown) {
+      accountDropdown.classList.remove('open');
+    }
+
+    if (signInTrigger) {
+      signInTrigger.setAttribute(
+        'aria-expanded',
+        'false'
+      );
+    }
+
+    if (accountMenuTrigger) {
+      accountMenuTrigger.setAttribute(
+        'aria-expanded',
+        'false'
+      );
+    }
+  }
+
+
+  signInTrigger?.addEventListener(
+    'click',
+    event => {
+
+      event.stopPropagation();
+
+      const isOpen =
+        signInDropdown?.classList.contains('open');
+
+      closeAllDropdowns();
+
+      if (!isOpen && signInDropdown) {
+
+        signInDropdown.classList.add('open');
+
+        signInTrigger.setAttribute(
+          'aria-expanded',
+          'true'
+        );
+      }
+    }
+  );
+
+
+  accountMenuTrigger?.addEventListener(
+    'click',
+    event => {
+
+      event.stopPropagation();
+
+      const isOpen =
+        accountDropdown?.classList.contains('open');
+
+      closeAllDropdowns();
+
+      if (!isOpen && accountDropdown) {
+
+        accountDropdown.classList.add('open');
+
+        accountMenuTrigger.setAttribute(
+          'aria-expanded',
+          'true'
+        );
+      }
+    }
+  );
+
+
+  document.addEventListener(
+    'click',
+    event => {
+
+      if (
+        !event.target.closest('.nav-account-menu')
+      ) {
+        closeAllDropdowns();
+      }
+
+    }
+  );
+
+
+  navLogoutBtn?.addEventListener(
+    'click',
+    async () => {
+
+      closeAllDropdowns();
+
+      await handleLogout();
+
+    }
+  );
+
+
+  mobileLogoutBtn?.addEventListener(
+    'click',
+    async () => {
+
+      const mobileMenu =
+        document.getElementById('mobileMenu');
+
+      const hamburger =
+        document.getElementById('hamburger');
+
+      if (mobileMenu) {
+        mobileMenu.classList.remove('open');
+      }
+
+      if (hamburger) {
+        hamburger.classList.remove('open');
+        hamburger.setAttribute(
+          'aria-expanded',
+          'false'
+        );
+      }
+
+      await handleLogout();
+
+    }
+  );
+
+
+  /* Close mobile menu after navigation */
+
+  document
+    .querySelectorAll('.mobile-nav-link')
+    .forEach(link => {
+
+      link.addEventListener(
+        'click',
+        () => {
+
+          const mobileMenu =
+            document.getElementById('mobileMenu');
+
+          const hamburger =
+            document.getElementById('hamburger');
+
+          if (mobileMenu) {
+            mobileMenu.classList.remove('open');
+          }
+
+          if (hamburger) {
+            hamburger.classList.remove('open');
+
+            hamburger.setAttribute(
+              'aria-expanded',
+              'false'
+            );
+          }
+
+        }
+      );
+
+    });
+}
 function switchAuthTab(tab) {
   const loginForm = document.getElementById('login-form');
   const registerForm = document.getElementById('register-form');
@@ -2467,14 +2798,49 @@ async function handleRegister(e) {
 }
 
 async function handleLogout() {
+
   try {
-    await fetch(`${API_BASE}/customers/auth/logout`, {credentials: 'include'});
+
+    await fetch(
+      `${API_BASE}/customers/auth/logout`,
+      {
+        credentials: 'include'
+      }
+    );
+
+  } catch (e) {
+
+    console.error(
+      'Logout request failed:',
+      e
+    );
+
+  } finally {
+
     currentUser = null;
-    showToast('Logged out', 'success');
+
     updateAuthUI();
-    document.getElementById('orders-list').innerHTML = '';
-    document.getElementById('wishlist-grid').innerHTML = '';
-  } catch(e) {}
+
+    const ordersList =
+      document.getElementById('orders-list');
+
+    const wishlistGrid =
+      document.getElementById('wishlist-grid');
+
+    if (ordersList) {
+      ordersList.innerHTML = '';
+    }
+
+    if (wishlistGrid) {
+      wishlistGrid.innerHTML = '';
+    }
+
+    showToast(
+      'Logged out successfully',
+      'success'
+    );
+
+  }
 }
 
 async function handleProfileUpdate(e) {
@@ -2904,7 +3270,36 @@ function initAccountDashboardUI() {
     }
   } catch (e) {}
   activateTab(startTab);
+  /* Handle navbar links such as:
+     account.html#login
+     account.html#register
+     account.html#orders
+     account.html#wishlist
+     account.html#settings
+  */
 
+  const accountHash =
+    window.location.hash.replace('#', '');
+
+  if (
+    accountHash === 'login' ||
+    accountHash === 'register'
+  ) {
+
+    if (
+      typeof switchAuthTab === 'function'
+    ) {
+      switchAuthTab(accountHash);
+    }
+
+  } else if (
+    ['overview', 'profile', 'orders', 'wishlist', 'settings']
+      .includes(accountHash)
+  ) {
+
+    activateTab(accountHash);
+
+  }
   // Password visibility toggles (login / register forms)
   document.querySelectorAll('.acct-toggle-pass').forEach(toggle => {
     toggle.addEventListener('click', () => {
