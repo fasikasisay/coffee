@@ -1577,6 +1577,26 @@ address {
 .payment-modal__content {
   max-width: 680px;
 }
+/* Service enquiry modal */
+.service-modal__content {
+  max-width: 680px;
+}
+
+/* Service enquiry form */
+#serviceForm {
+  width: 100%;
+}
+
+#serviceForm .custom-grid {
+  width: 100%;
+}
+
+#serviceForm .custom-group input,
+#serviceForm .custom-group select,
+#serviceForm .custom-group textarea {
+  width: 100%;
+  box-sizing: border-box;
+}
 /* Service Modal Custom Fields */
 .service-title {
   font-family: var(--font-display);
