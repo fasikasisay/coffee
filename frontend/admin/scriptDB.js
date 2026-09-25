@@ -956,15 +956,42 @@ function updateDashboardGreeting() {
 }
 
 updateDashboardGreeting();
+/* ── MESSAGES PAGE ─────────────────────────────── */
+
 let _allMessages = [];
 
+
+/* Format message date */
+function formatMessageDate(value) {
+
+  if (!value) return '—';
+
+  const date = new Date(value);
+
+  if (Number.isNaN(date.getTime())) {
+    return '—';
+  }
+
+  return date.toLocaleDateString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric'
+  });
+}
+
+
+/* Load customer messages */
 async function loadMessages() {
+
   try {
+
     const res = await apiFetch('/enquiries');
     const data = await res.json();
 
     if (!res.ok) {
-      throw new Error(data.error || 'Failed to load messages.');
+      throw new Error(
+        data.error || 'Failed to load messages.'
+      );
     }
 
     _allMessages = data.data || [];
@@ -973,31 +1000,66 @@ async function loadMessages() {
 
   } catch (err) {
 
-    document.getElementById('messagesBody').innerHTML = `
-      <tr>
-        <td
-          colspan="5"
-          style="text-align:center;padding:2rem;color:#E88080"
-        >
-          ${err.message}
-        </td>
-      </tr>
-    `;
+    console.error('Message loading error:', err);
+
+    const body = document.getElementById('messagesBody');
+
+    if (body) {
+      body.innerHTML = `
+        <tr>
+          <td
+            colspan="7"
+            style="
+              text-align:center;
+              padding:2rem;
+              color:#E88080;
+            "
+          >
+            ${esc(err.message)}
+          </td>
+        </tr>
+      `;
+    }
+
   }
 }
 
+
+/* Render customer messages table */
 function renderMessagesTable(messages) {
 
-  document.getElementById('messages-count').textContent =
-    `${messages.length} message${messages.length !== 1 ? 's' : ''}`;
+  const countEl =
+    document.getElementById('messages-count');
+
+  const bodyEl =
+    document.getElementById('messagesBody');
+
+  if (!bodyEl) return;
+
+
+  /* Message count */
+
+  if (countEl) {
+
+    countEl.textContent =
+      `${messages.length} message${messages.length !== 1 ? 's' : ''}`;
+
+  }
+
+
+  /* Empty state */
 
   if (messages.length === 0) {
 
-    document.getElementById('messagesBody').innerHTML = `
+    bodyEl.innerHTML = `
       <tr>
         <td
-          colspan="5"
-          style="text-align:center;padding:2rem;color:var(--text-muted)"
+          colspan="7"
+          style="
+            text-align:center;
+            padding:2rem;
+            color:var(--text-muted);
+          "
         >
           No customer messages yet.
         </td>
@@ -1007,47 +1069,252 @@ function renderMessagesTable(messages) {
     return;
   }
 
-  document.getElementById('messagesBody').innerHTML =
-    messages.map(message => {
 
-      const date = new Date(message.createdAt).toLocaleDateString(
-        'en-US',
+  /* Available statuses */
+
+  const STATUS_OPTIONS = [
+    'new',
+    'read',
+    'responded',
+    'archived'
+  ];
+
+
+  /* Build table */
+
+  bodyEl.innerHTML = messages.map(message => {
+
+    const status =
+      message.status || 'new';
+
+    const date =
+      formatMessageDate(
+        message.createdAt ||
+        message.created_at
+      );
+
+
+    const options =
+      STATUS_OPTIONS.map(option => `
+        <option
+          value="${option}"
+          ${status === option ? 'selected' : ''}
+        >
+          ${capitalize(option)}
+        </option>
+      `).join('');
+
+
+    return `
+      <tr>
+
+        <!-- Customer -->
+        <td style="font-weight:600">
+          ${esc(message.name || '—')}
+        </td>
+
+
+        <!-- Email -->
+        <td>
+          ${esc(message.email || '—')}
+        </td>
+
+
+        <!-- Phone -->
+        <td>
+          ${esc(message.phone || '—')}
+        </td>
+
+
+        <!-- Message -->
+        <td
+          style="
+            max-width:350px;
+            white-space:normal;
+            line-height:1.5;
+          "
+        >
+          ${esc(message.message || '—')}
+        </td>
+
+
+        <!-- Status -->
+        <td>
+          <span
+            class="status-badge status-${esc(status)}"
+          >
+            ${capitalize(esc(status))}
+          </span>
+        </td>
+
+
+        <!-- Date -->
+        <td
+          style="
+            color:var(--text-muted);
+            font-size:0.8rem;
+            white-space:nowrap;
+          "
+        >
+          ${date}
+        </td>
+
+
+        <!-- Update -->
+        <td>
+
+          <select
+            onchange="
+              changeMessageStatus(
+                ${Number(message.id)},
+                this.value,
+                this
+              )
+            "
+            style="
+              font-size:0.78rem;
+              padding:0.3rem 0.5rem;
+              border:1px solid var(--border);
+              border-radius:5px;
+              background:var(--bg-surface);
+              color:var(--text-primary);
+              cursor:pointer;
+            "
+          >
+
+            ${options}
+
+          </select>
+
+        </td>
+
+      </tr>
+    `;
+
+  }).join('');
+}
+
+
+/* Update message status */
+async function changeMessageStatus(
+  messageId,
+  newStatus,
+  selectEl
+) {
+
+  const message =
+    _allMessages.find(
+      item => Number(item.id) === Number(messageId)
+    );
+
+
+  const previousStatus =
+    message?.status || 'new';
+
+
+  selectEl.disabled = true;
+
+
+  try {
+
+    const res =
+      await apiFetch(
+        `/enquiries/${messageId}/status`,
         {
-          month: 'short',
-          day: 'numeric',
-          year: 'numeric'
+          method: 'PATCH',
+
+          body: JSON.stringify({
+            status: newStatus
+          })
         }
       );
 
-      return `
-        <tr>
 
-          <td style="font-weight:600">
-            ${esc(message.name)}
-          </td>
+    const data =
+      await res.json();
 
-          <td>
-            ${esc(message.email)}
-          </td>
 
-          <td style="max-width:350px;white-space:normal">
-            ${esc(message.message)}
-          </td>
+    if (!res.ok) {
 
-          <td>
-            <span class="status-badge">
-              ${esc(message.status)}
-            </span>
-          </td>
+      throw new Error(
+        data.error ||
+        'Failed to update message status.'
+      );
 
-          <td>
-            ${date}
-          </td>
+    }
 
-        </tr>
-      `;
 
-    }).join('');
+    /* Update local message */
+
+    if (message) {
+
+      message.status =
+        newStatus;
+
+      if (data.data?.updatedAt) {
+
+        message.updatedAt =
+          data.data.updatedAt;
+
+      }
+
+    }
+
+
+    /* Update status badge immediately */
+
+    const row =
+      selectEl.closest('tr');
+
+
+    const badge =
+      row?.querySelector('.status-badge');
+
+
+    if (badge) {
+
+      badge.className =
+        `status-badge status-${newStatus}`;
+
+      badge.textContent =
+        capitalize(newStatus);
+
+    }
+
+
+    showToast(
+      `Message status updated to ${capitalize(newStatus)}.`,
+      'success'
+    );
+
+
+  } catch (err) {
+
+    console.error(
+      'Message status update error:',
+      err
+    );
+
+
+    /* Restore previous status */
+
+    selectEl.value =
+      previousStatus;
+
+
+    showToast(
+      err.message ||
+      'Failed to update message status.',
+      'error'
+    );
+
+
+  } finally {
+
+    selectEl.disabled = false;
+
+  }
+
 }
 let _allServices = [];
 
@@ -1086,7 +1353,7 @@ async function loadServices() {
     document.getElementById('servicesBody').innerHTML = `
       <tr>
         <td
-          colspan="6"
+          colspan="7"
           style="text-align:center;padding:2rem;color:#E88080"
         >
           ${esc(err.message)}

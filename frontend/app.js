@@ -2237,6 +2237,11 @@ async function initCustomerState() {
   }
 }
 
+function updateAccountStat(elementId, value) {
+  const el = document.getElementById(elementId);
+  if (el) el.textContent = value;
+}
+
 function updateAuthUI() {
   const authUI = document.getElementById('auth-ui');
   const dashboardUI = document.getElementById('dashboard-ui');
@@ -2267,6 +2272,31 @@ Object.entries(profileFieldMap).forEach(
     }
   }
 );
+
+    // Premium dashboard personalization (name, avatar, settings info)
+    const firstName = (currentUser.name || '').trim().split(' ')[0];
+    const greetingEl = document.getElementById('acct-greeting');
+    if (greetingEl) {
+      greetingEl.textContent = firstName ? `Welcome back, ${firstName}` : 'My Account';
+    }
+
+    const avatarInitialEl = document.getElementById('acct-avatar-initial');
+    if (avatarInitialEl) {
+      avatarInitialEl.textContent = (currentUser.name || currentUser.email || 'M').trim().charAt(0).toUpperCase();
+    }
+
+    const settingsEmailEl = document.getElementById('acct-settings-email');
+    if (settingsEmailEl) settingsEmailEl.textContent = currentUser.email || '—';
+
+    let memberSince = '—';
+    if (currentUser.created_at) {
+      const joined = new Date(currentUser.created_at);
+      if (!isNaN(joined)) {
+        memberSince = joined.toLocaleDateString(undefined, { month: 'short', year: 'numeric' });
+      }
+    }
+    updateAccountStat('acct-stat-member-since', memberSince);
+    updateAccountStat('acct-settings-member-since', memberSince);
   } else {
     if(authUI) authUI.style.display = 'block';
     if(dashboardUI) dashboardUI.style.display = 'none';
@@ -2498,29 +2528,72 @@ function prefillCheckoutForm() {
    ORDER TRACKING & HISTORY
 ============================================================ */
 async function loadMyOrders() {
+  const tbody = document.getElementById('orders-list');
+
+  if(tbody) {
+    tbody.innerHTML = `
+      <tr class="acct-state-row">
+        <td colspan="5">
+          <div class="acct-empty-inline">
+            <span class="acct-spinner"></span>
+            <p>Loading your orders…</p>
+          </div>
+        </td>
+      </tr>
+    `;
+  }
+
   try {
     const res = await fetch(`${API_BASE}/customers/profile/orders`, {credentials:'include'});
     const data = await res.json();
     if(!data.success) return;
-    
-    const tbody = document.getElementById('orders-list');
+
     if(!tbody) return;
-    
+
+    updateAccountStat('acct-stat-orders-total', data.data.length);
+
+    const totalSpent = data.data.reduce((sum, o) => sum + Number(o.total_amount || 0), 0);
+    updateAccountStat('acct-stat-total-spent', `$${totalSpent.toFixed(2)}`);
+
     if(data.data.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="5">No orders found.</td></tr>';
+      tbody.innerHTML = `
+        <tr class="acct-state-row">
+          <td colspan="5">
+            <div class="acct-empty-inline">
+              <i class="fa-regular fa-rectangle-list"></i>
+              <p>No orders yet</p>
+              <span>Your order history will show up here once you place an order.</span>
+            </div>
+          </td>
+        </tr>
+      `;
       return;
     }
-    
+
     tbody.innerHTML = data.data.map(o => `
       <tr>
-        <td>${o.order_number}</td>
-        <td>${new Date(o.created_at).toLocaleDateString()}</td>
-        <td><span style="text-transform:capitalize">${o.status}</span></td>
-        <td>$${Number(o.total_amount).toFixed(2)}</td>
-        <td><button class="btn btn--primary" style="padding:4px 10px;font-size:0.8rem" onclick="openOrderModal(${o.id})">View</button></td>
+        <td data-label="Order ID"><span class="acct-order-id">${o.order_number}</span></td>
+        <td data-label="Date">${new Date(o.created_at).toLocaleDateString()}</td>
+        <td data-label="Status"><span class="status-pill status-pill--${o.status}">${o.status}</span></td>
+        <td data-label="Total">$${Number(o.total_amount).toFixed(2)}</td>
+        <td data-label="Action"><button class="acct-view-btn" onclick="openOrderModal(${o.id})"><i class="fa-solid fa-eye"></i> View</button></td>
       </tr>
     `).join('');
-  } catch(e) {}
+  } catch(e) {
+    if(tbody) {
+      tbody.innerHTML = `
+        <tr class="acct-state-row">
+          <td colspan="5">
+            <div class="acct-empty-inline acct-empty-inline--error">
+              <i class="fa-solid fa-triangle-exclamation"></i>
+              <p>Couldn't load your orders</p>
+              <span>Please refresh the page to try again.</span>
+            </div>
+          </td>
+        </tr>
+      `;
+    }
+  }
 }
 
 async function openOrderModal(id) {
@@ -2535,9 +2608,25 @@ async function openOrderModal(id) {
     renderOrderTracker(order.status);
     
     const ul = document.getElementById('modal-order-items');
-    ul.innerHTML = order.items.map(item => `
-      <li>${item.quantity}x ${item.name} - $${Number(item.unit_price * item.quantity).toFixed(2)}</li>
-    `).join('');
+    ul.innerHTML = order.items.map(item => {
+      const product = PRODUCT_MAP.get(Number(item.product_id));
+      const img = product ? resolveProductImage(product) : null;
+      const lineTotal = Number(item.unit_price * item.quantity).toFixed(2);
+
+      return `
+        <li class="acct-order-item">
+          ${img
+            ? `<img src="${escapeHTML(img)}" alt="" class="acct-order-item__img">`
+            : `<span class="acct-order-item__img acct-order-item__img--placeholder"><i class="fa-solid fa-mug-hot"></i></span>`
+          }
+          <div class="acct-order-item__info">
+            <span class="acct-order-item__name">${escapeHTML(item.name)}</span>
+            <span class="acct-order-item__meta">Qty ${item.quantity} &times; $${Number(item.unit_price).toFixed(2)}</span>
+          </div>
+          <span class="acct-order-item__total">$${lineTotal}</span>
+        </li>
+      `;
+    }).join('');
     
     document.getElementById('modal-order-total').innerHTML = `<strong>Total: $${Number(order.total_amount).toFixed(2)}</strong>`;
     
@@ -2567,7 +2656,7 @@ function renderOrderTracker(status) {
   
   // canceled status check
   if(status === 'cancelled') {
-    container.innerHTML = '<div style="color:red; font-weight:bold; text-align:center; width:100%">Order Cancelled</div>';
+    container.innerHTML = '<div class="acct-order-cancelled"><i class="fa-solid fa-circle-xmark"></i> This order was cancelled</div>';
     return;
   }
   
@@ -2756,6 +2845,9 @@ async function loadWishlist() {
     
     const grid = document.getElementById('wishlist-grid');
     const emptyMsg = document.getElementById('wishlist-empty');
+
+    updateAccountStat('acct-stat-wishlist-total', data.data.length);
+
     if(!grid || !emptyMsg) return;
     
     // Update product buttons active state
@@ -2776,6 +2868,75 @@ async function loadWishlist() {
     }
   } catch(e) {}
 }
+
+/* ============================================================
+   ACCOUNT DASHBOARD — SIDEBAR TABS & MICRO-INTERACTIONS
+   (Presentation-only: no API calls, safe to run on any page)
+============================================================ */
+function initAccountDashboardUI() {
+  const dashboard = document.getElementById('dashboard-ui');
+  if (!dashboard) return;
+
+  const navButtons = dashboard.querySelectorAll('.acct-nav__item');
+  const quickLinks = dashboard.querySelectorAll('.acct-quicklink');
+  const panels = dashboard.querySelectorAll('.acct-panel');
+
+  function activateTab(tabId) {
+    if (!tabId) return;
+    navButtons.forEach(btn => btn.classList.toggle('is-active', btn.dataset.tab === tabId));
+    panels.forEach(panel => panel.classList.toggle('is-active', panel.dataset.panel === tabId));
+    try { sessionStorage.setItem('misrak_account_tab', tabId); } catch (e) {}
+  }
+
+  navButtons.forEach(btn => {
+    btn.addEventListener('click', () => activateTab(btn.dataset.tab));
+  });
+
+  quickLinks.forEach(link => {
+    link.addEventListener('click', () => activateTab(link.dataset.tab));
+  });
+
+  let startTab = 'overview';
+  try {
+    const saved = sessionStorage.getItem('misrak_account_tab');
+    if (saved && dashboard.querySelector(`.acct-panel[data-panel="${saved}"]`)) {
+      startTab = saved;
+    }
+  } catch (e) {}
+  activateTab(startTab);
+
+  // Password visibility toggles (login / register forms)
+  document.querySelectorAll('.acct-toggle-pass').forEach(toggle => {
+    toggle.addEventListener('click', () => {
+      const input = document.getElementById(toggle.dataset.target);
+      if (!input) return;
+      const isHidden = input.type === 'password';
+      input.type = isHidden ? 'text' : 'password';
+      toggle.innerHTML = isHidden
+        ? '<i class="fa-solid fa-eye-slash"></i>'
+        : '<i class="fa-solid fa-eye"></i>';
+      toggle.setAttribute('aria-label', isHidden ? 'Hide password' : 'Show password');
+    });
+  });
+
+  // Settings panel theme toggle mirrors the navbar theme toggle
+  const settingsThemeBtn = document.getElementById('acctThemeToggle');
+  if (settingsThemeBtn) {
+    const syncIcon = () => {
+      const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+      settingsThemeBtn.innerHTML = isLight
+        ? '<i class="fa-solid fa-sun"></i>'
+        : '<i class="fa-solid fa-moon"></i>';
+    };
+    syncIcon();
+    settingsThemeBtn.addEventListener('click', () => {
+      if (typeof toggleTheme === 'function') toggleTheme();
+      syncIcon();
+    });
+  }
+}
+
+initAccountDashboardUI();
 
 window.switchAuthTab = switchAuthTab;
 window.handleLogin = handleLogin;

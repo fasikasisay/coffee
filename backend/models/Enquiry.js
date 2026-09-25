@@ -1,7 +1,7 @@
 const { pool } = require('../config/db');
 
 const ENQUIRY_COLS = `
-  id, name, email, message, status,
+  id, name, email, phone, message, status,
   created_at AS createdAt, updated_at AS updatedAt
 `;
 
@@ -9,8 +9,8 @@ const Enquiry = {
 
   async create(data) {
     const [result] = await pool.execute(
-      `INSERT INTO enquiries (name, email, message) VALUES (?, ?, ?)`,
-      [data.name.trim(), data.email.trim().toLowerCase(), data.message.trim()]
+      `INSERT INTO enquiries (name, email, phone, message) VALUES (?, ?, ?, ?)`,
+      [data.name.trim(), data.email.trim().toLowerCase(), data.phone.trim(), data.message.trim()]
     );
     return Enquiry.findById(result.insertId);
   },

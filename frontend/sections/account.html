@@ -10,147 +10,191 @@
 
   <div
     id="auth-ui"
-    class="auth-container"
-  >
+    class="auth-ui"
+  > 
 
-    <!-- Tabs -->
-    <div class="auth-tabs">
+    <div class="acct-auth-shell">
 
-      <button
-        type="button"
-        class="auth-tab active"
-        onclick="switchAuthTab('login')"
-      >
-        Login
-      </button>
+      <!-- Decorative brand panel -->
+      <aside class="acct-auth-visual" aria-hidden="true">
 
-      <button
-        type="button"
-        class="auth-tab"
-        onclick="switchAuthTab('register')"
-      >
-        Register
-      </button>
+        <div class="acct-auth-visual__badge">
+          <img src="logo2.png" alt="" class="acct-auth-visual__logo">
+        </div>
+
+        <span class="section-eyebrow">Misrak Coffee</span>
+
+        <h2 class="acct-auth-visual__title">
+          Your account, <em>your coffee journey</em>
+        </h2>
+
+        <p class="acct-auth-visual__copy">
+          Sign in to track orders, save your favorite beans,
+          and check out faster next time.
+        </p>
+
+        <ul class="acct-auth-visual__list">
+          <li><i class="fa-solid fa-truck-fast"></i> Real-time order tracking</li>
+          <li><i class="fa-solid fa-heart"></i> Save products to your wishlist</li>
+          <li><i class="fa-solid fa-bolt"></i> Faster, prefilled checkout</li>
+        </ul>
+
+      </aside>
+
+      <!-- Auth card -->
+      <div class="auth-container">
+
+        <div class="auth-tabs">
+
+          <button
+            type="button"
+            class="auth-tab active"
+            onclick="switchAuthTab('login')"
+          >
+            <i class="fa-solid fa-right-to-bracket"></i>
+            Login
+          </button>
+
+          <button
+            type="button"
+            class="auth-tab"
+            onclick="switchAuthTab('register')"
+          >
+            <i class="fa-solid fa-user-plus"></i>
+            Register
+          </button>
+
+        </div>
+
+
+        <!-- LOGIN -->
+        <form
+          id="login-form"
+          class="auth-form"
+        >
+          <div class="acct-form-body">
+
+            <div class="form-group">
+              <label for="login-email">Email</label>
+              <div class="acct-input-wrap">
+                <i class="fa-solid fa-envelope"></i>
+                <input
+                  type="email"
+                  id="login-email"
+                  placeholder="you@example.com"
+                  autocomplete="email"
+                  required
+                >
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="login-password">Password</label>
+              <div class="acct-input-wrap acct-input-wrap--pass">
+                <i class="fa-solid fa-lock"></i>
+                <input
+                  type="password"
+                  id="login-password"
+                  placeholder="Enter your password"
+                  autocomplete="current-password"
+                  required
+                >
+                <button
+                  type="button"
+                  class="acct-toggle-pass"
+                  data-target="login-password"
+                  aria-label="Show password"
+                >
+                  <i class="fa-solid fa-eye"></i>
+                </button>
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              class="btn btn--primary auth-submit"
+            >
+              <i class="fa-solid fa-right-to-bracket"></i>
+              Log In
+            </button>
+
+          </div>
+        </form>
+
+
+        <!-- REGISTER -->
+        <form
+          id="register-form"
+          class="auth-form"
+          style="display:none;"
+        >
+          <div class="acct-form-body">
+
+            <div class="form-group">
+              <label for="reg-name">Full Name</label>
+              <div class="acct-input-wrap">
+                <i class="fa-solid fa-user"></i>
+                <input
+                  type="text"
+                  id="reg-name"
+                  placeholder="Enter your full name"
+                  autocomplete="name"
+                  required
+                >
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="reg-email">Email</label>
+              <div class="acct-input-wrap">
+                <i class="fa-solid fa-envelope"></i>
+                <input
+                  type="email"
+                  id="reg-email"
+                  placeholder="you@example.com"
+                  autocomplete="email"
+                  required
+                >
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="reg-password">Password</label>
+              <div class="acct-input-wrap acct-input-wrap--pass">
+                <i class="fa-solid fa-lock"></i>
+                <input
+                  type="password"
+                  id="reg-password"
+                  placeholder="Create a password"
+                  autocomplete="new-password"
+                  required
+                >
+                <button
+                  type="button"
+                  class="acct-toggle-pass"
+                  data-target="reg-password"
+                  aria-label="Show password"
+                >
+                  <i class="fa-solid fa-eye"></i>
+                </button>
+              </div>
+              <span class="acct-field-hint">Use at least 6 characters.</span>
+            </div>
+
+            <button
+              type="submit"
+              class="btn btn--primary auth-submit"
+            >
+              <i class="fa-solid fa-user-plus"></i>
+              Create Account
+            </button>
+
+          </div>
+        </form>
+
+      </div>
 
     </div>
-
-
-    <!-- LOGIN -->
-    <form
-      id="login-form"
-      class="auth-form"
-    >
-
-      <div class="form-group">
-
-        <label for="login-email">
-          Email
-        </label>
-
-        <input
-          type="email"
-          id="login-email"
-          placeholder="Enter your email"
-          autocomplete="email"
-          required
-        >
-
-      </div>
-
-
-      <div class="form-group">
-
-        <label for="login-password">
-          Password
-        </label>
-
-        <input
-          type="password"
-          id="login-password"
-          placeholder="Enter your password"
-          autocomplete="current-password"
-          required
-        >
-
-      </div>
-
-
-      <button
-        type="submit"
-        class="btn btn--primary auth-submit"
-      >
-        Log In
-      </button>
-
-    </form>
-
-
-    <!-- REGISTER -->
-    <form
-      id="register-form"
-      class="auth-form"
-      style="display:none;"
-    >
-
-      <div class="form-group">
-
-        <label for="reg-name">
-          Full Name
-        </label>
-
-        <input
-          type="text"
-          id="reg-name"
-          placeholder="Enter your full name"
-          autocomplete="name"
-          required
-        >
-
-      </div>
-
-
-      <div class="form-group">
-
-        <label for="reg-email">
-          Email
-        </label>
-
-        <input
-          type="email"
-          id="reg-email"
-          placeholder="Enter your email"
-          autocomplete="email"
-          required
-        >
-
-      </div>
-
-
-      <div class="form-group">
-
-        <label for="reg-password">
-          Password
-        </label>
-
-        <input
-          type="password"
-          id="reg-password"
-          placeholder="Create a password"
-          autocomplete="new-password"
-          required
-        >
-
-      </div>
-
-
-      <button
-        type="submit"
-        class="btn btn--primary auth-submit"
-      >
-        Create Account
-      </button>
-
-    </form>
 
   </div>
 
@@ -165,25 +209,25 @@
     style="display:none;"
   >
 
-    <div class="dashboard-header">
+    <div class="dashboard-header acct-topbar">
 
-      <div>
+      <div class="acct-topbar__identity">
 
-        <span class="section-eyebrow">
-          Welcome back
-        </span>
+        <div class="acct-avatar">
+          <span id="acct-avatar-initial">M</span>
+        </div>
 
-        <h2>
-          My Account
-        </h2>
+        <div>
+          <span class="section-eyebrow">Welcome back</span>
+          <h2 id="acct-greeting">My Account</h2>
+        </div>
 
       </div>
-
 
       <button
         type="button"
         onclick="handleLogout()"
-        class="btn btn"
+        class="btn btn--ghost"
       >
         <i class="fa-solid fa-right-from-bracket"></i>
         Log Out
@@ -192,164 +236,315 @@
     </div>
 
 
-    <div class="dashboard-grid">
+    <div class="acct-shell">
 
-      <!-- PROFILE -->
-      <div class="dashboard-card">
+      <!-- SIDEBAR NAV -->
+      <aside class="acct-sidebar">
 
-        <h3>
-          Profile & Default Address
-        </h3>
+        <nav class="acct-nav" aria-label="Account navigation">
 
-        <form
-          id="profile-form"
-          onsubmit="handleProfileUpdate(event)"
-        >
-
-          <div class="form-group">
-
-            <label for="prof-name">
-              Name
-            </label>
-
-            <input
-              type="text"
-              id="prof-name"
-            >
-
-          </div>
-
-
-          <div class="form-group">
-
-            <label for="prof-company">
-              Company
-            </label>
-
-            <input
-              type="text"
-              id="prof-company"
-            >
-
-          </div>
-
-
-          <div class="form-group">
-
-            <label for="prof-phone">
-              Phone
-            </label>
-
-            <input
-              type="text"
-              id="prof-phone"
-            >
-
-          </div>
-
-
-          <div class="form-group">
-
-            <label for="prof-street">
-              Street
-            </label>
-
-            <input
-              type="text"
-              id="prof-street"
-            >
-
-          </div>
-
-
-          <div class="form-group">
-
-            <label for="prof-city">
-              City
-            </label>
-
-            <input
-              type="text"
-              id="prof-city"
-            >
-
-          </div>
-
-
-          <div class="form-group">
-
-            <label for="prof-postal">
-              Postal Code
-            </label>
-
-            <input
-              type="text"
-              id="prof-postal"
-            >
-
-          </div>
-
-
-          <div class="form-group">
-
-            <label for="prof-country">
-              Country
-            </label>
-
-            <input
-              type="text"
-              id="prof-country"
-            >
-
-          </div>
-
-
-          <button
-            type="submit"
-            class="btn btn--primary"
-          >
-            Save Changes
+          <button type="button" class="acct-nav__item is-active" data-tab="overview">
+            <i class="fa-solid fa-gauge-high"></i>
+            <span>Overview</span>
           </button>
 
-        </form>
+          <button type="button" class="acct-nav__item" data-tab="profile">
+            <i class="fa-solid fa-user-pen"></i>
+            <span>Profile &amp; Address</span>
+          </button>
 
-      </div>
+          <button type="button" class="acct-nav__item" data-tab="orders">
+            <i class="fa-solid fa-box"></i>
+            <span>Orders</span>
+          </button>
+
+          <button type="button" class="acct-nav__item" data-tab="wishlist">
+            <i class="fa-solid fa-heart"></i>
+            <span>Wishlist</span>
+          </button>
+
+          <button type="button" class="acct-nav__item" data-tab="settings">
+            <i class="fa-solid fa-gear"></i>
+            <span>Settings</span>
+          </button>
+
+        </nav>
+
+      </aside>
 
 
-      <!-- ORDER HISTORY -->
-      <div class="dashboard-card">
+      <!-- CONTENT PANELS -->
+      <div class="acct-content">
 
-        <h3>
-          Order History
-        </h3>
+        <!-- OVERVIEW -->
+        <div class="acct-panel is-active" id="panel-overview" data-panel="overview">
 
-        <div class="table-responsive">
+          <div class="acct-panel__head">
+            <h3>Overview</h3>
+            <p>A quick snapshot of your account activity.</p>
+          </div>
 
-          <table class="orders-table">
+          <div class="acct-stats">
 
-            <thead>
+            <div class="acct-stat-card">
+              <div class="acct-stat-card__icon"><i class="fa-solid fa-box"></i></div>
+              <div class="acct-stat-card__body">
+                <span id="acct-stat-orders-total">0</span>
+                <label>Total Orders</label>
+              </div>
+            </div>
 
-              <tr>
-                <th>Order ID</th>
-                <th>Date</th>
-                <th>Status</th>
-                <th>Total</th>
-                <th>Action</th>
-              </tr>
+            <div class="acct-stat-card">
+              <div class="acct-stat-card__icon"><i class="fa-solid fa-sack-dollar"></i></div>
+              <div class="acct-stat-card__body">
+                <span id="acct-stat-total-spent">$0.00</span>
+                <label>Total Spent</label>
+              </div>
+            </div>
 
-            </thead>
+            <div class="acct-stat-card">
+              <div class="acct-stat-card__icon"><i class="fa-solid fa-heart"></i></div>
+              <div class="acct-stat-card__body">
+                <span id="acct-stat-wishlist-total">0</span>
+                <label>Wishlist Items</label>
+              </div>
+            </div>
 
-            <tbody id="orders-list">
-              <!-- Loaded by app.js -->
-            </tbody>
+            <div class="acct-stat-card">
+              <div class="acct-stat-card__icon"><i class="fa-solid fa-calendar-check"></i></div>
+              <div class="acct-stat-card__body">
+                <span id="acct-stat-member-since">—</span>
+                <label>Member Since</label>
+              </div>
+            </div>
 
-          </table>
+          </div>
+
+          <div class="acct-quicklinks">
+
+            <button type="button" class="acct-quicklink" data-tab="profile">
+              <i class="fa-solid fa-user-pen"></i>
+              <div>
+                <strong>Edit Profile &amp; Address</strong>
+                <p>Update your contact and shipping details.</p>
+              </div>
+              <i class="fa-solid fa-chevron-right acct-quicklink__arrow"></i>
+            </button>
+
+            <button type="button" class="acct-quicklink" data-tab="orders">
+              <i class="fa-solid fa-box"></i>
+              <div>
+                <strong>Track an Order</strong>
+                <p>View status and details of past orders.</p>
+              </div>
+              <i class="fa-solid fa-chevron-right acct-quicklink__arrow"></i>
+            </button>
+
+            <button type="button" class="acct-quicklink" data-tab="wishlist">
+              <i class="fa-solid fa-heart"></i>
+              <div>
+                <strong>View Wishlist</strong>
+                <p>See the products you've saved for later.</p>
+              </div>
+              <i class="fa-solid fa-chevron-right acct-quicklink__arrow"></i>
+            </button>
+
+          </div>
+
+        </div>
+
+
+        <!-- PROFILE & ADDRESS -->
+        <div class="acct-panel" id="panel-profile" data-panel="profile">
+
+          <div class="acct-panel__head">
+            <h3>Profile &amp; Address</h3>
+            <p>This information is used to prefill your checkout.</p>
+          </div>
+
+          <form
+            id="profile-form"
+            onsubmit="handleProfileUpdate(event)"
+          >
+
+            <div class="acct-form-grid">
+
+              <div class="dashboard-card acct-card">
+                <h4><i class="fa-solid fa-id-card"></i> Personal Information</h4>
+
+                <div class="form-group">
+                  <label for="prof-name">Name</label>
+                  <div class="acct-input-wrap">
+                    <i class="fa-solid fa-user"></i>
+                    <input type="text" id="prof-name">
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label for="prof-company">Company</label>
+                  <div class="acct-input-wrap">
+                    <i class="fa-solid fa-building"></i>
+                    <input type="text" id="prof-company">
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label for="prof-phone">Phone</label>
+                  <div class="acct-input-wrap">
+                    <i class="fa-solid fa-phone"></i>
+                    <input type="text" id="prof-phone">
+                  </div>
+                </div>
+              </div>
+
+              <div class="dashboard-card acct-card">
+                <h4><i class="fa-solid fa-location-dot"></i> Shipping Address</h4>
+
+                <div class="form-group">
+                  <label for="prof-street">Street</label>
+                  <div class="acct-input-wrap">
+                    <i class="fa-solid fa-road"></i>
+                    <input type="text" id="prof-street">
+                  </div>
+                </div>
+
+                <div class="acct-field-row">
+                  <div class="form-group">
+                    <label for="prof-city">City</label>
+                    <div class="acct-input-wrap">
+                      <i class="fa-solid fa-city"></i>
+                      <input type="text" id="prof-city">
+                    </div>
+                  </div>
+
+                  <div class="form-group">
+                    <label for="prof-postal">Postal Code</label>
+                    <div class="acct-input-wrap">
+                      <i class="fa-solid fa-hashtag"></i>
+                      <input type="text" id="prof-postal">
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label for="prof-country">Country</label>
+                  <div class="acct-input-wrap">
+                    <i class="fa-solid fa-globe"></i>
+                    <input type="text" id="prof-country">
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+            <button
+              type="submit"
+              class="btn btn--primary acct-save-btn"
+            >
+              <i class="fa-solid fa-check"></i>
+              Save Changes
+            </button>
+
+          </form>
+
+        </div>
+
+
+        <!-- ORDERS -->
+        <div class="acct-panel" id="panel-orders" data-panel="orders">
+
+          <div class="acct-panel__head">
+            <h3>Order History</h3>
+            <p>Track and review your past orders.</p>
+          </div>
+
+          <div class="dashboard-card acct-card acct-card--table">
+
+            <div class="table-responsive">
+
+              <table class="orders-table">
+
+                <thead>
+                  <tr>
+                    <th>Order ID</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                    <th>Total</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+
+                <tbody id="orders-list">
+                  <!-- Loaded by app.js -->
+                </tbody>
+
+              </table>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <!-- WISHLIST -->
+        <div class="acct-panel" id="panel-wishlist" data-panel="wishlist">
+          <div id="wishlist-section-wrapper"></div>
+        </div>
+
+
+        <!-- SETTINGS -->
+        <div class="acct-panel" id="panel-settings" data-panel="settings">
+
+          <div class="acct-panel__head">
+            <h3>Settings</h3>
+            <p>Manage account information and preferences.</p>
+          </div>
+
+          <div class="acct-form-grid">
+
+            <div class="dashboard-card acct-card">
+              <h4><i class="fa-solid fa-circle-info"></i> Account Information</h4>
+
+              <dl class="acct-info-list">
+                <div>
+                  <dt>Email</dt>
+                  <dd id="acct-settings-email">—</dd>
+                </div>
+                <div>
+                  <dt>Member Since</dt>
+                  <dd id="acct-settings-member-since">—</dd>
+                </div>
+                <div>
+                  <dt>Status</dt>
+                  <dd><span class="status-pill status-pill--delivered">Active</span></dd>
+                </div>
+              </dl>
+            </div>
+
+            <div class="dashboard-card acct-card">
+              <h4><i class="fa-solid fa-palette"></i> Appearance</h4>
+
+              <div class="acct-theme-row">
+                <div>
+                  <strong>Theme</strong>
+                  <p>Switch between light and dark mode.</p>
+                </div>
+                <button type="button" id="acctThemeToggle" class="acct-theme-btn" aria-label="Toggle theme">
+                  <i class="fa-solid fa-moon"></i>
+                </button>
+              </div>
+            </div>
+
+          </div>
 
         </div>
 
       </div>
+      <!-- /.acct-content -->
 
     </div>
+    <!-- /.acct-shell -->
 
   </div>
 
@@ -395,7 +590,7 @@
           Items
         </h4>
 
-        <ul id="modal-order-items"></ul>
+        <ul id="modal-order-items" class="acct-order-items"></ul>
 
         <div
           class="order-total"
@@ -408,6 +603,7 @@
           class="btn btn--primary"
           id="reorder-btn"
         >
+          <i class="fa-solid fa-rotate-right"></i>
           Reorder these items
         </button>
 
