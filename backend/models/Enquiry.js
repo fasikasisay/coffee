@@ -10,7 +10,12 @@ const Enquiry = {
   async create(data) {
     const [result] = await pool.execute(
       `INSERT INTO enquiries (name, email, phone, message) VALUES (?, ?, ?, ?)`,
-      [data.name.trim(), data.email.trim().toLowerCase(), data.phone.trim(), data.message.trim()]
+  [
+  data.name.trim(),
+  data.email.trim().toLowerCase(),
+  data.phone ? data.phone.trim() : null,
+  data.message.trim()
+]
     );
     return Enquiry.findById(result.insertId);
   },

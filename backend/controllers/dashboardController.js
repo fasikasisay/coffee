@@ -1,6 +1,7 @@
 const Order    = require('../models/Order');
 const Product  = require('../models/Product');
 const Customer = require('../models/Customer');
+const Stock    = require('../models/Stock');
 const asyncHandler = require('../middleware/async');
 
 // ── @route  GET /api/v1/dashboard/stats ───────────────────────────
@@ -24,6 +25,7 @@ exports.getDashboardStats = asyncHandler(async (req, res) => {
     lastMonthOrders,
     recentOrders,
     ordersByStatus,
+    stockAlerts,
   ] = await Promise.all([
     Order.count(),
     Product.countAvailable(),
@@ -33,6 +35,7 @@ exports.getDashboardStats = asyncHandler(async (req, res) => {
     Order.countInRange(startOfLastMonth, startOfMonth),
     Order.findRecent(5),
     Order.countByStatus(),
+    Stock.alertCounts(),
   ]);
 
   
@@ -57,6 +60,7 @@ exports.getDashboardStats = asyncHandler(async (req, res) => {
       },
       ordersByStatus,
       recentOrders,   
+      stockAlerts,
     },
   });
 });

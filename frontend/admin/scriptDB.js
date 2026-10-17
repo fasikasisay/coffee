@@ -1,5 +1,5 @@
  
-  const API_BASE = window.MISRAK_API_BASE || 'http://127.0.0.1:5000/api/v1';
+  const API_BASE = window.MISRAK_API_BASE || 'http://127.0.0.1:5001/api/v1';
 
  
  
@@ -65,7 +65,7 @@
   }
 
   /* ── PAGE NAVIGATION ───────────────────────────── */
-  const pages = ['dashboard', 'products', 'orders', 'customers','services', 'messages', 'settings'];
+  const pages = ['dashboard', 'products', 'stock', 'orders', 'sales', 'customers','services', 'messages', 'settings'];
   const _pageLoaded = { products: false, orders: false, customers: false, services: false, messages: false };
 
   function setActivePage(page, navEl) {
@@ -79,7 +79,9 @@
     const titles = {
       dashboard: 'Dashboard',
       products: 'Products',
+      stock: 'Stock',
       orders: 'Orders',
+      sales: 'Daily Sales',
       customers: 'Customers',
       services: 'Services',
       messages: 'Messages',
@@ -95,6 +97,9 @@
     if (page === 'services' && !_pageLoaded.services) { loadServices(); _pageLoaded.services = true; }
     if (page === 'messages' && !_pageLoaded.messages) { loadMessages(); _pageLoaded.messages = true; }
     if (page === 'settings') { loadBusinessSettings();}
+    // Stock and sales change from several places (orders, sales, edits) — refresh on every visit
+    if (page === 'stock' && typeof loadStockPage === 'function') loadStockPage(true);
+    if (page === 'sales' && typeof loadSalesPage === 'function') loadSalesPage();
   }
 
   /* ── AUTH: Login ───────────────────────────────── */
@@ -254,6 +259,9 @@ document.getElementById('settingsAdminRole').textContent = currentAdmin.role || 
 
     document.getElementById('stat-revenue-change').className = 'stat-change up';
     document.getElementById('stat-revenue-change').textContent = '↑ Cumulative revenue';
+
+    // Low / out-of-stock badge on the Stock nav item
+    if (typeof updateStockBadge === 'function') updateStockBadge(d.stockAlerts);
 
     // Pending badge
     const pending = ordersByStatus?.pending ?? 0;
@@ -501,7 +509,10 @@ document.getElementById('settingsAdminRole').textContent = currentAdmin.role || 
             <span style="color:${p.isAvailable?'#6ABF8B':'var(--text-muted)'}">${p.isAvailable?'Available':'Hidden'}</span>
           </label>
         </td>
-        <td><button class="btn-del" onclick="deleteProduct(${Number(p.id)})"><i class="fa-solid fa-trash-can"></i> Delete</button></td>
+        <td><div class="row-actions">
+          <button class="btn-mini" onclick="openEditProduct(${Number(p.id)})"><i class="fa-solid fa-pen"></i> Edit</button>
+          <button class="btn-del" onclick="deleteProduct(${Number(p.id)})"><i class="fa-solid fa-trash-can"></i> Delete</button>
+        </div></td>
       </tr>`).join('');
   }
 

@@ -2,6 +2,7 @@ const { pool }       = require('../config/db');
 const Order          = require('../models/Order');
 const Product        = require('../models/Product');
 const Customer       = require('../models/Customer');
+const Stock          = require('../models/Stock');
 const ErrorResponse  = require('../utils/errorResponse');
 const asyncHandler   = require('../middleware/async');
 const { body, validationResult } = require('express-validator');
@@ -88,6 +89,7 @@ exports.createOrder = asyncHandler(async (req, res, next) => {
 
     let serverTotal = 0;
     const resolvedItems = [];
+    const stockLog = [];   // stock history rows, written once the order id is known
 
   for (const item of items) {
   
@@ -144,6 +146,11 @@ exports.createOrder = asyncHandler(async (req, res, next) => {
   );
 }
 
+
+      stockLog.push({
+        productId: product.id, productName: product.name,
+        before: product.stock, quantity: Number(item.quantity),
+      });
 
       const lineTotal = Number(product.pricePerKg) * item.quantity;
       serverTotal += lineTotal;
@@ -213,6 +220,16 @@ exports.createOrder = asyncHandler(async (req, res, next) => {
       );
     }
 
+    // Stock history — same transaction as the deduction above
+    for (const s of stockLog) {
+      await Stock.logMovement(conn, {
+        productId: s.productId, productName: s.productName, type: 'order',
+        change: -s.quantity, before: s.before, after: s.before - s.quantity,
+        reason: `Online order ${orderNumber} placed`,
+        refType: 'order', refId: orderId, adminId: null,
+      });
+    }
+
     await conn.commit();
 
 const order = await Order.findById(orderId);
@@ -244,8 +261,40 @@ exports.updateOrderStatus = asyncHandler(async (req, res, next) => {
     );
   }
 
-  const order = await Order.updateStatus(id, status);
-  if (!order) return next(new ErrorResponse('Order not found', 404));
+  // Stock is deducted when an order is placed. Cancelling returns it to stock;
+  // un-cancelling takes it out again (and fails if there isn't enough left).
+  await Stock.withTransaction(async (conn) => {
+    const [[current]] = await conn.execute(
+      `SELECT id, order_number AS orderNumber, status FROM orders WHERE id = ? LIMIT 1 FOR UPDATE`,
+      [id]
+    );
+    if (!current) throw new ErrorResponse('Order not found', 404);
 
+    const wasCancelled  = current.status === 'cancelled';
+    const willBeCancelled = status === 'cancelled';
+
+    if (wasCancelled !== willBeCancelled) {
+      const [items] = await conn.execute(
+        `SELECT product_id AS productId, quantity FROM order_items
+         WHERE order_id = ? AND product_id IS NOT NULL ORDER BY product_id ASC`,
+        [id]
+      );
+      for (const item of items) {
+        await Stock.change(conn, item.productId, willBeCancelled ? item.quantity : -item.quantity, {
+          type:    willBeCancelled ? 'order_cancel' : 'order',
+          reason:  willBeCancelled
+            ? `Order ${current.orderNumber} cancelled — stock returned`
+            : `Order ${current.orderNumber} reinstated after cancellation`,
+          refType: 'order', refId: id, adminId: req.admin?.id,
+        });
+      }
+    }
+
+    await conn.execute(
+      `UPDATE orders SET status = ?, updated_at = NOW() WHERE id = ?`, [status, id]
+    );
+  });
+
+  const order = await Order.findById(id);
   res.status(200).json({ success: true, data: order });
 });

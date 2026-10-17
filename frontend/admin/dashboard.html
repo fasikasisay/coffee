@@ -82,12 +82,23 @@
         <span>Products</span>
       </div>
 
+      <div class="nav-item" onclick="setActivePage('stock', this)">
+        <i class="fa-solid fa-boxes-stacked"></i>
+        <span>Stock</span>
+        <span class="nav-badge" id="stockBadge" style="display:none">0</span>
+      </div>
+
       <div class="nav-section-label">Commerce</div>
 
       <div class="nav-item" onclick="setActivePage('orders', this)">
         <i class="fa-solid fa-truck"></i>
         <span>Orders</span>
         <span class="nav-badge" id="pendingBadge">—</span>
+      </div>
+
+      <div class="nav-item" onclick="setActivePage('sales', this)">
+        <i class="fa-solid fa-cash-register"></i>
+        <span>Daily Sales</span>
       </div>
 
     <div class="nav-item" onclick="setActivePage('services', this)">
@@ -306,6 +317,485 @@
         </div>
       </div>
     </div>
+<!--  STOCK PAGE  -->
+<div class="page-content" id="page-stock" style="display:none">
+  <div class="page-header">
+    <h1>Stock Management</h1>
+    <p>Track inventory levels, restock products and review every stock movement.</p>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card orders">
+      <div class="stat-card-header">
+        <div class="stat-label">Total Products</div>
+        <div class="stat-icon"><i class="fa-solid fa-boxes-stacked"></i></div>
+      </div>
+      <div class="stat-value" id="stk-total">—</div>
+      <div class="stat-change neutral" id="stk-total-sub">Loading…</div>
+    </div>
+    <div class="stat-card customers">
+      <div class="stat-card-header">
+        <div class="stat-label">In Stock</div>
+        <div class="stat-icon"><i class="fa-solid fa-circle-check"></i></div>
+      </div>
+      <div class="stat-value" id="stk-in">—</div>
+      <div class="stat-change neutral">Above low-stock level</div>
+    </div>
+    <div class="stat-card revenue">
+      <div class="stat-card-header">
+        <div class="stat-label">Low Stock</div>
+        <div class="stat-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
+      </div>
+      <div class="stat-value" id="stk-low">—</div>
+      <div class="stat-change neutral">Time to reorder</div>
+    </div>
+    <div class="stat-card danger">
+      <div class="stat-card-header">
+        <div class="stat-label">Out of Stock</div>
+        <div class="stat-icon"><i class="fa-solid fa-ban"></i></div>
+      </div>
+      <div class="stat-value" id="stk-out">—</div>
+      <div class="stat-change neutral">Cannot be sold</div>
+    </div>
+  </div>
+
+  <div class="panel toolbar-panel">
+    <div class="toolbar-row" id="stockTabs">
+      <button class="orders-filter-btn active" data-tab="inventory" onclick="switchStockTab(this)">Inventory</button>
+      <button class="orders-filter-btn" data-tab="history" onclick="switchStockTab(this)">Movement History</button>
+    </div>
+  </div>
+
+  <!-- Inventory tab -->
+  <div id="stock-tab-inventory">
+    <div class="panel toolbar-panel">
+      <div class="toolbar-row">
+        <span class="toolbar-label">Filter:</span>
+        <button class="orders-filter-btn active" data-status="all"          onclick="filterStockStatus(this)">All</button>
+        <button class="orders-filter-btn" data-status="in_stock"            onclick="filterStockStatus(this)">In Stock</button>
+        <button class="orders-filter-btn" data-status="low_stock"           onclick="filterStockStatus(this)">Low Stock</button>
+        <button class="orders-filter-btn" data-status="out_of_stock"        onclick="filterStockStatus(this)">Out of Stock</button>
+        <input type="search" class="form-input toolbar-search" id="stockSearch" placeholder="Search products…" aria-label="Search products" oninput="renderStockTable()" />
+      </div>
+    </div>
+    <div class="panel">
+      <div class="table-count" id="stock-count">Loading…</div>
+      <div class="table-scroll">
+        <table class="orders-table" id="stockTable">
+          <thead><tr>
+            <th>Product</th><th>Stock</th><th>Low-stock level</th>
+            <th>Status</th><th>Last movement</th><th>Actions</th>
+          </tr></thead>
+          <tbody id="stockBody"><tr><td colspan="6" class="table-msg">Loading stock…</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Movement history tab -->
+  <div id="stock-tab-history" style="display:none">
+    <div class="panel toolbar-panel">
+      <div class="toolbar-row">
+        <select class="form-input" id="histProduct" aria-label="Product"><option value="">All products</option></select>
+        <select class="form-input" id="histType" aria-label="Movement type">
+          <option value="">All movement types</option>
+          <option value="restock">Restock</option>
+          <option value="adjustment">Adjustment</option>
+          <option value="sale">Walk-in sale</option>
+          <option value="order">Online order</option>
+          <option value="order_cancel">Order cancelled</option>
+          <option value="sale_void">Sale voided</option>
+          <option value="initial">Initial stock</option>
+        </select>
+        <label class="toolbar-field">From <input type="date" class="form-input" id="histFrom" /></label>
+        <label class="toolbar-field">To <input type="date" class="form-input" id="histTo" /></label>
+        <button class="btn-gold btn-sm" onclick="applyHistoryFilters()">Apply</button>
+        <button class="btn-outline btn-sm" onclick="resetHistoryFilters()">Reset</button>
+      </div>
+      <div class="inline-error" id="histError" style="display:none"></div>
+    </div>
+    <div class="panel">
+      <div class="table-count" id="hist-count">Loading…</div>
+      <div class="table-scroll">
+        <table class="orders-table wide-table">
+          <thead><tr>
+            <th>Date</th><th>Product</th><th>Type</th><th>Change</th>
+            <th>Before → After</th><th>Reason</th><th>By</th>
+          </tr></thead>
+          <tbody id="histBody"><tr><td colspan="7" class="table-msg">Loading history…</td></tr></tbody>
+        </table>
+      </div>
+      <div class="pager" id="histPager"></div>
+    </div>
+  </div>
+</div>
+
+<!--  DAILY SALES PAGE  -->
+<div class="page-content" id="page-sales" style="display:none">
+  <div class="page-header">
+    <h1>Daily Sales</h1>
+    <p>Register walk-in and manual sales, and review sales by day.</p>
+  </div>
+
+  <div class="panel toolbar-panel">
+    <div class="toolbar-row">
+      <span class="toolbar-label">Period:</span>
+      <button class="orders-filter-btn active" data-preset="today"     onclick="applySalesPreset(this)">Today</button>
+      <button class="orders-filter-btn" data-preset="yesterday"        onclick="applySalesPreset(this)">Yesterday</button>
+      <button class="orders-filter-btn" data-preset="7d"               onclick="applySalesPreset(this)">Last 7 days</button>
+      <button class="orders-filter-btn" data-preset="30d"              onclick="applySalesPreset(this)">Last 30 days</button>
+      <button class="orders-filter-btn" data-preset="month"            onclick="applySalesPreset(this)">This month</button>
+      <button class="btn-gold toolbar-spacer" onclick="openSaleModal()"><i class="fa-solid fa-plus"></i> New Sale</button>
+    </div>
+    <div class="toolbar-row">
+      <label class="toolbar-field">From <input type="date" class="form-input" id="salesFrom" /></label>
+      <label class="toolbar-field">To <input type="date" class="form-input" id="salesTo" /></label>
+      <select class="form-input" id="salesPayment" aria-label="Payment method">
+        <option value="">All payment methods</option>
+        <option value="cash">Cash</option>
+        <option value="telebirr">Telebirr</option>
+        <option value="cbe-birr">CBE Birr</option>
+        <option value="card">Card</option>
+      </select>
+      <select class="form-input" id="salesStatus" aria-label="Sale status">
+        <option value="">All sales</option>
+        <option value="completed">Completed</option>
+        <option value="voided">Voided</option>
+      </select>
+      <button class="btn-outline btn-sm" onclick="applySalesCustomRange()">Apply</button>
+    </div>
+    <div class="inline-error" id="salesRangeError" style="display:none"></div>
+  </div>
+
+  <div class="stats-grid cols-3 tight">
+    <div class="stat-card customers">
+      <div class="stat-card-header">
+        <div class="stat-label">Paid Sales</div>
+        <div class="stat-icon"><i class="fa-solid fa-sack-dollar"></i></div>
+      </div>
+      <div class="stat-value" id="ds-paid">—</div>
+      <div class="stat-change neutral" id="ds-paid-sub">Loading…</div>
+    </div>
+    <div class="stat-card revenue">
+      <div class="stat-card-header">
+        <div class="stat-label">Credit Sales</div>
+        <div class="stat-icon"><i class="fa-solid fa-hand-holding-dollar"></i></div>
+      </div>
+      <div class="stat-value" id="ds-credit">—</div>
+      <div class="stat-change neutral" id="ds-credit-sub">Sold on credit in this period</div>
+    </div>
+    <div class="stat-card danger">
+      <div class="stat-card-header">
+        <div class="stat-label">Outstanding Credit</div>
+        <div class="stat-icon"><i class="fa-solid fa-file-invoice-dollar"></i></div>
+      </div>
+      <div class="stat-value" id="ds-outstanding">—</div>
+      <div class="stat-change neutral" id="ds-outstanding-sub">All unpaid credit</div>
+    </div>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card orders">
+      <div class="stat-card-header">
+        <div class="stat-label">Transactions</div>
+        <div class="stat-icon"><i class="fa-solid fa-receipt"></i></div>
+      </div>
+      <div class="stat-value" id="ds-transactions">—</div>
+      <div class="stat-change neutral" id="ds-voided">Paid + credit</div>
+    </div>
+    <div class="stat-card products">
+      <div class="stat-card-header">
+        <div class="stat-label">Items Sold</div>
+        <div class="stat-icon"><i class="fa-solid fa-weight-hanging"></i></div>
+      </div>
+      <div class="stat-value" id="ds-items">—</div>
+      <div class="stat-change neutral">Total kilograms</div>
+    </div>
+    <div class="stat-card customers">
+      <div class="stat-card-header">
+        <div class="stat-label">Average Sale</div>
+        <div class="stat-icon"><i class="fa-solid fa-chart-simple"></i></div>
+      </div>
+      <div class="stat-value" id="ds-average">—</div>
+      <div class="stat-change neutral">Per transaction</div>
+    </div>
+    <div class="stat-card revenue">
+      <div class="stat-card-header">
+        <div class="stat-label">Credit Collected</div>
+        <div class="stat-icon"><i class="fa-solid fa-coins"></i></div>
+      </div>
+      <div class="stat-value" id="ds-collected">—</div>
+      <div class="stat-change neutral">Payments received in period</div>
+    </div>
+  </div>
+
+  <div class="ds-grid">
+    <div class="panel">
+      <div class="panel-header"><div>
+        <div class="panel-title">Payment Methods</div>
+        <div class="panel-subtitle">Paid sales only · credit is settled later</div>
+      </div></div>
+      <div class="bar-list" id="dsPayments"><div class="empty-state">Loading…</div></div>
+    </div>
+    <div class="panel">
+      <div class="panel-header"><div>
+        <div class="panel-title">Top Products</div>
+        <div class="panel-subtitle">Best sellers by revenue</div>
+      </div></div>
+      <div class="bar-list" id="dsTopProducts"><div class="empty-state">Loading…</div></div>
+    </div>
+  </div>
+
+  <div class="panel section-gap" id="dsDailyPanel" style="display:none">
+    <div class="panel-header"><div>
+      <div class="panel-title">Daily Breakdown</div>
+      <div class="panel-subtitle">Completed sales per day in the selected period</div>
+    </div></div>
+    <div class="table-scroll">
+      <table class="orders-table">
+        <thead><tr><th>Date</th><th>Transactions</th><th>Items sold</th><th>Paid</th><th>Credit</th></tr></thead>
+        <tbody id="dsDailyBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-header"><div>
+      <div class="panel-title">Sales History</div>
+      <div class="panel-subtitle" id="sales-count">Loading…</div>
+    </div></div>
+
+    <div class="hist-tabs" id="salesTabs" role="tablist">
+      <button class="orders-filter-btn active" role="tab" aria-selected="true"  data-stab="paid"   onclick="switchSalesTab(this)">Paid Sales</button>
+      <button class="orders-filter-btn"        role="tab" aria-selected="false" data-stab="credit" onclick="switchSalesTab(this)">Credit Sales</button>
+    </div>
+    <div class="hist-filters" id="creditFilters" style="display:none">
+      <select class="form-input" id="salesCreditStatus" aria-label="Credit status">
+        <option value="">All credit statuses</option>
+        <option value="unpaid">Unpaid</option>
+        <option value="partial">Partly paid</option>
+        <option value="paid">Fully paid</option>
+      </select>
+      <input type="search" class="form-input" id="salesSearch" maxlength="100" placeholder="Search customer, contact or sale #…" aria-label="Search credit sales" />
+    </div>
+
+    <div class="table-scroll" id="paidWrap">
+      <table class="orders-table wide-table">
+        <thead><tr>
+          <th>Sale #</th><th>Date</th><th>Items</th><th>Payment</th>
+          <th>Qty</th><th>Total</th><th>Status</th><th>Action</th>
+        </tr></thead>
+        <tbody id="salesBody"><tr><td colspan="8" class="table-msg">Loading sales…</td></tr></tbody>
+      </table>
+    </div>
+    <div class="table-scroll" id="creditWrap" style="display:none">
+      <table class="orders-table wide-table credit-table">
+        <thead><tr>
+          <th>Sale #</th><th>Date</th><th>Customer</th><th>Items</th>
+          <th>Total</th><th>Paid</th><th>Balance</th><th>Status</th><th>Action</th>
+        </tr></thead>
+        <tbody id="creditBody"><tr><td colspan="9" class="table-msg">Loading credit sales…</td></tr></tbody>
+      </table>
+    </div>
+    <div class="pager" id="salesPager"></div>
+  </div>
+</div>
+
+<!-- EDIT PRODUCT MODAL (name + price) -->
+<div class="mc-modal" id="editProductModal" aria-hidden="true">
+  <div class="mc-modal-card" role="dialog" aria-modal="true" aria-labelledby="editProductTitle">
+    <div class="mc-modal-head">
+      <h2 id="editProductTitle">Edit Product</h2>
+      <button type="button" class="mc-modal-close" onclick="closeEditProduct()" aria-label="Close">✕</button>
+    </div>
+    <div class="mc-modal-sub">Changes appear on the website, Stock page and new sales straight away. Past orders and sales keep the name and price they were sold at.</div>
+    <form id="editProductForm" onsubmit="submitEditProduct(event)" novalidate>
+      <div class="mc-field">
+        <label for="editProductName">Product name *</label>
+        <input class="form-input" id="editProductName" type="text" maxlength="255" autocomplete="off" />
+      </div>
+      <div class="mc-field">
+        <label for="editProductPrice">Price per kg (USD) *</label>
+        <input class="form-input" id="editProductPrice" type="number" min="0.01" max="9999999.99" step="0.01" inputmode="decimal" />
+      </div>
+      <div class="inline-error" id="editProductError" style="display:none"></div>
+      <div class="mc-modal-actions">
+        <button type="button" class="btn-outline" onclick="closeEditProduct()">Cancel</button>
+        <button type="submit" class="btn-gold" id="editProductBtn">Save changes</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- STOCK UPDATE MODAL -->
+<div class="mc-modal" id="stockModal" aria-hidden="true">
+  <div class="mc-modal-card" role="dialog" aria-modal="true" aria-labelledby="stockModalTitle">
+    <div class="mc-modal-head">
+      <h2 id="stockModalTitle">Update Stock</h2>
+      <button type="button" class="mc-modal-close" onclick="closeStockModal()" aria-label="Close">✕</button>
+    </div>
+    <div class="mc-modal-sub" id="stockModalProduct"></div>
+
+    <form id="stockForm" onsubmit="submitStockForm(event)" novalidate>
+      <div class="mc-field">
+        <label for="stockAction">Action</label>
+        <select class="form-input" id="stockAction" onchange="onStockActionChange()">
+          <option value="add">Add stock (received)</option>
+          <option value="remove">Remove stock</option>
+          <option value="set">Set exact count (stock-take)</option>
+          <option value="threshold">Change low-stock level</option>
+        </select>
+      </div>
+      <div class="mc-field">
+        <label for="stockQty" id="stockQtyLabel">Quantity to add (kg)</label>
+        <input class="form-input" id="stockQty" type="number" min="1" step="1" inputmode="numeric"
+               placeholder="0" oninput="updateStockPreview()" onkeydown="blockNonDigits(event)" />
+      </div>
+      <div class="mc-field" id="stockReasonWrap">
+        <label for="stockReason">Reason *</label>
+        <input class="form-input" id="stockReason" type="text" maxlength="255" list="stockReasonList"
+               placeholder="e.g. New delivery from supplier" autocomplete="off" />
+        <datalist id="stockReasonList"></datalist>
+      </div>
+      <div class="stock-preview" id="stockPreview"></div>
+      <div class="inline-error" id="stockModalError" style="display:none"></div>
+      <div class="mc-modal-actions">
+        <button type="button" class="btn-outline" onclick="closeStockModal()">Cancel</button>
+        <button type="submit" class="btn-gold" id="stockSubmitBtn">Save</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- RECORD CREDIT PAYMENT MODAL -->
+<div class="mc-modal" id="payModal" aria-hidden="true">
+  <div class="mc-modal-card" role="dialog" aria-modal="true" aria-labelledby="payModalTitle">
+    <div class="mc-modal-head">
+      <h2 id="payModalTitle">Record Payment</h2>
+      <button type="button" class="mc-modal-close" onclick="closePayModal()" aria-label="Close">✕</button>
+    </div>
+    <div class="mc-modal-sub"><strong id="paySaleNumber"></strong> · <span id="payCustomer"></span></div>
+    <div class="pay-summary">
+      <div><span class="sale-summary-label">Total</span><strong id="payTotal">$0.00</strong></div>
+      <div><span class="sale-summary-label">Paid so far</span><strong id="payPaid">$0.00</strong></div>
+      <div class="sale-summary-total"><span class="sale-summary-label">Balance</span><strong id="payBalance">$0.00</strong></div>
+    </div>
+    <form id="payForm" onsubmit="submitPayment(event)" novalidate>
+      <div class="mc-grid-2">
+        <div class="mc-field">
+          <label for="payAmount">Amount received *</label>
+          <input class="form-input" id="payAmount" type="number" min="0.01" step="0.01" inputmode="decimal" placeholder="0.00" oninput="updatePayPreview()" />
+        </div>
+        <div class="mc-field">
+          <label for="payMethod">Payment method *</label>
+          <select class="form-input" id="payMethod">
+            <option value="cash">Cash</option>
+            <option value="telebirr">Telebirr</option>
+            <option value="cbe-birr">CBE Birr</option>
+            <option value="card">Card</option>
+          </select>
+        </div>
+      </div>
+      <button type="button" class="btn-link" onclick="fillFullBalance()">Pay full balance</button>
+      <div class="mc-field">
+        <label for="payNote">Note (optional)</label>
+        <input class="form-input" id="payNote" type="text" maxlength="255" placeholder="e.g. Second installment" autocomplete="off" />
+      </div>
+      <div class="stock-preview" id="payPreview"></div>
+      <div class="inline-error" id="payError" style="display:none"></div>
+      <div class="mc-modal-actions">
+        <button type="button" class="btn-outline" onclick="closePayModal()">Cancel</button>
+        <button type="submit" class="btn-gold" id="paySubmitBtn">Record payment</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- VOID SALE MODAL -->
+<div class="mc-modal" id="voidModal" aria-hidden="true">
+  <div class="mc-modal-card" role="dialog" aria-modal="true" aria-labelledby="voidModalTitle">
+    <div class="mc-modal-head">
+      <h2 id="voidModalTitle">Void Sale</h2>
+      <button type="button" class="mc-modal-close" onclick="closeVoidModal()" aria-label="Close">✕</button>
+    </div>
+    <div class="mc-modal-sub">Voiding <strong id="voidSaleNumber"></strong> returns its quantities to stock and removes it from the sales totals. This cannot be undone.</div>
+    <form id="voidForm" onsubmit="submitVoid(event)" novalidate>
+      <div class="mc-field">
+        <label for="voidReason">Reason *</label>
+        <input class="form-input" id="voidReason" type="text" maxlength="255" placeholder="e.g. Entered by mistake" autocomplete="off" />
+      </div>
+      <div class="inline-error" id="voidError" style="display:none"></div>
+      <div class="mc-modal-actions">
+        <button type="button" class="btn-outline" onclick="closeVoidModal()">Keep sale</button>
+        <button type="submit" class="btn-gold" id="voidSubmitBtn">Void sale</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- NEW SALE MODAL -->
+<div class="mc-modal" id="saleModal" aria-hidden="true">
+  <div class="mc-modal-card mc-modal-lg" role="dialog" aria-modal="true" aria-labelledby="saleModalTitle">
+    <div class="mc-modal-head">
+      <h2 id="saleModalTitle">New Walk-in Sale</h2>
+      <button type="button" class="mc-modal-close" onclick="closeSaleModal()" aria-label="Close">✕</button>
+    </div>
+    <div class="mc-modal-sub">Choose the products sold. Totals are calculated automatically and stock is deducted when you complete the sale.</div>
+
+    <form id="saleForm" onsubmit="submitSale(event)" novalidate>
+      <div class="sale-type-switch" role="radiogroup" aria-label="Sale type">
+        <button type="button" class="orders-filter-btn active" role="radio" aria-checked="true"  data-type="paid"   onclick="setSaleType('paid')"><i class="fa-solid fa-sack-dollar"></i> Paid sale</button>
+        <button type="button" class="orders-filter-btn"        role="radio" aria-checked="false" data-type="credit" onclick="setSaleType('credit')"><i class="fa-solid fa-hand-holding-dollar"></i> Credit sale</button>
+      </div>
+      <div class="sale-type-hint" id="saleTypeHint">The customer pays now.</div>
+
+      <div class="sale-lines-head" aria-hidden="true">
+        <span>Product</span><span>Qty (kg)</span><span>Line total</span><span></span>
+      </div>
+      <div id="saleLines"></div>
+      <button type="button" class="btn-link" id="addSaleLineBtn" onclick="addSaleLine()">
+        <i class="fa-solid fa-plus"></i> Add another product
+      </button>
+
+      <div class="mc-grid-2">
+        <div class="mc-field" id="salePaymentWrap">
+          <label for="salePayment">Payment method *</label>
+          <select class="form-input" id="salePayment">
+            <option value="cash">Cash</option>
+            <option value="telebirr">Telebirr</option>
+            <option value="cbe-birr">CBE Birr</option>
+            <option value="card">Card</option>
+          </select>
+        </div>
+        <div class="mc-field">
+          <label for="saleCustomer" id="saleCustomerLabel">Customer name (optional)</label>
+          <input class="form-input" id="saleCustomer" type="text" maxlength="120" placeholder="Walk-in customer" autocomplete="off" />
+        </div>
+        <div class="mc-field" id="saleContactWrap" style="display:none">
+          <label for="saleContact">Contact (phone)</label>
+          <input class="form-input" id="saleContact" type="tel" maxlength="40" placeholder="e.g. +251 91 123 4567" autocomplete="off" />
+        </div>
+      </div>
+      <div class="mc-field">
+        <label for="saleNotes">Notes (optional)</label>
+        <input class="form-input" id="saleNotes" type="text" maxlength="500" placeholder="Anything worth remembering about this sale" autocomplete="off" />
+      </div>
+
+      <div class="sale-summary">
+        <div><span class="sale-summary-label">Products</span><strong id="saleSumItems">0</strong></div>
+        <div><span class="sale-summary-label">Total quantity</span><strong id="saleSumQty">0 kg</strong></div>
+        <div class="sale-summary-total"><span class="sale-summary-label">Total</span><strong id="saleSumTotal">$0.00</strong></div>
+      </div>
+
+      <div class="inline-error" id="saleModalError" style="display:none"></div>
+      <div class="mc-modal-actions">
+        <button type="button" class="btn-outline" onclick="closeSaleModal()">Cancel</button>
+        <button type="submit" class="btn-gold" id="saleSubmitBtn"><i class="fa-solid fa-check"></i> Complete Sale</button>
+      </div>
+    </form>
+  </div>
+</div>
+
 <!-- SERVICES PAGE -->
 <div class="page-content" id="page-services" style="display:none">
   <div class="page-header">
@@ -845,5 +1335,7 @@
 <script>window.MISRAK_API_BASE = 'https://api.misrakcoffee.com/api/v1';</script>
 -->
 <script src="scriptDB.js"></script>
+<script src="stockSales.js"></script>
+<script src="productEdit.js"></script>
 </body>
 </html>

@@ -8,7 +8,7 @@ const API_HOST = window.location.hostname === '127.0.0.1'
   ? '127.0.0.1'
   : 'localhost';
 
-const API_BASE = `http://${API_HOST}:5000/api/v1`;
+const API_BASE = `http://${API_HOST}:5001/api/v1`;
 
 const STORAGE_KEYS = {
   CART: 'misrak_cart',
@@ -771,6 +771,32 @@ const menuGrid =
   document.getElementById('menuGrid');
 
 
+/* The cart is saved in the browser, so a product renamed or repriced by the
+   admin would otherwise keep its old name/price there. Refresh those lines
+   from the live catalogue (the server always charges the current price). */
+function syncCartWithCatalogue() {
+  let changed = false;
+
+  cart.forEach(item => {
+    const product = PRODUCT_MAP.get(Number(item.id));
+    if (!product) return;
+
+    const price = Number(product.pricePerKg);
+
+    if (item.price !== price || item.name !== product.name) {
+      item.price = price;
+      item.name = product.name;
+      changed = true;
+    }
+  });
+
+  if (changed) {
+    saveCart();
+    updateCartUI();
+  }
+}
+
+
 async function fetchProducts() {
 
   if (!menuGrid) return;
@@ -820,6 +846,7 @@ async function fetchProducts() {
         ])
       );
 
+    syncCartWithCatalogue();
 
     renderProducts();
 

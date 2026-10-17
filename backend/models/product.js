@@ -1,4 +1,5 @@
 const { pool } = require('../config/db');
+const Stock = require('./Stock');
 
 function toSlug(name) {
   return name
@@ -8,10 +9,16 @@ function toSlug(name) {
     .slice(0, 200);
 }
 
+/** toSlug, but never empty (e.g. names written only in non-Latin script). */
+function makeSlug(name, suffix) {
+  const slug = toSlug(name);
+  return /[a-z0-9]/.test(slug) ? slug : `product-${suffix}`;
+}
+
 const PRODUCT_COLS = `
   id, name, slug, category, description,
   price_per_kg AS pricePerKg, min_order_kg AS minOrderKg,
-  stock, origin, region, process, grade,
+  stock, low_stock_threshold AS lowStockThreshold, origin, region, process, grade,
   is_available AS isAvailable, image,
   created_at AS createdAt, updated_at AS updatedAt
 `;
@@ -52,24 +59,38 @@ const Product = {
     return rows[0] || null;
   },
 
-  async create(data) {
-    const slug = toSlug(data.name);
+  async create(data, adminId = null) {
+    const slug = makeSlug(data.name, Date.now().toString(36));
     const [result] = await pool.execute(`
       INSERT INTO products
         (name, slug, category, description, price_per_kg, min_order_kg,
-         stock, origin, region, process, grade, is_available, image)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+         stock, low_stock_threshold, origin, region, process, grade, is_available, image)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `, [
       data.name.trim(), slug, data.category,
       data.description ? data.description.trim() : null,
       data.pricePerKg, data.minOrderKg ?? 1,
-      data.stock ?? 0, data.origin ?? 'Ethiopia',
+      data.stock ?? 0, data.lowStockThreshold ?? 100, data.origin ?? 'Ethiopia',
       data.region  ? data.region.trim()  : null,
       data.process ? data.process.trim() : null,
       data.grade   ? data.grade.trim()   : null,
       data.isAvailable !== false ? 1 : 0,
       data.image   ? data.image.trim()   : null,
     ]);
+
+    // Stock history: record the starting quantity of a brand-new product
+    const initial = Number(data.stock ?? 0);
+    if (initial > 0) {
+      try {
+        await Stock.logMovement(pool, {
+          productId: result.insertId, productName: data.name.trim(), type: 'initial',
+          change: initial, before: 0, after: initial,
+          reason: 'Initial stock when product was created', adminId,
+        });
+      } catch (e) {
+        console.error('Stock history (initial) failed:', e.message);
+      }
+    }
     return Product.findById(result.insertId);
   },
 
@@ -77,12 +98,13 @@ const Product = {
     const fields = [];
     const values = [];
 
-    if (data.name        !== undefined) { fields.push('name = ?', 'slug = ?'); values.push(data.name.trim(), toSlug(data.name)); }
+    if (data.name        !== undefined) { fields.push('name = ?', 'slug = ?'); values.push(data.name.trim(), makeSlug(data.name, id)); }
     if (data.category    !== undefined) { fields.push('category = ?');     values.push(data.category); }
     if (data.description !== undefined) { fields.push('description = ?');  values.push(data.description ? data.description.trim() : null); }
     if (data.pricePerKg  !== undefined) { fields.push('price_per_kg = ?'); values.push(Number(data.pricePerKg)); }
     if (data.minOrderKg  !== undefined) { fields.push('min_order_kg = ?'); values.push(Number(data.minOrderKg)); }
     if (data.stock       !== undefined) { fields.push('stock = ?');        values.push(Number(data.stock)); }
+    if (data.lowStockThreshold !== undefined) { fields.push('low_stock_threshold = ?'); values.push(Number(data.lowStockThreshold)); }
     if (data.region      !== undefined) { fields.push('region = ?');       values.push(data.region ? data.region.trim() : null); }
     if (data.process     !== undefined) { fields.push('process = ?');      values.push(data.process ? data.process.trim() : null); }
     if (data.grade       !== undefined) { fields.push('grade = ?');        values.push(data.grade ? data.grade.trim() : null); }
@@ -98,6 +120,16 @@ const Product = {
       `UPDATE products SET ${fields.join(', ')} WHERE id = ?`,
       values
     );
+
+    // Keep the stock-history name snapshot current, so history still reads
+    // correctly if the product is deleted later. (Sale/order receipts keep
+    // the name and price from the time of sale on purpose.)
+    if (data.name !== undefined) {
+      await pool.execute(
+        `UPDATE stock_movements SET product_name = ? WHERE product_id = ?`,
+        [data.name.trim(), id]
+      );
+    }
     return Product.findById(id);
   },
 

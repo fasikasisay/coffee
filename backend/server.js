@@ -18,9 +18,26 @@ const productRoutes   = require('./routes/products');
 const enquiryRoutes   = require('./routes/enquiries');
 const businessSettingsRoutes = require('./routes/businessSettings');
 const customerRoutes  = require('./routes/customerRoutes');
+const stockRoutes     = require('./routes/stock');
+const salesRoutes     = require('./routes/sales');
+const { isMigrated }  = require('./utils/migrateStockSales');
 
 // Connect MySQL
 connectDB();
+
+// Stock Management + Daily Sales need their tables/column (npm run migrate:stock)
+const { pool: _pool } = require('./config/db');
+isMigrated(_pool)
+  .then((ok) => {
+    if (!ok) {
+      console.error('❌  Stock & Sales tables are missing — run:  npm run migrate:stock');
+      process.exit(1);
+    }
+  })
+  .catch((err) => {
+    console.error(`❌  Could not verify stock/sales schema: ${err.message}`);
+    process.exit(1);
+  });
 
 const app  = express();
 const isProd = process.env.NODE_ENV === 'production';
@@ -134,6 +151,8 @@ app.use('/api/v1/auth',      authLimiter,   authRoutes);
 app.use('/api/v1/customers', publicLimiter, customerRoutes);
 app.use('/api/v1/dashboard', adminLimiter,  dashboardRoutes);
 app.use('/api/v1/orders',    publicLimiter, orderRoutes);
+app.use('/api/v1/stock',     adminLimiter,  stockRoutes);
+app.use('/api/v1/sales',     adminLimiter,  salesRoutes);
 app.use('/api/v1/products',  publicLimiter, productRoutes);
 app.use('/api/v1/enquiries', publicLimiter, enquiryRoutes);
 app.use('/api/v1/business-settings', publicLimiter, businessSettingsRoutes);
