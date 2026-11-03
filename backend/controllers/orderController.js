@@ -3,6 +3,7 @@ const Order          = require('../models/Order');
 const Product        = require('../models/Product');
 const Customer       = require('../models/Customer');
 const Stock          = require('../models/Stock');
+const Sale           = require('../models/Sale');
 const ErrorResponse  = require('../utils/errorResponse');
 const asyncHandler   = require('../middleware/async');
 const { body, validationResult } = require('express-validator');
@@ -263,7 +264,9 @@ exports.updateOrderStatus = asyncHandler(async (req, res, next) => {
 
   // Stock is deducted when an order is placed. Cancelling returns it to stock;
   // un-cancelling takes it out again (and fails if there isn't enough left).
-  await Stock.withTransaction(async (conn) => {
+  // The same transaction keeps the order's Daily Sales record in step (see Sale.syncFromOrder):
+  // the orders row is locked first, so two simultaneous requests for one order are serialised.
+  const sale = await Stock.withTransaction(async (conn) => {
     const [[current]] = await conn.execute(
       `SELECT id, order_number AS orderNumber, status FROM orders WHERE id = ? LIMIT 1 FOR UPDATE`,
       [id]
@@ -293,8 +296,16 @@ exports.updateOrderStatus = asyncHandler(async (req, res, next) => {
     await conn.execute(
       `UPDATE orders SET status = ?, updated_at = NOW() WHERE id = ?`, [status, id]
     );
+
+    // Confirmed (or later) → one sale; cancelled / back to pending → that sale is voided.
+    // No stock movement happens here — the order handler above already owns stock.
+    return Sale.syncFromOrder(conn, { orderId: id, status, adminId: req.admin?.id });
   });
 
   const order = await Order.findById(id);
-  res.status(200).json({ success: true, data: order });
+  res.status(200).json({
+    success: true,
+    data: order,
+    sale: { action: sale.action, id: sale.saleId },   // additive field; existing clients ignore it
+  });
 });

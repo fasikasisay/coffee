@@ -459,7 +459,12 @@ document.getElementById('settingsAdminRole').textContent = currentAdmin.role || 
       const badge = row.querySelector('.status-badge');
       badge.className   = `status-badge status-${newStatus}`;
       badge.textContent = capitalize(newStatus);
-      showToast(`Status updated to ${newStatus}`, 'success');
+      const act = data.sale && data.sale.action;
+      showToast(
+        act === 'created'     ? `Status updated to ${newStatus} — added to Daily Sales`
+        : act === 'reactivated' ? `Status updated to ${newStatus} — sale restored in Daily Sales`
+        : act === 'voided'      ? `Status updated to ${newStatus} — removed from Daily Sales`
+        : `Status updated to ${newStatus}`, 'success');
     } catch (err) {
       const order = _allOrders.find(o => o.id === orderId);
       if (order) selectEl.value = order.status;

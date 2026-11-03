@@ -7,8 +7,21 @@ const SALE_COLS = `
   s.total_amount AS totalAmount, s.total_quantity AS totalQuantity,
   s.amount_paid AS amountPaid, s.credit_status AS creditStatus,
   s.status, s.voided_at AS voidedAt, s.void_reason AS voidReason,
+  s.source, s.order_id AS orderId, o.order_number AS orderNumber,
   a.name AS adminName, s.created_at AS createdAt
 `;
+const SALE_JOINS = `LEFT JOIN admins a ON a.id = s.admin_id LEFT JOIN orders o ON o.id = s.order_id`;
+
+/** Order statuses that count as a sale (confirmed or any later step of fulfilment). */
+const SALE_ORDER_STATUSES = ['confirmed', 'processing', 'shipped', 'delivered'];
+const PAY_METHODS = ['cash', 'telebirr', 'cbe-birr', 'card'];
+
+/** The storefront saves the customer's choice in the order notes as "Payment method: telebirr". */
+function paymentFromOrderNotes(notes) {
+  const m = /Payment method:\s*([a-z-]+)/i.exec(notes || '');
+  const v = m && m[1].toLowerCase();
+  return PAY_METHODS.includes(v) ? v : 'online';
+}
 
 const toCents = (v) => Math.round(Number(v) * 100);
 
@@ -105,7 +118,7 @@ const Sale = {
 
   async findById(id) {
     const [rows] = await pool.execute(
-      `SELECT ${SALE_COLS} FROM sales s LEFT JOIN admins a ON a.id = s.admin_id
+      `SELECT ${SALE_COLS} FROM sales s ${SALE_JOINS}
        WHERE s.id = ? LIMIT 1`, [id]
     );
     if (!rows[0]) return null;
@@ -116,6 +129,7 @@ const Sale = {
   async lockById(conn, id) {
     const [rows] = await conn.execute(
       `SELECT id, sale_number AS saleNumber, sale_type AS saleType, status,
+              source, order_id AS orderId,
               total_amount AS totalAmount, amount_paid AS amountPaid, credit_status AS creditStatus
        FROM sales WHERE id = ? LIMIT 1 FOR UPDATE`, [id]
     );
@@ -154,26 +168,117 @@ const Sale = {
     return { creditStatus, balanceCents: totalCents - newPaidCents };
   },
 
-  async findAll({ fromUtc, toUtc, saleType, paymentMethod, status, creditStatus, q, limit, offset }) {
+  /**
+   * Keeps the sale for an online order in step with the order's status.
+   * Runs on the caller's transaction, with the orders row already locked.
+   *
+   *   pending/…  → confirmed|processing|shipped|delivered : create the sale (once)
+   *   already has a sale (completed)                        : nothing — never a second sale
+   *   cancelled (or back to pending) while a sale is active : mark it voided
+   *   cancelled → confirmed again                           : re-activate the SAME sale
+   *
+   * Stock is NOT touched here: it was deducted when the order was placed and is
+   * returned/re-deducted by the order status handler itself.
+   * Returns { action: 'created' | 'reactivated' | 'voided' | 'unchanged', saleId }.
+   */
+  async syncFromOrder(conn, { orderId, status, adminId }) {
+    const [[order]] = await conn.execute(
+      `SELECT id, order_number AS orderNumber, customer_name AS customerName,
+              customer_phone AS customerPhone, total_amount AS totalAmount, notes
+       FROM orders WHERE id = ? LIMIT 1`, [orderId]
+    );
+    if (!order) return { action: 'unchanged', saleId: null };
+
+    const [[existing]] = await conn.execute(
+      `SELECT id, status FROM sales WHERE order_id = ? LIMIT 1 FOR UPDATE`, [orderId]
+    );
+    const counts = SALE_ORDER_STATUSES.includes(status);
+
+    if (!counts) {
+      if (existing && existing.status === 'completed') {
+        const reason = status === 'cancelled'
+          ? `Order ${order.orderNumber} cancelled`
+          : `Order ${order.orderNumber} moved back to ${status}`;
+        await Sale.markVoided(conn, existing.id, reason);
+        return { action: 'voided', saleId: existing.id };
+      }
+      return { action: 'unchanged', saleId: existing ? existing.id : null };
+    }
+
+    if (existing) {
+      if (existing.status === 'voided') {
+        // Back to an active status: the sale is dated from this (re)confirmation.
+        await conn.execute(
+          `UPDATE sales SET status = 'completed', voided_at = NULL, void_reason = NULL,
+                  created_at = NOW(), admin_id = ? WHERE id = ?`,
+          [adminId ?? null, existing.id]
+        );
+        return { action: 'reactivated', saleId: existing.id };
+      }
+      return { action: 'unchanged', saleId: existing.id };
+    }
+
+    const [items] = await conn.execute(
+      `SELECT product_id AS productId, name, quantity, unit_price AS unitPrice
+       FROM order_items WHERE order_id = ? ORDER BY id ASC`, [orderId]
+    );
+    const totalQty = items.reduce((n, i) => n + Number(i.quantity), 0);
+
+    let saleId;
+    try {
+      const temp = `TMP-${require('crypto').randomUUID()}`.slice(0, 40);
+      const [res] = await conn.execute(
+        `INSERT INTO sales (sale_number, sale_type, source, order_id, payment_method,
+                            customer_name, customer_phone, notes,
+                            total_amount, total_quantity, amount_paid, credit_status, admin_id)
+         VALUES (?, 'paid', 'online', ?, ?, ?, ?, ?, ?, ?, 0, NULL, ?)`,
+        [
+          temp, orderId, paymentFromOrderNotes(order.notes),
+          order.customerName, order.customerPhone,
+          `Online order ${order.orderNumber}`,
+          order.totalAmount, totalQty, adminId ?? null,
+        ]
+      );
+      saleId = res.insertId;
+    } catch (err) {
+      // UNIQUE(order_id) — another request created it first. That is fine: one sale per order.
+      if (err && err.code === 'ER_DUP_ENTRY') return { action: 'unchanged', saleId: null };
+      throw err;
+    }
+    await conn.execute(`UPDATE sales SET sale_number = ? WHERE id = ?`,
+      [`SL-${String(saleId).padStart(5, '0')}`, saleId]);
+
+    for (const i of items) {
+      const unit = Number(i.unitPrice);
+      await Sale.addItem(conn, saleId, {
+        productId: i.productId, name: i.name, quantity: i.quantity,
+        unitPrice: unit, lineTotal: Math.round(unit * 100) * Number(i.quantity) / 100,
+      });
+    }
+    return { action: 'created', saleId };
+  },
+
+  async findAll({ fromUtc, toUtc, saleType, paymentMethod, status, creditStatus, source, q, limit, offset }) {
     const params = [];
     const where = dateClause(fromUtc, toUtc, params);
     if (saleType)      { where.push('s.sale_type = ?');      params.push(saleType); }
     if (paymentMethod) { where.push('s.payment_method = ?'); params.push(paymentMethod); }
     if (status)        { where.push('s.status = ?');         params.push(status); }
     if (creditStatus)  { where.push('s.credit_status = ?');  params.push(creditStatus); }
+    if (source)        { where.push('s.source = ?');         params.push(source); }
     if (q) {
-      where.push('(s.customer_name LIKE ? OR s.customer_phone LIKE ? OR s.sale_number LIKE ?)');
+      where.push('(s.customer_name LIKE ? OR s.customer_phone LIKE ? OR s.sale_number LIKE ? OR o.order_number LIKE ?)');
       const t = likeTerm(q);
-      params.push(t, t, t);
+      params.push(t, t, t, t);
     }
     const clause = where.length ? `WHERE ${where.join(' AND ')}` : '';
 
     const [[{ total }]] = await pool.execute(
-      `SELECT COUNT(*) AS total FROM sales s ${clause}`, params
+      `SELECT COUNT(*) AS total FROM sales s ${SALE_JOINS} ${clause}`, params
     );
     const [rows] = await pool.execute(
       `SELECT ${SALE_COLS}
-       FROM sales s LEFT JOIN admins a ON a.id = s.admin_id
+       FROM sales s ${SALE_JOINS}
        ${clause}
        ORDER BY s.created_at DESC, s.id DESC
        LIMIT ${Number(limit)} OFFSET ${Number(offset)}`,
@@ -204,7 +309,9 @@ const Sale = {
               COALESCE(SUM(s.sale_type = 'paid'), 0)   AS paidCount,
               COALESCE(SUM(CASE WHEN s.sale_type = 'paid'   THEN s.total_amount ELSE 0 END), 0) AS paidAmount,
               COALESCE(SUM(s.sale_type = 'credit'), 0) AS creditCount,
-              COALESCE(SUM(CASE WHEN s.sale_type = 'credit' THEN s.total_amount ELSE 0 END), 0) AS creditAmount
+              COALESCE(SUM(CASE WHEN s.sale_type = 'credit' THEN s.total_amount ELSE 0 END), 0) AS creditAmount,
+              COALESCE(SUM(s.source = 'online'), 0) AS onlineCount,
+              COALESCE(SUM(CASE WHEN s.source = 'online' THEN s.total_amount ELSE 0 END), 0) AS onlineAmount
        FROM sales s ${clause}`, params
     );
 
@@ -276,6 +383,7 @@ const Sale = {
       credit: { transactions: Number(totals.creditCount), amount: Number(totals.creditAmount),
                 collected: Number(collected.amount) },
       outstandingCredit: { amount: Number(owed.amount), accounts: Number(owed.accounts) },
+      online: { transactions: Number(totals.onlineCount), amount: Number(totals.onlineAmount) },
       byPayment:   byPayment.map(r => ({ ...r, transactions: Number(r.transactions), revenue: Number(r.revenue) })),
       topProducts: topProducts.map(r => ({ ...r, quantity: Number(r.quantity), revenue: Number(r.revenue) })),
       daily:       daily.map(r => ({
@@ -286,5 +394,7 @@ const Sale = {
     };
   },
 };
+
+Sale.SALE_ORDER_STATUSES = SALE_ORDER_STATUSES;
 
 module.exports = Sale;

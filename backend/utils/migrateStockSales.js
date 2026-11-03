@@ -8,12 +8,14 @@
  *   2. creates stock_movements, sales, sale_items (if missing)
  *   3. adds credit-sale support: sales.sale_type / customer_phone /
  *      amount_paid / credit_status, and the credit_payments table
- *   4. writes an "opening balance" movement for every product that already
+ *   4. links sales to online orders: sales.source / order_id (UNIQUE) and the
+ *      'online' payment method, so a confirmed order becomes exactly one sale
+ *   5. writes an "opening balance" movement for every product that already
  *      has stock but no history yet, so the ledger starts consistent.
  */
 require('dotenv').config({ path: require('path').resolve(__dirname, '../.env') });
 
-const { DDL, ADD_THRESHOLD_COLUMN, ADD_CREDIT_COLUMNS } = require('./stockSalesSchema');
+const { DDL, ADD_THRESHOLD_COLUMN, ADD_CREDIT_COLUMNS, ADD_ONLINE_SALE_COLUMNS } = require('./stockSalesSchema');
 
 async function isMigrated(pool) {
   const [[col]] = await pool.execute(
@@ -29,7 +31,11 @@ async function isMigrated(pool) {
      WHERE TABLE_SCHEMA = DATABASE()
        AND TABLE_NAME IN ('stock_movements','sales','sale_items','credit_payments')`
   );
-  return col.c === 1 && credit.c === 1 && tables.length === 4;
+  const [[online]] = await pool.execute(
+    `SELECT COUNT(*) AS c FROM information_schema.COLUMNS
+     WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'sales' AND COLUMN_NAME IN ('source','order_id')`
+  );
+  return col.c === 1 && credit.c === 1 && tables.length === 4 && online.c === 2;
 }
 
 async function migrate(pool) {
@@ -53,6 +59,16 @@ async function migrate(pool) {
   if (hasCredit.c === 0) {
     await pool.query(ADD_CREDIT_COLUMNS);
     console.log('✅  sales upgraded for credit sales (existing sales kept as paid sales)');
+  }
+
+  // Existing databases: link sales to online orders (existing sales stay 'manual')
+  const [[hasOnline]] = await pool.execute(
+    `SELECT COUNT(*) AS c FROM information_schema.COLUMNS
+     WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'sales' AND COLUMN_NAME = 'order_id'`
+  );
+  if (hasOnline.c === 0) {
+    await pool.query(ADD_ONLINE_SALE_COLUMNS);
+    console.log('✅  sales linked to online orders (sales.source, sales.order_id UNIQUE)');
   }
 
   const [result] = await pool.query(`

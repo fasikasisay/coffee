@@ -30,7 +30,9 @@ const DDL = [
   id              INT UNSIGNED  NOT NULL AUTO_INCREMENT,
   sale_number     VARCHAR(40)   NOT NULL UNIQUE,         -- SL-00001
   sale_type       ENUM('paid','credit') NOT NULL DEFAULT 'paid',
-  payment_method  ENUM('cash','telebirr','cbe-birr','card') NULL,   -- paid sales only
+  source          ENUM('manual','online') NOT NULL DEFAULT 'manual',   -- online = auto-registered from a confirmed order
+  order_id        INT UNSIGNED  NULL,                    -- original online order (one sale per order)
+  payment_method  ENUM('cash','telebirr','cbe-birr','card','online') NULL,   -- paid sales only; 'online' = method not recorded on the order
   customer_name   VARCHAR(120)  NULL,                    -- required for credit sales
   customer_phone  VARCHAR(40)   NULL,                    -- contact for credit sales
   notes           VARCHAR(500)  NULL,
@@ -50,11 +52,14 @@ const DDL = [
   INDEX idx_sales_payment (payment_method),
   INDEX idx_sales_type    (sale_type, created_at),
   INDEX idx_sales_credit  (credit_status),
+  UNIQUE KEY uq_sales_order (order_id),                  -- an order can produce at most ONE sale
+  INDEX idx_sales_source  (source),
   CONSTRAINT chk_sales_type CHECK (
     (sale_type = 'paid'   AND payment_method IS NOT NULL AND credit_status IS NULL) OR
     (sale_type = 'credit' AND credit_status IS NOT NULL)
   ),
-  CONSTRAINT fk_sales_admin FOREIGN KEY (admin_id) REFERENCES admins(id) ON DELETE SET NULL
+  CONSTRAINT fk_sales_admin FOREIGN KEY (admin_id) REFERENCES admins(id) ON DELETE SET NULL,
+  CONSTRAINT fk_sales_order FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci`,
 
 `CREATE TABLE IF NOT EXISTS sale_items (
@@ -108,4 +113,18 @@ const ADD_CREDIT_COLUMNS = `
       (sale_type = 'credit' AND credit_status IS NOT NULL)
     )`;
 
-module.exports = { DDL, ADD_THRESHOLD_COLUMN, ADD_CREDIT_COLUMNS };
+/**
+ * Links sales to online orders (existing databases). Existing rows become
+ * source='manual', order_id=NULL. The UNIQUE key on order_id is what guarantees
+ * "one sale per order" even under simultaneous requests (NULLs are allowed many times).
+ */
+const ADD_ONLINE_SALE_COLUMNS = `
+  ALTER TABLE sales
+    ADD COLUMN source   ENUM('manual','online') NOT NULL DEFAULT 'manual' AFTER sale_type,
+    ADD COLUMN order_id INT UNSIGNED NULL AFTER source,
+    MODIFY COLUMN payment_method ENUM('cash','telebirr','cbe-birr','card','online') NULL,
+    ADD UNIQUE KEY uq_sales_order (order_id),
+    ADD INDEX idx_sales_source (source),
+    ADD CONSTRAINT fk_sales_order FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE SET NULL`;
+
+module.exports = { DDL, ADD_THRESHOLD_COLUMN, ADD_CREDIT_COLUMNS, ADD_ONLINE_SALE_COLUMNS };

@@ -6,6 +6,9 @@ const { parseRange, parsePaging } = require('../utils/dateRange');
 const { body, validationResult } = require('express-validator');
 
 const PAYMENT_METHODS = ['cash', 'telebirr', 'cbe-birr', 'card'];
+// Filter-only: online-order sales whose order did not record a payment method
+const FILTER_PAYMENT_METHODS = [...PAYMENT_METHODS, 'online'];
+const SOURCES         = ['manual', 'online'];
 const STATUSES        = ['completed', 'voided'];
 const SALE_TYPES      = ['paid', 'credit'];
 const CREDIT_STATUSES = ['unpaid', 'partial', 'paid'];
@@ -141,7 +144,10 @@ exports.getSales = asyncHandler(async (req, res, next) => {
   const { fromUtc, toUtc } = parseRange(req.query);
   const { page, limit, offset } = parsePaging(req.query, { defaultLimit: 25, maxLimit: 100 });
 
-  const { paymentMethod, status, type, creditStatus } = req.query;
+  const { paymentMethod, status, type, creditStatus, source } = req.query;
+  if (source && !SOURCES.includes(source)) {
+    return next(new ErrorResponse(`source must be one of: ${SOURCES.join(', ')}`, 400));
+  }
   if (type && !SALE_TYPES.includes(type)) {
     return next(new ErrorResponse(`type must be one of: ${SALE_TYPES.join(', ')}`, 400));
   }
@@ -155,8 +161,8 @@ exports.getSales = asyncHandler(async (req, res, next) => {
     }
     q = req.query.q.trim() || null;
   }
-  if (paymentMethod && !PAYMENT_METHODS.includes(paymentMethod)) {
-    return next(new ErrorResponse(`paymentMethod must be one of: ${PAYMENT_METHODS.join(', ')}`, 400));
+  if (paymentMethod && !FILTER_PAYMENT_METHODS.includes(paymentMethod)) {
+    return next(new ErrorResponse(`paymentMethod must be one of: ${FILTER_PAYMENT_METHODS.join(', ')}`, 400));
   }
   if (status && !STATUSES.includes(status)) {
     return next(new ErrorResponse(`status must be one of: ${STATUSES.join(', ')}`, 400));
@@ -164,7 +170,7 @@ exports.getSales = asyncHandler(async (req, res, next) => {
 
   const { rows, total } = await Sale.findAll({
     fromUtc, toUtc, saleType: type || null, paymentMethod: paymentMethod || null,
-    status: status || null, creditStatus: creditStatus || null, q, limit, offset,
+    status: status || null, creditStatus: creditStatus || null, source: source || null, q, limit, offset,
   });
   res.status(200).json({
     success: true,
@@ -193,6 +199,12 @@ exports.voidSale = asyncHandler(async (req, res, next) => {
     const sale = await Sale.lockById(conn, id);
     if (!sale) throw new ErrorResponse('Sale not found', 404);
     if (sale.status === 'voided') throw new ErrorResponse('This sale has already been voided', 400);
+    // Online sales follow their order. Voiding here would return stock a second time
+    // (cancelling the order already returns it), so it has to be done from the Orders page.
+    if (sale.source === 'online') {
+      throw new ErrorResponse(
+        `${sale.saleNumber} comes from an online order — cancel the order in Orders to remove it from sales`, 400);
+    }
     if (sale.saleType === 'credit' && toCents(sale.amountPaid) > 0) {
       throw new ErrorResponse(
         `${sale.saleNumber} already has $${money(toCents(sale.amountPaid))} in payments recorded and cannot be voided`, 400);

@@ -39,7 +39,7 @@
     initial: 'Initial stock', restock: 'Restock', adjustment: 'Adjustment', sale: 'Walk-in sale',
     order: 'Online order', order_cancel: 'Order cancelled', sale_void: 'Sale voided',
   };
-  const PAY_LABEL = { cash: 'Cash', telebirr: 'Telebirr', 'cbe-birr': 'CBE Birr', card: 'Card' };
+  const PAY_LABEL = { cash: 'Cash', telebirr: 'Telebirr', 'cbe-birr': 'CBE Birr', card: 'Card', online: 'Online' };
   const CAT = { 'green-beans': 'Green Beans', roasted: 'Roasted', specialty: 'Specialty', blend: 'Blend' };
 
   /* ── modal plumbing ──────────────────────────────── */
@@ -385,7 +385,7 @@
       const r = presetRange('today');
       salesRange = r;
       $('salesFrom').value = r.from; $('salesTo').value = r.to;
-      ['salesPayment', 'salesStatus', 'salesCreditStatus'].forEach((id) => $(id).addEventListener('change', () => loadSalesList(1)));
+      ['salesPayment', 'salesStatus', 'salesCreditStatus', 'salesSource'].forEach((id) => $(id).addEventListener('change', () => loadSalesList(1)));
       let timer;
       $('salesSearch').addEventListener('input', () => { clearTimeout(timer); timer = setTimeout(() => loadSalesList(1), 300); });
       $('payAmount').addEventListener('keydown', (e) => { if (['e', 'E', '+', '-'].includes(e.key)) e.preventDefault(); });
@@ -449,7 +449,8 @@
         : 'No unpaid credit';
 
       $('ds-transactions').textContent = d.transactions.toLocaleString('en-US');
-      $('ds-voided').textContent = d.voidedCount ? `${d.voidedCount} voided (excluded)` : 'Paid + credit';
+      const onlineNote = d.online && d.online.transactions ? `${d.online.transactions.toLocaleString('en-US')} online · ` : '';
+      $('ds-voided').textContent = d.voidedCount ? `${onlineNote}${d.voidedCount} voided (excluded)` : `${onlineNote}Paid + credit`;
       $('ds-items').textContent = kg(d.itemsSold);
       $('ds-average').textContent = money(d.averageSale);
       $('ds-collected').textContent = money(d.credit.collected);
@@ -490,21 +491,25 @@
   const dateCell = (s) =>
     `<td style="color:var(--text-muted);font-size:0.8rem;white-space:nowrap">${fmtDateTime(s.createdAt)}${s.adminName ? `<div class="cell-sub">by ${esc(s.adminName)}</div>` : ''}</td>`;
 
+  /* online-order sales: small badge + the order number they came from */
+  const onlineTag = (s) => s.source === 'online'
+    ? `<div class="cell-sub"><span class="status-badge status-confirmed">Online</span> ${esc(s.orderNumber || '')}</div>` : '';
+
   function paidRow(s) {
     const who  = s.customerName ? `<div class="cell-sub">${esc(s.customerName)}</div>` : '';
     const note = s.notes ? `<div class="cell-sub">${esc(s.notes)}</div>` : '';
     const voidInfo = s.status === 'voided' ? `<div class="cell-sub">${esc(s.voidReason || '')}</div>` : '';
     return `<tr>
-      <td><span class="order-num">${esc(s.saleNumber)}</span>${who}</td>
+      <td><span class="order-num">${esc(s.saleNumber)}</span>${onlineTag(s)}${who}</td>
       ${dateCell(s)}
       <td style="white-space:normal;min-width:170px;font-size:0.82rem">${itemsHtml(s)}${note}</td>
       <td>${esc(PAY_LABEL[s.paymentMethod] || s.paymentMethod || '—')}</td>
       <td>${Number(s.totalQuantity).toLocaleString('en-US')} kg</td>
       <td class="cell-strong" ${s.status === 'voided' ? 'style="text-decoration:line-through;opacity:.6"' : ''}>${money(s.totalAmount)}</td>
       <td><span class="status-badge status-${esc(s.status)}">${capitalize(esc(s.status))}</span>${voidInfo}</td>
-      <td>${s.status === 'completed'
-        ? `<button class="btn-mini danger" onclick="openVoidModal(${Number(s.id)},'${esc(s.saleNumber)}')"><i class="fa-solid fa-rotate-left"></i> Void</button>`
-        : '—'}</td>
+      <td>${s.status !== 'completed' ? '—'
+        : s.source === 'online' ? '<span class="cell-sub" title="Cancel the order in Orders to remove this sale">Managed in Orders</span>'
+        : `<button class="btn-mini danger" onclick="openVoidModal(${Number(s.id)},'${esc(s.saleNumber)}')"><i class="fa-solid fa-rotate-left"></i> Void</button>`}</td>
     </tr>`;
   }
 
@@ -556,6 +561,7 @@
 
     const qs = new URLSearchParams({ from, to, tz: TZ(), page: salesPage, limit: 15, type: salesTab });
     if ($('salesStatus').value) qs.set('status', $('salesStatus').value);
+    if ($('salesSource') && $('salesSource').value) qs.set('source', $('salesSource').value);
     if (credit) {
       if ($('salesCreditStatus').value) qs.set('creditStatus', $('salesCreditStatus').value);
       const q = $('salesSearch').value.trim();
